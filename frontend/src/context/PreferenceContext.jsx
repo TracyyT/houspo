@@ -13,6 +13,8 @@ const defaultPreferences = {
   colors: [],
   materials: [],
   space: null,
+  categories: [],
+  subcategories: [],
 }
 
 export function PreferenceProvider({ children }) {
@@ -21,11 +23,18 @@ export function PreferenceProvider({ children }) {
       sessionStorage.getItem('houspoPreferences')
 
     if (savedPreferences) {
-      return JSON.parse(savedPreferences)
+      const parsedPreferences =
+        JSON.parse(savedPreferences)
+
+      return {
+        ...defaultPreferences,
+        ...parsedPreferences,
+      }
     }
 
     return defaultPreferences
   })
+
 
   useEffect(() => {
     sessionStorage.setItem(
@@ -34,12 +43,14 @@ export function PreferenceProvider({ children }) {
     )
   }, [preferences])
 
+
   const toggleStyle = (style) => {
     setPreferences((current) => {
       const exists = current.styles.includes(style)
 
       return {
         ...current,
+
         styles: exists
           ? current.styles.filter(
               (item) => item !== style
@@ -49,6 +60,7 @@ export function PreferenceProvider({ children }) {
     })
   }
 
+
   const toggleCharacteristic = (characteristic) => {
     setPreferences((current) => {
       const exists =
@@ -56,6 +68,7 @@ export function PreferenceProvider({ children }) {
 
       return {
         ...current,
+
         characteristics: exists
           ? current.characteristics.filter(
               (item) => item !== characteristic
@@ -68,6 +81,7 @@ export function PreferenceProvider({ children }) {
     })
   }
 
+
   const selectSpace = (space) => {
     setPreferences((current) => ({
       ...current,
@@ -75,9 +89,65 @@ export function PreferenceProvider({ children }) {
     }))
   }
 
+
+  const toggleCategory = (category) => {
+    setPreferences((current) => {
+      const exists =
+        current.categories.includes(category)
+
+      return {
+        ...current,
+
+        categories: exists
+          ? current.categories.filter(
+              (item) => item !== category
+            )
+          : [...current.categories, category],
+      }
+    })
+  }
+
+
+  const toggleColor = (color) => {
+    setPreferences((current) => {
+      const exists =
+        current.colors.includes(color)
+
+      return {
+        ...current,
+
+        colors: exists
+          ? current.colors.filter(
+              (item) => item !== color
+            )
+          : [...current.colors, color],
+      }
+    })
+  }
+
+
+  const toggleMaterial = (material) => {
+    setPreferences((current) => {
+      const exists =
+        current.materials.includes(material)
+
+      return {
+        ...current,
+
+        materials: exists
+          ? current.materials.filter(
+              (item) => item !== material
+            )
+          : [...current.materials, material],
+      }
+    })
+  }
+
+
   const resetPreferences = () => {
     setPreferences(defaultPreferences)
   }
+
 
   return (
     <PreferenceContext.Provider
@@ -86,6 +156,9 @@ export function PreferenceProvider({ children }) {
         toggleStyle,
         toggleCharacteristic,
         selectSpace,
+        toggleCategory,
+        toggleColor,
+        toggleMaterial,
         resetPreferences,
       }}
     >
@@ -93,6 +166,7 @@ export function PreferenceProvider({ children }) {
     </PreferenceContext.Provider>
   )
 }
+
 
 export function usePreferences() {
   return useContext(PreferenceContext)

@@ -1,9 +1,13 @@
-import { Link } from 'react-router-dom'
+import {
+  Link,
+  useNavigate,
+} from 'react-router-dom'
 
 import { spaces } from '../data/spaces'
 import { usePreferences } from '../context/PreferenceContext'
 
 function SpacesPage() {
+  const navigate = useNavigate()
   const { preferences, selectSpace } = usePreferences()
 
   return (
@@ -87,6 +91,7 @@ function SpacesPage() {
           <button
             className="continue-button"
             disabled={!preferences.space}
+            onClick={() => navigate('/categories')}
           >
             <span>Continue</span>
             <span>→</span>
