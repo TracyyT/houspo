@@ -1,0 +1,100 @@
+//will update :)
+export const stylePreferences = [
+  {
+    id: 'modern',
+    name: 'Modern',
+    image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Black accents',
+      'Glass',
+      'Geometric shapes',
+      'Monochrome',
+      'Open spaces',
+    ],
+  },
+  {
+    id: 'minimalist',
+    name: 'Minimalist',
+    image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Clean lines',
+      'Neutral colors',
+      'Minimal decor',
+      'Open space',
+      'Soft textures',
+    ],
+  },
+  {
+    id: 'scandinavian',
+    name: 'Scandinavian',
+    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Light wood',
+      'Soft textiles',
+      'White walls',
+      'Warm lighting',
+      'Functional decor',
+    ],
+  },
+  {
+    id: 'japandi',
+    name: 'Japandi',
+    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Natural wood',
+      'Neutral colors',
+      'Minimal decor',
+      'Warm lighting',
+      'Wabi-sabi',
+      'Linen textures',
+    ],
+  },
+  {
+    id: 'industrial',
+    name: 'Industrial',
+    image: 'https://images.unsplash.com/photo-1617104678098-de229db51175?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Exposed brick',
+      'Metal',
+      'Dark tones',
+      'Concrete',
+      'Raw finishes',
+    ],
+  },
+  {
+    id: 'mid-century',
+    name: 'Mid-Century Modern',
+    image: 'https://images.unsplash.com/photo-1615874694520-474822394e73?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Walnut wood',
+      'Tapered legs',
+      'Warm tones',
+      'Retro shapes',
+      'Statement lighting',
+    ],
+  },
+  {
+    id: 'bohemian',
+    name: 'Bohemian',
+    image: 'https://images.unsplash.com/photo-1615529162924-f8605388461d?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Plants',
+      'Colorful textiles',
+      'Rattan',
+      'Vintage pieces',
+      'Layered rugs',
+    ],
+  },
+  {
+    id: 'coastal',
+    name: 'Coastal',
+    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80',
+    related: [
+      'Light blue',
+      'Natural fibers',
+      'White linen',
+      'Light wood',
+      'Airy spaces',
+    ],
+  },
+]
