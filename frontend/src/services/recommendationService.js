@@ -42,82 +42,111 @@ function calculateFeedbackScore(
 ) {
   let feedbackScore = 0
 
-  const likedProducts = products.filter((item) =>
-    preferences.likedProducts.includes(item.id)
+  // Saved + explicitly liked products are positive signals
+  const positiveProductIds = [
+    ...new Set([
+      ...preferences.savedProducts,
+      ...preferences.likedProducts,
+    ]),
+  ]
+
+  const positiveProducts = products.filter((item) =>
+    positiveProductIds.includes(item.id)
   )
 
   const dislikedProducts = products.filter((item) =>
     preferences.dislikedProducts.includes(item.id)
   )
 
-
-
-  likedProducts.forEach((likedProduct) => {
-    if (likedProduct.id === product.id) {
+  positiveProducts.forEach((positiveProduct) => {
+    if (positiveProduct.id === product.id) {
       return
     }
 
+    // Style is the strongest signal
     feedbackScore +=
       countMatches(
         product.styles,
-        likedProduct.styles
+        positiveProduct.styles
       ) * 2
 
+    // Characteristics also say a lot about the user's taste
+    feedbackScore +=
+      countMatches(
+        product.characteristics,
+        positiveProduct.characteristics
+      ) * 1.5
+
+    // Materials and colors are weaker supporting signals
     feedbackScore +=
       countMatches(
         product.materials,
-        likedProduct.materials
+        positiveProduct.materials
       )
 
     feedbackScore +=
       countMatches(
         product.colors,
-        likedProduct.colors
+        positiveProduct.colors
       )
 
+    // Same category
     if (
-      product.category === likedProduct.category
+      product.category === positiveProduct.category
+    ) {
+      feedbackScore += 1
+    }
+
+    // Same subcategory is an even more specific match
+    if (
+      product.subcategory === positiveProduct.subcategory
     ) {
       feedbackScore += 1
     }
   })
 
-
-  dislikedProducts.forEach(
-    (dislikedProduct) => {
-      if (
-        dislikedProduct.id === product.id
-      ) {
-        return
-      }
-
-      feedbackScore -=
-        countMatches(
-          product.styles,
-          dislikedProduct.styles
-        ) * 2
-
-      feedbackScore -=
-        countMatches(
-          product.materials,
-          dislikedProduct.materials
-        )
-
-      feedbackScore -=
-        countMatches(
-          product.colors,
-          dislikedProduct.colors
-        )
-
-      if (
-        product.category ===
-        dislikedProduct.category
-      ) {
-        feedbackScore -= 1
-      }
+  dislikedProducts.forEach((dislikedProduct) => {
+    if (dislikedProduct.id === product.id) {
+      return
     }
-  )
 
+    feedbackScore -=
+      countMatches(
+        product.styles,
+        dislikedProduct.styles
+      ) * 2
+
+    feedbackScore -=
+      countMatches(
+        product.characteristics,
+        dislikedProduct.characteristics
+      ) * 1.5
+
+    feedbackScore -=
+      countMatches(
+        product.materials,
+        dislikedProduct.materials
+      )
+
+    feedbackScore -=
+      countMatches(
+        product.colors,
+        dislikedProduct.colors
+      )
+
+    if (
+      product.category === dislikedProduct.category
+    ) {
+      feedbackScore -= 1
+    }
+
+    if (
+      product.subcategory ===
+      dislikedProduct.subcategory
+    ) {
+      feedbackScore -= 1
+    }
+  })
 
   return feedbackScore
 }
@@ -318,11 +347,11 @@ export function getRecommendations(
         b.recommendationScore -
         a.recommendationScore
 
-    //   if (scoreDifference !== 0) {
-    //     return scoreDifference
-    //   }
+      if (scoreDifference !== 0) {
+        return scoreDifference
+      }
 
-    //   return a.originalOrder - b.originalOrder
+      return a.originalOrder - b.originalOrder
     })
 }
 

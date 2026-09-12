@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation, } from 'react-router-dom'
 
 import { products } from '../data/products'
 import { usePreferences } from '../context/PreferenceContext'
@@ -10,7 +10,7 @@ function RecommendationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [recentlyDisliked, setRecentlyDisliked] = useState(null)
   const navigate = useNavigate()
-
+  const location = useLocation()
   const {
     preferences,
     resetPreferences,
@@ -116,26 +116,50 @@ function RecommendationsPage() {
         </Link>
 
         <nav className="main-nav-links">
-            <Link to="/recommendations">
-            Explore
-            </Link>
+  <Link
+    to="/recommendations"
+    className={
+      location.pathname === '/recommendations'
+        ? 'active'
+        : ''
+    }
+  >
+    Explore
+  </Link>
 
-            {/* <Link to="/preferences">
-                Find Your Style
-            </Link> */}
+  <Link
+    to="/saved"
+    className={
+      location.pathname === '/saved'
+        ? 'active'
+        : ''
+    }
+  >
+    Saved
+  </Link>
 
-            <Link to="/saved">
-            Saved
-            </Link>
+  <Link
+    to="/about"
+    className={
+      location.pathname === '/about'
+        ? 'active'
+        : ''
+    }
+  >
+    About
+  </Link>
 
-            <Link to="/about">
-            About
-            </Link>
-
-            <Link to="/my-style">
-            My Style
-            </Link>
-        </nav>
+  <Link
+    to="/my-style"
+    className={
+      location.pathname === '/my-style'
+        ? 'active'
+        : ''
+    }
+  >
+    My Style
+  </Link>
+</nav>
         </header>
 
 

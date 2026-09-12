@@ -1,6 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, } from 'react-router-dom'
 
 function AboutPage() {
+  const location = useLocation()
   return (
     <main className="about-page">
       <header className="recommendations-nav">
@@ -9,11 +10,50 @@ function AboutPage() {
         </Link>
 
         <nav className="main-nav-links">
-          <Link to="/recommendations">Explore</Link>
-          <Link to="/saved">Saved</Link>
-          <Link to="/about">About</Link>
-          <Link to="/my-style">My Style</Link>
-        </nav>
+            <Link
+                to="/recommendations"
+                className={
+                location.pathname === '/recommendations'
+                    ? 'active'
+                    : ''
+                }
+            >
+                Explore
+            </Link>
+
+            <Link
+                to="/saved"
+                className={
+                location.pathname === '/saved'
+                    ? 'active'
+                    : ''
+                }
+            >
+                Saved
+            </Link>
+
+            <Link
+                to="/about"
+                className={
+                location.pathname === '/about'
+                    ? 'active'
+                    : ''
+                }
+            >
+                About
+            </Link>
+
+            <Link
+                to="/my-style"
+                className={
+                location.pathname === '/my-style'
+                    ? 'active'
+                    : ''
+                }
+            >
+                My Style
+            </Link>
+            </nav>
       </header>
 
       <section className="about-page-content">

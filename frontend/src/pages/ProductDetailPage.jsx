@@ -2,6 +2,7 @@ import {
   Link,
   useNavigate,
   useParams,
+  useLocation,
 } from 'react-router-dom'
 
 import {
@@ -26,7 +27,7 @@ function ProductDetailPage() {
     toggleSavedProduct,
   } = usePreferences()
 
-
+  const location = useLocation()
   const product = products.find(
     (item) =>
       item.id === Number(id)
@@ -142,27 +143,52 @@ function ProductDetailPage() {
             houspo
         </Link>
 
-        <nav className="main-nav-links">
-            <Link to="/recommendations">
-            Explore
-            </Link>
+       <nav className="main-nav-links">
+  <Link
+    to="/recommendations"
+    className={
+      location.pathname === '/recommendations' ||
+  location.pathname.startsWith('/product/')
+        ? 'active'
+        : ''
+    }
+  >
+    Explore
+  </Link>
 
-              {/* <Link to="/preferences">
-                Find Your Style
-            </Link> */}
+  <Link
+    to="/saved"
+    className={
+      location.pathname === '/saved'
+        ? 'active'
+        : ''
+    }
+  >
+    Saved
+  </Link>
 
-            <Link to="/saved">
-            Saved
-            </Link>
+  <Link
+    to="/about"
+    className={
+      location.pathname === '/about'
+        ? 'active'
+        : ''
+    }
+  >
+    About
+  </Link>
 
-            <Link to="/about">
-            About
-            </Link>
-
-            <Link to="/my-style">
-            My Style
-            </Link>
-        </nav>
+  <Link
+    to="/my-style"
+    className={
+      location.pathname === '/my-style'
+        ? 'active'
+        : ''
+    }
+  >
+    My Style
+  </Link>
+</nav>
         </header>
 
       <div className="product-detail-container">

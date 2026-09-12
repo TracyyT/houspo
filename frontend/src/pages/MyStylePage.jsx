@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, } from 'react-router-dom'
 import { usePreferences } from '../context/PreferenceContext'
+import { products } from '../data/products'
 
 function MyStylePage() {
   const { preferences } = usePreferences()
-
+  const location = useLocation()
   const hasPreferences =
     preferences.styles.length > 0 ||
     preferences.characteristics.length > 0 ||
@@ -11,7 +12,32 @@ function MyStylePage() {
     preferences.materials.length > 0 ||
     preferences.space ||
     preferences.categories.length > 0
+    const savedProducts = products.filter((product) =>
+        preferences.savedProducts.includes(product.id)
+        )
 
+        const countValues = (items, key) => {
+        const counts = {}
+
+        items.forEach((item) => {
+            ;(item[key] || []).forEach((value) => {
+            counts[value] = (counts[value] || 0) + 1
+            })
+        })
+
+        return Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([value]) => value)
+        }
+
+        const learnedStyles =
+        countValues(savedProducts, 'styles').slice(0, 3)
+
+        const learnedColors =
+        countValues(savedProducts, 'colors').slice(0, 3)
+
+        const learnedMaterials =
+        countValues(savedProducts, 'materials').slice(0, 3)
   return (
     <main className="my-style-page">
       <header className="recommendations-nav">
@@ -23,26 +49,50 @@ function MyStylePage() {
         </Link>
 
         <nav className="main-nav-links">
-          <Link to="/recommendations">
-            Explore
-          </Link>
+            <Link
+                to="/recommendations"
+                className={
+                location.pathname === '/recommendations'
+                    ? 'active'
+                    : ''
+                }
+            >
+                Explore
+            </Link>
 
-          {/* <Link to="/preferences">
-            Find Your Style
-          </Link> */}
+            <Link
+                to="/saved"
+                className={
+                location.pathname === '/saved'
+                    ? 'active'
+                    : ''
+                }
+            >
+                Saved
+            </Link>
 
-          <Link to="/saved">
-            Saved
-          </Link>
+            <Link
+                to="/about"
+                className={
+                location.pathname === '/about'
+                    ? 'active'
+                    : ''
+                }
+            >
+                About
+            </Link>
 
-          <Link to="/about">
-            About
-          </Link>
-
-          <Link to="/my-style">
-            My Style
-          </Link>
-        </nav>
+            <Link
+                to="/my-style"
+                className={
+                location.pathname === '/my-style'
+                    ? 'active'
+                    : ''
+                }
+            >
+                My Style
+            </Link>
+            </nav>
       </header>
 
       <section className="my-style-content">
@@ -174,7 +224,55 @@ function MyStylePage() {
                 </div>
               </section>
             </div>
+{savedProducts.length > 0 && (
+  <section className="learned-style-section">
+    <span className="section-label">
+      LEARNED FROM YOUR ACTIVITY
+    </span>
 
+    <h2>
+      houspo is getting to know your taste.
+    </h2>
+
+    <div className="learned-style-grid">
+      <div className="learned-style-card">
+        <span>Top styles</span>
+
+        <div className="my-style-tags">
+          {learnedStyles.map((style) => (
+            <span key={style}>
+              {style}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="learned-style-card">
+        <span>Colors you saved</span>
+
+        <div className="my-style-tags">
+          {learnedColors.map((color) => (
+            <span key={color}>
+              {color}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="learned-style-card">
+        <span>Materials you saved</span>
+
+        <div className="my-style-tags">
+          {learnedMaterials.map((material) => (
+            <span key={material}>
+              {material}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+)}
             <div className="my-style-actions">
             <Link
                 to="/preferences"

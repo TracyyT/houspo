@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, } from 'react-router-dom'
 
 import { products } from '../data/products'
 
@@ -18,6 +18,7 @@ function SavedPage() {
           Number(savedId) === Number(product.id)
       )
   )
+  const location = useLocation()
   
 
   return (
@@ -32,26 +33,51 @@ function SavedPage() {
         </Link>
 
         <nav className="main-nav-links">
-            <Link to="/recommendations">
-            Explore
-            </Link>
+  <Link
+    to="/recommendations"
+    className={
+      location.pathname === '/recommendations'
+        ? 'active'
+        : ''
+    }
+  >
+    Explore
+  </Link>
 
-            {/* <Link to="/preferences">
-                Find Your Style
-            </Link> */}
+  <Link
+    to="/saved"
+    className={
+      location.pathname === '/saved'
+        ? 'active'
+        : ''
+    }
+  >
+    Saved
+  </Link>
 
-            <Link to="/saved">
-            Saved
-            </Link>
+  <Link
+    to="/about"
+    className={
+      location.pathname === '/about'
+        ? 'active'
+        : ''
+    }
+  >
+    About
+  </Link>
 
-            <Link to="/about">
-            About
-            </Link>
+  <Link
+    to="/my-style"
+    className={
+      location.pathname === '/my-style'
+        ? 'active'
+        : ''
+    }
+  >
+    My Style
+  </Link>
+</nav>
 
-            <Link to="/my-style">
-            My Style
-            </Link>
-        </nav>
         </header>
 
 
