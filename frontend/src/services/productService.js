@@ -1,7 +1,7 @@
 import { normalizeProduct } from './productAdapter'
 
 const API_URL =
-  'http://localhost:3001/api/products/search'
+  'https://houspo-backend.onrender.com/api/products/search'
 
 export async function searchProducts({
   query = 'furniture and furnishings',
