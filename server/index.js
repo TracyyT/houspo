@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const app = express()
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
@@ -60,6 +60,6 @@ app.post('/api/products/search', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(
-    `houspo server running on http://localhost:${PORT}`
+    `houspo server running on port ${PORT}`
   )
 })
