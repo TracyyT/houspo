@@ -47,8 +47,13 @@ function ProductDetailPage() {
     setIsLoadingSimilar,
   ] = useState(false)
 
-  useEffect(() => {
+    useEffect(() => {
     setImageIndex(0)
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+    })
     }, [id])
 
 
@@ -282,6 +287,24 @@ function ProductDetailPage() {
               ${product.price}
             </p>
 
+            <div className="product-detail-status">
+                <span className="product-rating">
+                    ★ {product.rating}
+                    <span>
+                    ({product.reviewCount} reviews)
+                    </span>
+                </span>
+
+                <span
+                    className={`product-availability ${
+                    product.availability === 'Low Stock'
+                        ? 'low-stock'
+                        : ''
+                    }`}
+                >
+                    {product.availability}
+                </span>
+            </div>
 
             <div className="product-detail-actions">
 
@@ -350,6 +373,21 @@ function ProductDetailPage() {
                   {product.spaces.join(', ')}
                 </p>
               </div>
+
+              {product.dimensions && (
+                <div>
+                    <span>DIMENSIONS</span>
+                    <p>
+                    {product.dimensions.width}
+                    {' × '}
+                    {product.dimensions.depth}
+                    {' × '}
+                    {product.dimensions.height}
+                    {' '}
+                    {product.dimensions.unit}
+                    </p>
+                </div>
+                )}
 
             </div>
 

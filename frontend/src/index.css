@@ -4637,3 +4637,36 @@ button {
 .price-filter select:focus {
   border-color: var(--dark-coffee);
 }
+.product-detail-status {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin: 10px 0 24px;
+
+  font-size: 11px;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  color: var(--dark-coffee);
+}
+
+.product-rating > span {
+  color: var(--muted);
+}
+
+.product-availability {
+  padding-left: 18px;
+
+  border-left: 1px solid var(--line);
+
+  color: #55634d;
+}
+
+.product-availability.low-stock {
+  color: #9a6b42;
+}
