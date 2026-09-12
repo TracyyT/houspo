@@ -123,12 +123,16 @@ function calculateFeedbackScore(
 
     // Same subcategory is an even more specific match
     if (
-      product.subcategory === positiveProduct.subcategory
+    product.subcategory &&
+    positiveProduct.subcategory &&
+    product.subcategory ===
+        positiveProduct.subcategory
     ) {
-      feedbackScore += 1
+    feedbackScore += 1
     }
+  
   })
-
+  
   dislikedProducts.forEach((dislikedProduct) => {
     if (dislikedProduct.id === product.id) {
       return
@@ -165,11 +169,14 @@ function calculateFeedbackScore(
     }
 
     if (
-      product.subcategory ===
-      dislikedProduct.subcategory
+    product.subcategory &&
+    dislikedProduct.subcategory &&
+    product.subcategory ===
+        dislikedProduct.subcategory
     ) {
-      feedbackScore -= 1
+    feedbackScore -= 1
     }
+
   })
 
   return feedbackScore
@@ -344,6 +351,14 @@ export function getRecommendations(
   products,
   preferences
 ) {
+  const hasMatchingCategories =
+    preferences.categories.length === 0 ||
+    products.some((product) =>
+      preferences.categories.includes(
+        product.category
+      )
+    )
+
   return products
     .map((product, index) => {
       const result = scoreProduct(
@@ -373,7 +388,10 @@ export function getRecommendations(
     })
 
     .filter((product) => {
-      if (preferences.categories.length === 0) {
+      if (
+        preferences.categories.length === 0 ||
+        !hasMatchingCategories
+      ) {
         return true
       }
 

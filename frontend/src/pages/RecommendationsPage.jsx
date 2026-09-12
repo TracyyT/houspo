@@ -9,7 +9,9 @@ import { searchProducts,} from '../services/productService'
 function RecommendationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [recentlyDisliked, setRecentlyDisliked] = useState(null)
-  
+  const [apiProducts, setApiProducts] = useState([])
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true)
+//   console.log('API PRODUCTS STATE:', apiProducts)
   const navigate = useNavigate()
   const location = useLocation()
   const {
@@ -25,21 +27,28 @@ function RecommendationsPage() {
     navigate('/')
   }
 
-  const [priceRange, setPriceRange] = useState(preferences.budget || 'all')
+  const [priceRange, setPriceRange] = useState('all')
   const [selectedCategory, setSelectedCategory] =
     useState('All')
 
   const [sortOption, setSortOption] =
     useState('match')
 
+    const productSource =
+    isLoadingProducts
+        ? []
+        : apiProducts.length > 0
+        ? apiProducts
+        : products
 
-    const [recommendations] = useState(() =>
-    getRecommendations(
-        products,
+    const recommendations = getRecommendations(
+        productSource,
         preferences
     )
-    )
 
+    console.log('PRODUCT SOURCE:', productSource)
+    console.log('RECOMMENDATIONS:', recommendations)
+    console.log('PREFERENCES:', preferences)    
 
   const availableCategories = [
     'All',
@@ -129,27 +138,30 @@ function RecommendationsPage() {
   })
 
     useEffect(() => {
-    async function testApi() {
+    async function loadProducts() {
         try {
+        setIsLoadingProducts(true)
+
         const products =
             await searchProducts({
             query: 'modern living room furniture',
-            limit: 5,
+            limit: 20,
             })
 
-        console.log(
-            'TEST RESULT:',
-            products
-        )
+        setApiProducts(products)
         } catch (error) {
         console.error(
             'CHANNEL3 ERROR:',
             error
         )
+
+        setApiProducts([])
+        } finally {
+        setIsLoadingProducts(false)
         }
     }
 
-    testApi()
+    loadProducts()
     }, [])
 
 
@@ -414,15 +426,41 @@ function RecommendationsPage() {
   </div>
 )}
 
-    {sortedRecommendations.length === 0 ? (
-    <div className="recommendation-empty-state">
+    {isLoadingProducts ? (
+        <section className="recommendation-grid">
+            {Array.from({ length: 6 }).map((_, index) => (
+            <article
+                key={index}
+                className="product-card skeleton-card"
+            >
+                <div className="skeleton-image" />
+
+                <div className="product-content">
+                <div className="skeleton-line skeleton-small" />
+                <div className="skeleton-line skeleton-title" />
+                <div className="skeleton-line skeleton-price" />
+
+                <div className="skeleton-line skeleton-match" />
+                <div className="skeleton-line skeleton-reason" />
+                <div className="skeleton-line skeleton-reason short" />
+                </div>
+
+                <div className="product-feedback">
+                <div className="skeleton-button" />
+                <div className="skeleton-button" />
+                </div>
+            </article>
+            ))}
+        </section>
+        ) : sortedRecommendations.length === 0 ? (
+        <div className="recommendation-empty-state">
             <h2>No products found.</h2>
 
             <p>
             Try a different search term or adjust your filters.
             </p>
         </div>
-        ) : (            
+        ) : (         
         <section className="recommendation-grid">
         {sortedRecommendations.map((product, index) => {
             const isSaved =
