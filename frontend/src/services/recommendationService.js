@@ -8,6 +8,25 @@ function countMatches(productValues, userValues) {
   ).length
 }
 
+function getBudgetRange(budget) {
+  switch (budget) {
+    case 'under-200':
+      return { min: 0, max: 200 }
+
+    case '200-500':
+      return { min: 200, max: 500 }
+
+    case '500-1000':
+      return { min: 500, max: 1000 }
+
+    case '1000-plus':
+      return { min: 1000, max: Infinity }
+
+    default:
+      return null
+  }
+}
+
 
 function calculateMaximumScore(preferences) {
   let maxScore = 0
@@ -20,6 +39,11 @@ function calculateMaximumScore(preferences) {
 
   // Space match
   if (preferences.space) {
+    maxScore += 4
+  }
+
+  //price match
+  if (preferences.budget) {
     maxScore += 4
   }
 
@@ -252,6 +276,22 @@ export function scoreProduct(
     )
   }
 
+    const budgetRange =
+        getBudgetRange(preferences.budget)
+
+        if (budgetRange) {
+        const isWithinBudget =
+            product.price >= budgetRange.min &&
+            product.price <= budgetRange.max
+
+        if (isWithinBudget) {
+            score += 4
+
+            reasons.push(
+            'Fits your budget'
+            )
+        }
+    }
 
   const baseScore = score
 

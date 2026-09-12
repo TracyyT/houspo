@@ -15,14 +15,13 @@ const defaultPreferences = {
   space: null,
   categories: [],
   subcategories: [],
-
+  budget: null,
   savedProducts: [],
   likedProducts: [],
   dislikedProducts: [],
 }
 
 export function PreferenceProvider({ children }) {
-
     const [preferences, setPreferences] = useState(() => {
     const savedPreferences =
         localStorage.getItem('houspoPreferences')
@@ -136,7 +135,13 @@ export function PreferenceProvider({ children }) {
     })
   }
 
-
+    const selectBudget = (budget) => {
+        setPreferences((current) => ({
+            ...current,
+            budget,
+        }))
+    }
+    
   const selectSpace = (space) => {
     setPreferences((current) => ({
       ...current,
@@ -217,6 +222,7 @@ export function PreferenceProvider({ children }) {
         toggleCategory,
         toggleColor,
         toggleMaterial,
+        selectBudget,
         toggleSavedProduct,
         toggleLikedProduct,
         toggleDislikedProduct,   

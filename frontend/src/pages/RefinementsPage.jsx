@@ -20,6 +20,7 @@ function RefinementsPage() {
     preferences,
     toggleColor,
     toggleMaterial,
+    selectBudget,
   } = usePreferences()
 
 
@@ -195,6 +196,70 @@ function RefinementsPage() {
           </div>
 
         </section>
+
+            <section className="refinement-section">
+            <div className="refinement-section-heading">
+                <div>
+                <span className="refinement-number">
+                    03
+                </span>
+
+                <h2>
+                    Budget
+                </h2>
+                </div>
+
+                <span className="optional-label">
+                OPTIONAL
+                </span>
+            </div>
+
+            <div className="budget-grid">
+                {[
+                {
+                    label: 'Under $200',
+                    value: 'under-200',
+                },
+                {
+                    label: '$200–$500',
+                    value: '200-500',
+                },
+                {
+                    label: '$500–$1,000',
+                    value: '500-1000',
+                },
+                {
+                    label: '$1,000+',
+                    value: '1000-plus',
+                },
+                ].map((option) => {
+                const selected =
+                    preferences.budget === option.value
+
+                return (
+                    <button
+                    key={option.value}
+                    className={`budget-option ${
+                        selected ? 'selected' : ''
+                    }`}
+                    onClick={() =>
+                        selectBudget(
+                        selected ? null : option.value
+                        )
+                    }
+                    >
+                    <span>
+                        {option.label}
+                    </span>
+
+                    <span className="budget-check">
+                        {selected ? '✓' : '+'}
+                    </span>
+                    </button>
+                )
+                })}
+            </div>
+            </section>
 
 
         <footer className="refinements-footer">

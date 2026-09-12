@@ -9,6 +9,7 @@ import { getRecommendations } from '../services/recommendationService'
 function RecommendationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [recentlyDisliked, setRecentlyDisliked] = useState(null)
+  
   const navigate = useNavigate()
   const location = useLocation()
   const {
@@ -24,7 +25,7 @@ function RecommendationsPage() {
     navigate('/')
   }
 
-
+  const [priceRange, setPriceRange] = useState(preferences.budget || 'all')
   const [selectedCategory, setSelectedCategory] =
     useState('All')
 
@@ -49,7 +50,24 @@ function RecommendationsPage() {
     ),
   ]
 
+  const matchesPriceRange = (price) => {
+    switch (priceRange) {
+        case 'under-200':
+        return price < 200
 
+        case '200-500':
+        return price >= 200 && price <= 500
+
+        case '500-1000':
+        return price > 500 && price <= 1000
+
+        case '1000-plus':
+        return price > 1000
+
+        default:
+        return true
+    }
+  }
     const visibleRecommendations = recommendations.filter(
         (product) => {
             const isNotDisliked =
@@ -73,7 +91,14 @@ function RecommendationsPage() {
                 searchTerm.toLowerCase().trim()
             )
 
-            return isNotDisliked && matchesSearch
+            const matchesPrice =
+                matchesPriceRange(product.price)
+
+            return (
+            isNotDisliked &&
+            matchesSearch &&
+            matchesPrice
+            )
         }
     )
 
@@ -285,6 +310,39 @@ function RecommendationsPage() {
 
           </div>
 
+            <div className="price-filter">
+            <label htmlFor="price-filter">
+                Price
+            </label>
+
+            <select
+                id="price-filter"
+                value={priceRange}
+                onChange={(event) =>
+                setPriceRange(event.target.value)
+                }
+            >
+                <option value="all">
+                All prices
+                </option>
+
+                <option value="under-200">
+                Under $200
+                </option>
+
+                <option value="200-500">
+                $200–$500
+                </option>
+
+                <option value="500-1000">
+                $500–$1,000
+                </option>
+
+                <option value="1000-plus">
+                $1,000+
+                </option>
+            </select>
+            </div>
 
           <div className="sort-control">
 
