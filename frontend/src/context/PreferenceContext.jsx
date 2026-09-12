@@ -5,7 +5,8 @@ import {
   useState,
 } from 'react'
 
-const PreferenceContext = createContext()
+const PreferenceContext =
+  createContext()
 
 const defaultPreferences = {
   styles: [],
@@ -16,91 +17,187 @@ const defaultPreferences = {
   categories: [],
   subcategories: [],
   budget: null,
+
+  // IDs of products the user saved.
   savedProducts: [],
+
+  // Full product data for saved items.
+  savedProductDetails: {},
+
   likedProducts: [],
   dislikedProducts: [],
 }
 
-export function PreferenceProvider({ children }) {
-    const [preferences, setPreferences] = useState(() => {
+export function PreferenceProvider({
+  children,
+}) {
+  const [
+    preferences,
+    setPreferences,
+  ] = useState(() => {
     const savedPreferences =
-        localStorage.getItem('houspoPreferences')
+      localStorage.getItem(
+        'houspoPreferences'
+      )
 
     if (savedPreferences) {
+      try {
         const parsedPreferences =
-        JSON.parse(savedPreferences)
+          JSON.parse(
+            savedPreferences
+          )
 
         return {
-        ...defaultPreferences,
-        ...parsedPreferences,
+          ...defaultPreferences,
+          ...parsedPreferences,
+
+          // Support users who already had
+          // preferences saved before this field.
+          savedProductDetails:
+            parsedPreferences
+              .savedProductDetails ||
+            {},
         }
+      } catch {
+        return defaultPreferences
+      }
     }
 
     return defaultPreferences
-    })
+  })
 
-    useEffect(() => {
+  // Keep preferences saved across
+  // browser sessions.
+  useEffect(() => {
     localStorage.setItem(
-        'houspoPreferences',
-        JSON.stringify(preferences)
+      'houspoPreferences',
+      JSON.stringify(preferences)
     )
-    }, [preferences])
+  }, [preferences])
 
-    const toggleSavedProduct = (productId) => {
-    setPreferences((current) => ({
+  // Save or remove a product.
+  //
+  // productDetails is optional so older
+  // calls using only an ID still work.
+  const toggleSavedProduct = (
+    productId,
+    productDetails = null
+  ) => {
+    setPreferences((current) => {
+      const isSaved =
+        current.savedProducts.some(
+          (id) =>
+            String(id) ===
+            String(productId)
+        )
+
+      // Remove saved product + its details.
+      if (isSaved) {
+        const updatedDetails = {
+          ...current.savedProductDetails,
+        }
+
+        delete updatedDetails[
+          String(productId)
+        ]
+
+        return {
+          ...current,
+
+          savedProducts:
+            current.savedProducts.filter(
+              (id) =>
+                String(id) !==
+                String(productId)
+            ),
+
+          savedProductDetails:
+            updatedDetails,
+        }
+      }
+
+      // Add product ID and store its
+      // complete data when available.
+      return {
         ...current,
 
-        savedProducts:
-        current.savedProducts.includes(productId)
-            ? current.savedProducts.filter(
-                (id) => id !== productId
-            )
-            : [...current.savedProducts, productId],
-     }))
-    }
+        savedProducts: [
+          ...current.savedProducts,
+          productId,
+        ],
 
+        savedProductDetails:
+          productDetails
+            ? {
+                ...current.savedProductDetails,
 
-    const toggleLikedProduct = (productId) => {
+                [String(productId)]:
+                  productDetails,
+              }
+            : current.savedProductDetails,
+      }
+    })
+  }
+
+  // Like a product and remove it
+  // from dislikes if necessary.
+  const toggleLikedProduct = (
+    productId
+  ) => {
     setPreferences((current) => ({
-        ...current,
+      ...current,
 
-        likedProducts:
-        current.likedProducts.includes(productId)
-            ? current.likedProducts.filter(
-                (id) => id !== productId
+      likedProducts:
+        current.likedProducts.includes(
+          productId
+        )
+          ? current.likedProducts.filter(
+              (id) => id !== productId
             )
-            : [...current.likedProducts, productId],
+          : [
+              ...current.likedProducts,
+              productId,
+            ],
 
-        dislikedProducts:
+      dislikedProducts:
         current.dislikedProducts.filter(
-            (id) => id !== productId
+          (id) => id !== productId
         ),
     }))
-    }
+  }
 
-
-    const toggleDislikedProduct = (productId) => {
+  // Dislike a product and remove it
+  // from likes if necessary.
+  const toggleDislikedProduct = (
+    productId
+  ) => {
     setPreferences((current) => ({
-        ...current,
+      ...current,
 
-        dislikedProducts:
-        current.dislikedProducts.includes(productId)
-            ? current.dislikedProducts.filter(
-                (id) => id !== productId
+      dislikedProducts:
+        current.dislikedProducts.includes(
+          productId
+        )
+          ? current.dislikedProducts.filter(
+              (id) => id !== productId
             )
-            : [...current.dislikedProducts, productId],
+          : [
+              ...current.dislikedProducts,
+              productId,
+            ],
 
-        likedProducts:
+      likedProducts:
         current.likedProducts.filter(
-            (id) => id !== productId
+          (id) => id !== productId
         ),
     }))
-    }
+  }
 
-
+  // Add or remove a selected style.
   const toggleStyle = (style) => {
     setPreferences((current) => {
-      const exists = current.styles.includes(style)
+      const exists =
+        current.styles.includes(style)
 
       return {
         ...current,
@@ -109,23 +206,32 @@ export function PreferenceProvider({ children }) {
           ? current.styles.filter(
               (item) => item !== style
             )
-          : [...current.styles, style],
+          : [
+              ...current.styles,
+              style,
+            ],
       }
     })
   }
 
-
-  const toggleCharacteristic = (characteristic) => {
+  // Add or remove a characteristic.
+  const toggleCharacteristic = (
+    characteristic
+  ) => {
     setPreferences((current) => {
       const exists =
-        current.characteristics.includes(characteristic)
+        current.characteristics.includes(
+          characteristic
+        )
 
       return {
         ...current,
 
         characteristics: exists
           ? current.characteristics.filter(
-              (item) => item !== characteristic
+              (item) =>
+                item !==
+                characteristic
             )
           : [
               ...current.characteristics,
@@ -135,13 +241,15 @@ export function PreferenceProvider({ children }) {
     })
   }
 
-    const selectBudget = (budget) => {
-        setPreferences((current) => ({
-            ...current,
-            budget,
-        }))
-    }
-    
+  // Store the selected budget.
+  const selectBudget = (budget) => {
+    setPreferences((current) => ({
+      ...current,
+      budget,
+    }))
+  }
+
+  // Store the selected room.
   const selectSpace = (space) => {
     setPreferences((current) => ({
       ...current,
@@ -149,25 +257,33 @@ export function PreferenceProvider({ children }) {
     }))
   }
 
-
-  const toggleCategory = (category) => {
+  // Add or remove a category.
+  const toggleCategory = (
+    category
+  ) => {
     setPreferences((current) => {
       const exists =
-        current.categories.includes(category)
+        current.categories.includes(
+          category
+        )
 
       return {
         ...current,
 
         categories: exists
           ? current.categories.filter(
-              (item) => item !== category
+              (item) =>
+                item !== category
             )
-          : [...current.categories, category],
+          : [
+              ...current.categories,
+              category,
+            ],
       }
     })
   }
 
-
+  // Add or remove a color.
   const toggleColor = (color) => {
     setPreferences((current) => {
       const exists =
@@ -180,37 +296,53 @@ export function PreferenceProvider({ children }) {
           ? current.colors.filter(
               (item) => item !== color
             )
-          : [...current.colors, color],
+          : [
+              ...current.colors,
+              color,
+            ],
       }
     })
   }
 
-
-  const toggleMaterial = (material) => {
+  // Add or remove a material.
+  const toggleMaterial = (
+    material
+  ) => {
     setPreferences((current) => {
       const exists =
-        current.materials.includes(material)
+        current.materials.includes(
+          material
+        )
 
       return {
         ...current,
 
         materials: exists
           ? current.materials.filter(
-              (item) => item !== material
+              (item) =>
+                item !== material
             )
-          : [...current.materials, material],
+          : [
+              ...current.materials,
+              material,
+            ],
       }
     })
   }
 
-
-    const resetPreferences = () => {
+  // Restart the quiz but keep the
+  // user's saved collection.
+  const resetPreferences = () => {
     setPreferences((current) => ({
-        ...defaultPreferences,
-        savedProducts: current.savedProducts,
-    }))
-    }
+      ...defaultPreferences,
 
+      savedProducts:
+        current.savedProducts,
+
+      savedProductDetails:
+        current.savedProductDetails,
+    }))
+  }
 
   return (
     <PreferenceContext.Provider
@@ -225,7 +357,7 @@ export function PreferenceProvider({ children }) {
         selectBudget,
         toggleSavedProduct,
         toggleLikedProduct,
-        toggleDislikedProduct,   
+        toggleDislikedProduct,
         resetPreferences,
       }}
     >
@@ -234,7 +366,8 @@ export function PreferenceProvider({ children }) {
   )
 }
 
-
 export function usePreferences() {
-  return useContext(PreferenceContext)
+  return useContext(
+    PreferenceContext
+  )
 }

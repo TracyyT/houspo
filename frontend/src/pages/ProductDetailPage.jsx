@@ -29,12 +29,14 @@ function ProductDetailPage() {
     toggleSavedProduct,
   } = usePreferences()
 
+  // Load the currently active Channel3
+  // catalog from the recommendations page.
   const cachedApiProducts = useMemo(() => {
     try {
       return (
         JSON.parse(
           sessionStorage.getItem(
-            'houspoApiProducts'
+            'houspoActiveProducts'
           )
         ) || []
       )
@@ -43,11 +45,15 @@ function ProductDetailPage() {
     }
   }, [])
 
+  // Use live products when available.
+  // Fall back to local demo products.
   const productCatalog =
     cachedApiProducts.length > 0
       ? cachedApiProducts
       : products
 
+  // Prefer the product passed through
+  // navigation so live API products work.
   const product =
     location.state?.product ??
     productCatalog.find(
@@ -68,6 +74,8 @@ function ProductDetailPage() {
     setIsLoadingSimilar,
   ] = useState(false)
 
+  // Reset the gallery and scroll up
+  // when a different product is opened.
   useEffect(() => {
     setImageIndex(0)
 
@@ -88,50 +96,97 @@ function ProductDetailPage() {
       true
     )
 
-    const shuffled = [...matches].sort(
-      () => Math.random() - 0.5
-    )
+    // Keep only the strongest matches as candidates.
+    // This prevents weaker matches from jumping above
+    // products that are actually more similar.
+    const candidatePool =
+      matches.slice(0, 12)
 
-    return shuffled.slice(0, 6)
+    // On first load, show the best
+    // matches in ranked order.
+    if (shuffleCount === 0) {
+      return candidatePool.slice(0, 6)
+    }
+
+    // Keep the strongest two matches
+    // and shuffle the other strong options.
+    const strongestMatches =
+      candidatePool.slice(0, 2)
+
+    const remainingMatches =
+      candidatePool.slice(2)
+
+    const shuffledRemaining =
+      [...remainingMatches].sort(
+        () => Math.random() - 0.5
+      )
+
+    return [
+      ...strongestMatches,
+      ...shuffledRemaining,
+    ].slice(0, 6)
   }, [
     product,
     productCatalog,
     shuffleCount,
   ])
 
+  // Keep all hooks above this return.
   if (!product) {
     return (
       <main className="product-detail-page">
-        <p>Product not found.</p>
 
-        <Link to="/recommendations">
-          Back to recommendations
-        </Link>
+        <div className="product-detail-container">
+
+          <p>
+            Product not found.
+          </p>
+
+          <Link to="/recommendations">
+            Back to recommendations
+          </Link>
+
+        </div>
+
       </main>
     )
   }
 
+  // Use all available product images.
+  // Remove empty image values.
   const productImages =
-    product.images?.length
-      ? product.images
-      : [product.image]
+    (
+      product.images?.length
+        ? product.images
+        : [product.image]
+    ).filter(Boolean)
+
+  // Always keep at least one image
+  // available for the gallery.
+  const safeProductImages =
+    productImages.length > 0
+      ? productImages
+      : ['/image-placeholder.png']
 
   const isSaved =
-    preferences.savedProducts.includes(
-      product.id
+    preferences.savedProducts.some(
+      (productId) =>
+        String(productId) ===
+        String(product.id)
     )
 
   const showPreviousImage = () => {
     setImageIndex((current) =>
       current === 0
-        ? productImages.length - 1
+        ? safeProductImages.length - 1
         : current - 1
     )
   }
 
   const showNextImage = () => {
     setImageIndex((current) =>
-      current === productImages.length - 1
+      current ===
+      safeProductImages.length - 1
         ? 0
         : current + 1
     )
@@ -179,7 +234,8 @@ function ProductDetailPage() {
           <Link
             to="/saved"
             className={
-              location.pathname === '/saved'
+              location.pathname ===
+              '/saved'
                 ? 'active'
                 : ''
             }
@@ -190,7 +246,8 @@ function ProductDetailPage() {
           <Link
             to="/about"
             className={
-              location.pathname === '/about'
+              location.pathname ===
+              '/about'
                 ? 'active'
                 : ''
             }
@@ -201,7 +258,8 @@ function ProductDetailPage() {
           <Link
             to="/my-style"
             className={
-              location.pathname === '/my-style'
+              location.pathname ===
+              '/my-style'
                 ? 'active'
                 : ''
             }
@@ -228,16 +286,32 @@ function ProductDetailPage() {
 
               <img
                 src={
-                  productImages[imageIndex]
+                  safeProductImages[
+                    imageIndex
+                  ] ||
+                  '/image-placeholder.png'
                 }
-                alt={product.name}
+                alt={
+                  product.name ||
+                  'Furniture product'
+                }
+                onError={(event) => {
+                  event.currentTarget.onerror =
+                    null
+
+                  event.currentTarget.src =
+                    '/image-placeholder.png'
+                }}
               />
 
-              {productImages.length > 1 && (
+              {safeProductImages.length >
+                1 && (
                 <>
                   <button
                     className="gallery-arrow left"
-                    onClick={showPreviousImage}
+                    onClick={
+                      showPreviousImage
+                    }
                     aria-label="Previous image"
                   >
                     ←
@@ -245,7 +319,9 @@ function ProductDetailPage() {
 
                   <button
                     className="gallery-arrow right"
-                    onClick={showNextImage}
+                    onClick={
+                      showNextImage
+                    }
                     aria-label="Next image"
                   >
                     →
@@ -255,10 +331,11 @@ function ProductDetailPage() {
 
             </div>
 
-            {productImages.length > 1 && (
+            {safeProductImages.length >
+              1 && (
               <div className="product-thumbnails">
 
-                {productImages.map(
+                {safeProductImages.map(
                   (image, index) => (
                     <button
                       key={`${image}-${index}`}
@@ -271,12 +348,26 @@ function ProductDetailPage() {
                         setImageIndex(index)
                       }
                     >
+
                       <img
-                        src={image}
-                        alt={`${product.name} view ${
+                        src={
+                          image ||
+                          '/image-placeholder.png'
+                        }
+                        alt={`${product.name || 'Product'} view ${
                           index + 1
                         }`}
+                        onError={(
+                          event
+                        ) => {
+                          event.currentTarget.onerror =
+                            null
+
+                          event.currentTarget.src =
+                            '/image-placeholder.png'
+                        }}
                       />
+
                     </button>
                   )
                 )}
@@ -289,7 +380,8 @@ function ProductDetailPage() {
           <div className="product-detail-info">
 
             <span className="product-detail-category">
-              {product.category}
+              {product.category ||
+                'Home'}
 
               {product.subcategory && (
                 <>
@@ -299,25 +391,40 @@ function ProductDetailPage() {
               )}
             </span>
 
-            <h1>{product.name}</h1>
+            <h1>
+              {product.name ||
+                'Untitled product'}
+            </h1>
 
             <p className="product-detail-price">
-              ${product.price}
+              {typeof product.price ===
+              'number'
+                ? `$${product.price}`
+                : 'Price unavailable'}
             </p>
 
             <div className="product-detail-status">
 
               {product.rating !== null &&
-                product.rating !== undefined && (
+                product.rating !==
+                  undefined && (
                   <span className="product-rating">
                     ★ {product.rating}
 
-                    <span>
-                      (
-                      {product.reviewCount}
-                      {' '}
-                      reviews)
-                    </span>
+                    {product.reviewCount !==
+                      null &&
+                      product.reviewCount !==
+                        undefined && (
+                        <span>
+                          {' '}
+                          (
+                          {
+                            product.reviewCount
+                          }
+                          {' '}
+                          reviews)
+                        </span>
+                      )}
                   </span>
                 )}
 
@@ -340,11 +447,14 @@ function ProductDetailPage() {
 
               <button
                 className={`detail-action-button ${
-                  isSaved ? 'active' : ''
+                  isSaved
+                    ? 'active'
+                    : ''
                 }`}
                 onClick={() =>
                   toggleSavedProduct(
-                    product.id
+                    product.id,
+                    product
                   )
                 }
               >
@@ -362,7 +472,9 @@ function ProductDetailPage() {
                 rel="noreferrer"
                 className="seller-link"
               >
-                View at {product.seller.name}
+                View at{' '}
+                {product.seller.name ||
+                  'retailer'}
                 {' '}
                 ↗
               </a>
@@ -373,7 +485,9 @@ function ProductDetailPage() {
               {product.styles?.length >
                 0 && (
                 <div>
-                  <span>STYLE</span>
+                  <span>
+                    STYLE
+                  </span>
 
                   <p>
                     {product.styles.join(
@@ -386,7 +500,9 @@ function ProductDetailPage() {
               {product.colors?.length >
                 0 && (
                 <div>
-                  <span>COLORS</span>
+                  <span>
+                    COLORS
+                  </span>
 
                   <p>
                     {product.colors.join(
@@ -399,7 +515,9 @@ function ProductDetailPage() {
               {product.materials?.length >
                 0 && (
                 <div>
-                  <span>MATERIAL</span>
+                  <span>
+                    MATERIAL
+                  </span>
 
                   <p>
                     {product.materials.join(
@@ -412,7 +530,9 @@ function ProductDetailPage() {
               {product.spaces?.length >
                 0 && (
                 <div>
-                  <span>FOR</span>
+                  <span>
+                    FOR
+                  </span>
 
                   <p>
                     {product.spaces.join(
@@ -422,33 +542,41 @@ function ProductDetailPage() {
                 </div>
               )}
 
-              {product.dimensions && (
-                <div>
-                  <span>DIMENSIONS</span>
+              {product.dimensions &&
+                product.dimensions.width !==
+                  undefined &&
+                product.dimensions.depth !==
+                  undefined &&
+                product.dimensions.height !==
+                  undefined && (
+                  <div>
+                    <span>
+                      DIMENSIONS
+                    </span>
 
-                  <p>
-                    {
-                      product.dimensions
-                        .width
-                    }
-                    {' × '}
-                    {
-                      product.dimensions
-                        .depth
-                    }
-                    {' × '}
-                    {
-                      product.dimensions
-                        .height
-                    }
-                    {' '}
-                    {
-                      product.dimensions
-                        .unit
-                    }
-                  </p>
-                </div>
-              )}
+                    <p>
+                      {
+                        product.dimensions
+                          .width
+                      }
+                      {' × '}
+                      {
+                        product.dimensions
+                          .depth
+                      }
+                      {' × '}
+                      {
+                        product.dimensions
+                          .height
+                      }
+                      {' '}
+                      {
+                        product.dimensions
+                          .unit || ''
+                      }
+                    </p>
+                  </div>
+                )}
 
             </div>
 
@@ -467,17 +595,21 @@ function ProductDetailPage() {
               </h2>
 
               <p>
-                Selected by shared colors,
-                styles, materials, and
-                product type.
+                Selected by shared style,
+                color, material, space,
+                and product type.
               </p>
 
             </div>
 
             <button
               className="more-like-this-button"
-              onClick={handleMoreLikeThis}
-              disabled={isLoadingSimilar}
+              onClick={
+                handleMoreLikeThis
+              }
+              disabled={
+                isLoadingSimilar
+              }
             >
               {isLoadingSimilar
                 ? 'Finding pieces...'
@@ -498,7 +630,8 @@ function ProductDetailPage() {
 
             </div>
 
-          ) : similarProducts.length === 0 ? (
+          ) : similarProducts.length ===
+            0 ? (
 
             <div className="similar-empty-state">
               <p>
@@ -514,7 +647,9 @@ function ProductDetailPage() {
                 (similarProduct) => (
 
                   <Link
-                    key={similarProduct.id}
+                    key={
+                      similarProduct.id
+                    }
                     to={`/product/${similarProduct.id}`}
                     state={{
                       product:
@@ -525,27 +660,43 @@ function ProductDetailPage() {
 
                     <img
                       src={
-                        similarProduct.image
+                        similarProduct.image ||
+                        '/image-placeholder.png'
                       }
                       alt={
-                        similarProduct.name
+                        similarProduct.name ||
+                        'Furniture product'
                       }
+                      onError={(
+                        event
+                      ) => {
+                        event.currentTarget.onerror =
+                          null
+
+                        event.currentTarget.src =
+                          '/image-placeholder.png'
+                      }}
                     />
 
                     <span>
                       {
-                        similarProduct
-                          .category
+                        similarProduct.category ||
+                        'Home'
                       }
                     </span>
 
                     <h3>
-                      {similarProduct.name}
+                      {
+                        similarProduct.name ||
+                        'Untitled product'
+                      }
                     </h3>
 
                     <p>
-                      $
-                      {similarProduct.price}
+                      {typeof similarProduct.price ===
+                      'number'
+                        ? `$${similarProduct.price}`
+                        : 'Price unavailable'}
                     </p>
 
                   </Link>

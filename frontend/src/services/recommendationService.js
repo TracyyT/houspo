@@ -1,64 +1,126 @@
-function countMatches(productValues, userValues) {
-  if (!productValues || !userValues) {
-    return 0
-  }
+// Normalize values so matching is
+// consistent across API and quiz data.
+function normalizeValues(values = []) {
+  return values
+    .filter(Boolean)
+    .map((value) =>
+      String(value)
+        .trim()
+        .toLowerCase()
+    )
+}
 
-  return productValues.filter((value) =>
-    userValues.includes(value)
+// Count matching values without
+// worrying about capitalization.
+function countMatches(
+  productValues = [],
+  userValues = []
+) {
+  const normalizedProductValues =
+    normalizeValues(productValues)
+
+  const normalizedUserValues =
+    normalizeValues(userValues)
+
+  return normalizedProductValues.filter(
+    (value) =>
+      normalizedUserValues.includes(
+        value
+      )
   ).length
+}
+
+// Return the actual values that match
+// between the product and user choices.
+function getMatchedValues(
+  productValues = [],
+  userValues = []
+) {
+  const normalizedUserValues =
+    normalizeValues(userValues)
+
+  return productValues.filter(
+    (value) =>
+      normalizedUserValues.includes(
+        String(value)
+          .trim()
+          .toLowerCase()
+      )
+  )
 }
 
 function getBudgetRange(budget) {
   switch (budget) {
     case 'under-200':
-      return { min: 0, max: 200 }
+      return {
+        min: 0,
+        max: 200,
+      }
 
     case '200-500':
-      return { min: 200, max: 500 }
+      return {
+        min: 200,
+        max: 500,
+      }
 
     case '500-1000':
-      return { min: 500, max: 1000 }
+      return {
+        min: 500,
+        max: 1000,
+      }
 
     case '1000-plus':
-      return { min: 1000, max: Infinity }
+      return {
+        min: 1000,
+        max: Infinity,
+      }
 
     default:
       return null
   }
 }
 
-
-function calculateMaximumScore(preferences) {
+function calculateMaximumScore(
+  preferences
+) {
   let maxScore = 0
 
-  // Each selected style can contribute 3 points
-  maxScore += preferences.styles.length * 3
+  // Each selected style can contribute 3 points.
+  maxScore +=
+    preferences.styles.length * 3
 
-  // Each selected characteristic can contribute 2 points
-  maxScore += preferences.characteristics.length * 2
+  // Each selected characteristic
+  // can contribute 2 points.
+  maxScore +=
+    preferences.characteristics.length * 2
 
-  // Space match
+  // Space match.
   if (preferences.space) {
     maxScore += 4
   }
 
-  //price match
+  // Budget match.
   if (preferences.budget) {
     maxScore += 4
   }
 
-  // Category match
-  if (preferences.categories.length > 0) {
+  // Category match.
+  if (
+    preferences.categories.length > 0
+  ) {
     maxScore += 4
   }
 
-  // Future color + material preferences
-  maxScore += preferences.colors.length
+  // Color + material preferences.
+  maxScore +=
+    preferences.colors.length
 
-  maxScore += preferences.materials.length
+  maxScore +=
+    preferences.materials.length
 
   return maxScore
 }
+
 function calculateFeedbackScore(
   product,
   products,
@@ -66,118 +128,151 @@ function calculateFeedbackScore(
 ) {
   let feedbackScore = 0
 
-  // Saved + explicitly liked products are positive signals
-  const positiveProductIds = [
-    ...new Set([
-      ...preferences.savedProducts,
-      ...preferences.likedProducts,
-    ]),
-  ]
+  // Only explicitly liked products should
+  // influence future recommendation ranking.
+  //
+  // Saved products are bookmarks only and
+  // should not move products around.
+  const likedProducts =
+    products.filter((item) =>
+      preferences.likedProducts.includes(
+        item.id
+      )
+    )
 
-  const positiveProducts = products.filter((item) =>
-    positiveProductIds.includes(item.id)
+  // Disliked products are negative signals.
+  const dislikedProducts =
+    products.filter((item) =>
+      preferences.dislikedProducts.includes(
+        item.id
+      )
+    )
+
+  likedProducts.forEach(
+    (likedProduct) => {
+      if (
+        likedProduct.id === product.id
+      ) {
+        return
+      }
+
+      // Style is the strongest learned signal.
+      feedbackScore +=
+        countMatches(
+          product.styles,
+          likedProduct.styles
+        ) * 2
+
+      // Characteristics also describe taste.
+      feedbackScore +=
+        countMatches(
+          product.characteristics,
+          likedProduct.characteristics
+        ) * 1.5
+
+      // Materials and colors are supporting signals.
+      feedbackScore +=
+        countMatches(
+          product.materials,
+          likedProduct.materials
+        )
+
+      feedbackScore +=
+        countMatches(
+          product.colors,
+          likedProduct.colors
+        )
+
+      // Same broad category.
+      if (
+        product.category &&
+        likedProduct.category &&
+        normalizeValues([
+            product.category,
+            ])[0] ===
+            normalizeValues([
+            likedProduct.category,
+            ])[0]
+      ) {
+        feedbackScore += 1
+      }
+
+      // Same specific product type.
+      if (
+        product.subcategory &&
+        likedProduct.subcategory &&
+        normalizeValues([
+            product.subcategory,
+        ])[0] ===
+        normalizeValues([
+            likedProduct.subcategory,
+        ])[0]
+        ) {
+        feedbackScore += 1
+        }
+    }
   )
 
-  const dislikedProducts = products.filter((item) =>
-    preferences.dislikedProducts.includes(item.id)
+  dislikedProducts.forEach(
+    (dislikedProduct) => {
+      if (
+        dislikedProduct.id ===
+        product.id
+      ) {
+        return
+      }
+
+      feedbackScore -=
+        countMatches(
+          product.styles,
+          dislikedProduct.styles
+        ) * 2
+
+      feedbackScore -=
+        countMatches(
+          product.characteristics,
+          dislikedProduct.characteristics
+        ) * 1.5
+
+      feedbackScore -=
+        countMatches(
+          product.materials,
+          dislikedProduct.materials
+        )
+
+      feedbackScore -=
+        countMatches(
+          product.colors,
+          dislikedProduct.colors
+        )
+
+      if (
+        product.category &&
+        dislikedProduct.category &&
+        normalizeValues([
+            product.category,
+        ])[0] ===
+        normalizeValues([
+            dislikedProduct.category,
+        ])[0]
+        ) {
+        feedbackScore -= 1
+        }
+
+      if (
+        product.subcategory &&
+        dislikedProduct.subcategory &&
+        normalizeValues([
+            product.subcategory,
+        ])[0] ===
+        normalizeValues([
+            dislikedProduct.subcategory,
+        ])[0]
+        ) {
+        feedbackScore -= 1
+        }
+    }
   )
-
-  positiveProducts.forEach((positiveProduct) => {
-    if (positiveProduct.id === product.id) {
-      return
-    }
-
-    // Style is the strongest signal
-    feedbackScore +=
-      countMatches(
-        product.styles,
-        positiveProduct.styles
-      ) * 2
-
-    // Characteristics also say a lot about the user's taste
-    feedbackScore +=
-      countMatches(
-        product.characteristics,
-        positiveProduct.characteristics
-      ) * 1.5
-
-    // Materials and colors are weaker supporting signals
-    feedbackScore +=
-      countMatches(
-        product.materials,
-        positiveProduct.materials
-      )
-
-    feedbackScore +=
-      countMatches(
-        product.colors,
-        positiveProduct.colors
-      )
-
-    // Same category
-    if (
-      product.category === positiveProduct.category
-    ) {
-      feedbackScore += 1
-    }
-
-    // Same subcategory is an even more specific match
-    if (
-    product.subcategory &&
-    positiveProduct.subcategory &&
-    product.subcategory ===
-        positiveProduct.subcategory
-    ) {
-    feedbackScore += 1
-    }
-  
-  })
-  
-  dislikedProducts.forEach((dislikedProduct) => {
-    if (dislikedProduct.id === product.id) {
-      return
-    }
-
-    feedbackScore -=
-      countMatches(
-        product.styles,
-        dislikedProduct.styles
-      ) * 2
-
-    feedbackScore -=
-      countMatches(
-        product.characteristics,
-        dislikedProduct.characteristics
-      ) * 1.5
-
-    feedbackScore -=
-      countMatches(
-        product.materials,
-        dislikedProduct.materials
-      )
-
-    feedbackScore -=
-      countMatches(
-        product.colors,
-        dislikedProduct.colors
-      )
-
-    if (
-      product.category === dislikedProduct.category
-    ) {
-      feedbackScore -= 1
-    }
-
-    if (
-    product.subcategory &&
-    dislikedProduct.subcategory &&
-    product.subcategory ===
-        dislikedProduct.subcategory
-    ) {
-    feedbackScore -= 1
-    }
-
-  })
 
   return feedbackScore
 }
@@ -190,51 +285,62 @@ export function scoreProduct(
   let score = 0
   const reasons = []
 
+    const styleMatches =
+    countMatches(
+        product.styles,
+        preferences.styles
+    )
 
-  const styleMatches = countMatches(
-    product.styles,
-    preferences.styles
-  )
-
-  if (styleMatches > 0) {
+    if (styleMatches > 0) {
     score += styleMatches * 3
 
     const matchedStyles =
-      product.styles.filter((style) =>
-        preferences.styles.includes(style)
-      )
+        getMatchedValues(
+        product.styles,
+        preferences.styles
+        )
 
     reasons.push(
-      `Matches your ${matchedStyles.join(' + ')} style`
+        `Matches your ${matchedStyles
+        .slice(0, 2)
+        .join(' + ')} style`
     )
-  }
+    }
 
+  const characteristicMatches =
+    countMatches(
+        product.characteristics,
+        preferences.characteristics
+    )
 
-  const characteristicMatches = countMatches(
-    product.characteristics,
-    preferences.characteristics
-  )
-
-  if (characteristicMatches > 0) {
-    score += characteristicMatches * 2
+    if (characteristicMatches > 0) {
+    score +=
+        characteristicMatches * 2
 
     const matchedCharacteristics =
-      product.characteristics.filter((item) =>
-        preferences.characteristics.includes(item)
-      )
+        getMatchedValues(
+        product.characteristics,
+        preferences.characteristics
+        )
 
     reasons.push(
-      `Fits ${matchedCharacteristics
+        `Fits ${matchedCharacteristics
         .slice(0, 2)
         .join(' + ')}`
     )
-  }
+    }
 
 
   if (
     preferences.space &&
-    product.spaces.includes(preferences.space)
-  ) {
+    normalizeValues(
+        product.spaces
+    ).includes(
+        String(preferences.space)
+        .trim()
+        .toLowerCase()
+    )
+    ) {
     score += 4
 
     reasons.push(
@@ -244,10 +350,14 @@ export function scoreProduct(
 
 
   if (
-    preferences.categories.includes(
-      product.category
+    normalizeValues(
+        preferences.categories
+    ).includes(
+        String(product.category)
+        .trim()
+        .toLowerCase()
     )
-  ) {
+    ) {
     score += 4
 
     reasons.push(
@@ -255,57 +365,82 @@ export function scoreProduct(
     )
   }
 
+  const colorMatches =
+    countMatches(
+        product.colors,
+        preferences.colors
+    )
 
-  const colorMatches = countMatches(
-    product.colors,
-    preferences.colors
-  )
-
-  if (colorMatches > 0) {
+    if (colorMatches > 0) {
     score += colorMatches
 
-    reasons.push(
-      'Matches your color preferences'
-    )
-  }
-
-
-  const materialMatches = countMatches(
-    product.materials,
-    preferences.materials
-  )
-
-  if (materialMatches > 0) {
-    score += materialMatches
+    const matchedColors =
+        getMatchedValues(
+        product.colors,
+        preferences.colors
+        )
 
     reasons.push(
-      'Matches your material preferences'
+        `Matches your ${matchedColors
+        .slice(0, 2)
+        .join(' + ')} palette`
     )
-  }
-
-    const budgetRange =
-        getBudgetRange(preferences.budget)
-
-        if (budgetRange) {
-        const isWithinBudget =
-            product.price >= budgetRange.min &&
-            product.price <= budgetRange.max
-
-        if (isWithinBudget) {
-            score += 4
-
-            reasons.push(
-            'Fits your budget'
-            )
-        }
     }
 
+  const materialMatches =
+    countMatches(
+        product.materials,
+        preferences.materials
+    )
+
+    if (materialMatches > 0) {
+    score += materialMatches
+
+    const matchedMaterials =
+        getMatchedValues(
+        product.materials,
+        preferences.materials
+        )
+
+    reasons.push(
+        `Uses ${matchedMaterials
+        .slice(0, 2)
+        .join(' + ')}`
+    )
+    }
+
+  const budgetRange =
+    getBudgetRange(
+      preferences.budget
+    )
+
+  if (budgetRange) {
+    const isWithinBudget =
+      product.price >=
+        budgetRange.min &&
+      product.price <=
+        budgetRange.max
+
+    if (isWithinBudget) {
+      score += 4
+
+      reasons.push(
+        'Fits your budget'
+      )
+    }
+  }
+
+  // Base score only uses explicit quiz choices.
+  // This is what the match percentage displays.
   const baseScore = score
 
   const maximumScore =
-    calculateMaximumScore(preferences)
+    calculateMaximumScore(
+      preferences
+    )
 
-
+  // Learned feedback can affect ordering,
+  // but saved/bookmarked products do not.
   const feedbackScore =
     calculateFeedbackScore(
       product,
@@ -314,7 +449,6 @@ export function scoreProduct(
     )
 
   score += feedbackScore
-
 
   if (feedbackScore > 0) {
     reasons.push(
@@ -328,17 +462,18 @@ export function scoreProduct(
     )
   }
 
-
   const matchPercentage =
     maximumScore === 0
       ? 0
       : Math.min(
           100,
           Math.round(
-            (baseScore / maximumScore) * 100
+            (
+              baseScore /
+              maximumScore
+            ) * 100
           )
         )
-
 
   return {
     score,
@@ -351,25 +486,35 @@ export function getRecommendations(
   products,
   preferences
 ) {
-  const hasMatchingCategories =
-    preferences.categories.length === 0 ||
+  const normalizedCategories =
+    normalizeValues(
+        preferences.categories
+    )
+
+    const hasMatchingCategories =
+    normalizedCategories.length === 0 ||
     products.some((product) =>
-      preferences.categories.includes(
-        product.category
-      )
+        normalizedCategories.includes(
+        String(product.category)
+            .trim()
+            .toLowerCase()
+        )
     )
 
   return products
     .map((product, index) => {
-      const result = scoreProduct(
-        product,
-        preferences,
-        products
-      )
+      const result =
+        scoreProduct(
+          product,
+          preferences,
+          products
+        )
 
       return {
         ...product,
 
+        // Keep original position for stable
+        // ordering when scores are tied.
         originalOrder: index,
 
         recommendationScore:
@@ -386,18 +531,20 @@ export function getRecommendations(
           result.reasons,
       }
     })
-
     .filter((product) => {
       if (
-        preferences.categories.length === 0 ||
+        preferences.categories.length ===
+          0 ||
         !hasMatchingCategories
       ) {
         return true
       }
 
-      return preferences.categories.includes(
-        product.category
-      )
+      return normalizedCategories.includes(
+        String(product.category)
+          .trim()
+          .toLowerCase()
+        )
     })
 
     .sort((a, b) => {
@@ -409,7 +556,10 @@ export function getRecommendations(
         return scoreDifference
       }
 
-      return a.originalOrder - b.originalOrder
+      return (
+        a.originalOrder -
+        b.originalOrder
+      )
     })
 }
 
@@ -417,6 +567,6 @@ export function getRecommendations(
 //      ↓
 // recommendationService.js
 //      ↓
-// ranked products
+// scored + ranked products
 //      ↓
 // RecommendationsPage

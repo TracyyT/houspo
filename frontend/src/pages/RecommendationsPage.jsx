@@ -45,19 +45,6 @@ function RecommendationsPage() {
   const [sortOption, setSortOption] =
     useState('match')
 
-  // Build the Channel3 search from the
-  // user's currently selected room.
-  const productSearchQuery =
-    preferences.space
-      ? `${preferences.space} furniture`
-      : 'home furniture'
-
-  // Give every room its own cache.
-  // Example:
-  // houspoApiProducts:Living Room furniture
-  const productCacheKey =
-    `houspoApiProducts:${productSearchQuery}`
-
   // Products returned from Channel3.
   const [apiProducts, setApiProducts] =
     useState([])
@@ -66,6 +53,45 @@ function RecommendationsPage() {
     isLoadingProducts,
     setIsLoadingProducts,
   ] = useState(true)
+
+  const [
+    productLoadError,
+    setProductLoadError,
+  ] = useState(false)
+
+  // Build a more specific Channel3 search
+  // from the user's main preferences.
+  const searchParts = []
+
+  if (preferences.styles.length > 0) {
+    searchParts.push(
+      preferences.styles[0]
+    )
+  }
+
+  if (preferences.space) {
+    searchParts.push(
+      preferences.space
+    )
+  }
+
+  if (preferences.categories.length > 0) {
+    searchParts.push(
+      preferences.categories[0]
+    )
+  }
+
+  // Keep the query short so the API
+  // still returns enough product variety.
+  const productSearchQuery =
+    searchParts.length > 0
+      ? `${searchParts.join(' ')} furniture`
+          .toLowerCase()
+      : 'home furniture'
+
+  // Each unique query gets its own cache.
+  const productCacheKey =
+    `houspoApiProducts:${productSearchQuery}`
 
   // Reset the quiz while keeping saved
   // products through PreferenceContext.
@@ -77,6 +103,10 @@ function RecommendationsPage() {
   // Check whether a product fits the
   // manually selected price filter.
   const matchesPriceRange = (price) => {
+    if (typeof price !== 'number') {
+      return priceRange === 'all'
+    }
+
     switch (priceRange) {
       case 'under-200':
         return price < 200
@@ -101,12 +131,12 @@ function RecommendationsPage() {
     }
   }
 
-  // Load furniture for the selected room.
+  // Load products for the current
+  // preference-based Channel3 search.
   //
-  // If we already searched this room during
-  // the current browser tab, use the cached
-  // products instead of spending another
-  // Channel3 search.
+  // If we already searched this combination
+  // during the current browser tab, use the
+  // cached products instead of another request.
   useEffect(() => {
     async function loadProducts() {
       const cachedProducts =
@@ -122,6 +152,8 @@ function RecommendationsPage() {
           setApiProducts(
             parsedProducts
           )
+
+          setProductLoadError(false)
 
           // Keep one active catalog for the
           // product detail + similar items page.
@@ -146,6 +178,7 @@ function RecommendationsPage() {
 
       try {
         setIsLoadingProducts(true)
+        setProductLoadError(false)
 
         const fetchedProducts =
           await searchProducts({
@@ -157,7 +190,7 @@ function RecommendationsPage() {
           fetchedProducts
         )
 
-        // Save products under this specific room.
+        // Save products under this specific query.
         sessionStorage.setItem(
           productCacheKey,
           JSON.stringify(
@@ -180,6 +213,7 @@ function RecommendationsPage() {
         )
 
         setApiProducts([])
+        setProductLoadError(true)
       } finally {
         setIsLoadingProducts(false)
       }
@@ -217,10 +251,12 @@ function RecommendationsPage() {
   const availableCategories = [
     'All',
     ...new Set(
-      recommendations.map(
-        (product) =>
-          product.category
-      )
+      recommendations
+        .map(
+          (product) =>
+            product.category
+        )
+        .filter(Boolean)
     ),
   ]
 
@@ -229,8 +265,10 @@ function RecommendationsPage() {
     recommendations.filter(
       (product) => {
         const isNotDisliked =
-          !preferences.dislikedProducts.includes(
-            product.id
+          !preferences.dislikedProducts.some(
+            (productId) =>
+              String(productId) ===
+              String(product.id)
           )
 
         const searchableText = [
@@ -243,6 +281,7 @@ function RecommendationsPage() {
           ...(product.materials || []),
           ...(product.spaces || []),
         ]
+          .filter(Boolean)
           .join(' ')
           .toLowerCase()
 
@@ -281,11 +320,31 @@ function RecommendationsPage() {
     ...filteredRecommendations,
   ].sort((a, b) => {
     if (sortOption === 'price-low') {
-      return a.price - b.price
+      const priceA =
+        typeof a.price === 'number'
+          ? a.price
+          : Infinity
+
+      const priceB =
+        typeof b.price === 'number'
+          ? b.price
+          : Infinity
+
+      return priceA - priceB
     }
 
     if (sortOption === 'price-high') {
-      return b.price - a.price
+      const priceA =
+        typeof a.price === 'number'
+          ? a.price
+          : -Infinity
+
+      const priceB =
+        typeof b.price === 'number'
+          ? b.price
+          : -Infinity
+
+      return priceB - priceA
     }
 
     return (
@@ -565,6 +624,16 @@ function RecommendationsPage() {
           </div>
         </div>
 
+        {productLoadError && (
+          <div className="product-load-notice">
+            <span>
+              Live products are temporarily
+              unavailable. Showing houspo
+              demo picks instead.
+            </span>
+          </div>
+        )}
+
         {recentlyDisliked && (
           <div className="undo-dislike-message">
 
@@ -656,8 +725,10 @@ function RecommendationsPage() {
               (product, index) => {
 
                 const isSaved =
-                  preferences.savedProducts.includes(
-                    product.id
+                  preferences.savedProducts.some(
+                    (productId) =>
+                      String(productId) ===
+                      String(product.id)
                   )
 
                 return (
@@ -678,11 +749,20 @@ function RecommendationsPage() {
 
                         <img
                           src={
-                            product.image
+                            product.image ||
+                            '/image-placeholder.png'
                           }
                           alt={
-                            product.name
+                            product.name ||
+                            'Furniture product'
                           }
+                          onError={(event) => {
+                            event.currentTarget.onerror =
+                              null
+
+                            event.currentTarget.src =
+                              '/image-placeholder.png'
+                          }}
                         />
 
                         <div className="product-rank">
@@ -703,22 +783,24 @@ function RecommendationsPage() {
                           <div>
                             <span className="product-category">
                               {
-                                product.category
+                                product.category ||
+                                'Home'
                               }
                             </span>
 
                             <h2>
                               {
-                                product.name
+                                product.name ||
+                                'Untitled product'
                               }
                             </h2>
                           </div>
 
                           <span className="product-price">
-                            $
-                            {
-                              product.price
-                            }
+                            {typeof product.price ===
+                            'number'
+                              ? `$${product.price}`
+                              : 'Price unavailable'}
                           </span>
 
                         </div>
@@ -812,7 +894,8 @@ function RecommendationsPage() {
                           event.stopPropagation()
 
                           toggleSavedProduct(
-                            product.id
+                            product.id,
+                            product
                           )
                         }}
                       >

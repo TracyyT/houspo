@@ -1,89 +1,125 @@
-import { Link, useLocation, } from 'react-router-dom'
+import {
+  Link,
+  useLocation,
+} from 'react-router-dom'
 
 import { products } from '../data/products'
-
 import { usePreferences } from '../context/PreferenceContext'
 
-
 function SavedPage() {
+  const location = useLocation()
+
   const {
     preferences,
     toggleSavedProduct,
   } = usePreferences()
 
-  const savedProducts = products.filter(
-    (product) =>
+  // Convert saved product details
+  // from an object into an array.
+  const persistentSavedProducts =
+    Object.values(
+      preferences.savedProductDetails || {}
+    )
+
+  // Keep old static products working too.
+  const staticSavedProducts =
+    products.filter((product) =>
       preferences.savedProducts.some(
         (savedId) =>
-          Number(savedId) === Number(product.id)
+          String(savedId) ===
+          String(product.id)
       )
-  )
-  const location = useLocation()
-  
+    )
+
+  // Combine persistent live products
+  // with any saved demo products.
+  const allSavedProducts = [
+    ...persistentSavedProducts,
+    ...staticSavedProducts,
+  ]
+
+  // Remove duplicates by product ID.
+  const savedProducts = [
+    ...new Map(
+      allSavedProducts.map(
+        (product) => [
+          String(product.id),
+          product,
+        ]
+      )
+    ).values(),
+  ]
 
   return (
     <main className="saved-page">
 
-        <header className="recommendations-nav">
+      <header className="recommendations-nav">
+
         <Link
-            to="/"
-            className="onboarding-logo"
+          to="/"
+          className="onboarding-logo"
         >
-            houspo
+          houspo
         </Link>
 
         <nav className="main-nav-links">
-  <Link
-    to="/recommendations"
-    className={
-      location.pathname === '/recommendations'
-        ? 'active'
-        : ''
-    }
-  >
-    Explore
-  </Link>
 
-  <Link
-    to="/saved"
-    className={
-      location.pathname === '/saved'
-        ? 'active'
-        : ''
-    }
-  >
-    Saved
-  </Link>
+          <Link
+            to="/recommendations"
+            className={
+              location.pathname ===
+              '/recommendations'
+                ? 'active'
+                : ''
+            }
+          >
+            Explore
+          </Link>
 
-  <Link
-    to="/about"
-    className={
-      location.pathname === '/about'
-        ? 'active'
-        : ''
-    }
-  >
-    About
-  </Link>
+          <Link
+            to="/saved"
+            className={
+              location.pathname ===
+              '/saved'
+                ? 'active'
+                : ''
+            }
+          >
+            Saved
+          </Link>
 
-  <Link
-    to="/my-style"
-    className={
-      location.pathname === '/my-style'
-        ? 'active'
-        : ''
-    }
-  >
-    My Style
-  </Link>
-</nav>
+          <Link
+            to="/about"
+            className={
+              location.pathname ===
+              '/about'
+                ? 'active'
+                : ''
+            }
+          >
+            About
+          </Link>
 
-        </header>
+          <Link
+            to="/my-style"
+            className={
+              location.pathname ===
+              '/my-style'
+                ? 'active'
+                : ''
+            }
+          >
+            My Style
+          </Link>
 
+        </nav>
+
+      </header>
 
       <section className="saved-content">
 
         <div className="saved-heading">
+
           <span className="section-label">
             YOUR COLLECTION
           </span>
@@ -96,8 +132,8 @@ function SavedPage() {
             Keep track of products you want
             to come back to later.
           </p>
-        </div>
 
+        </div>
 
         {savedProducts.length === 0 ? (
 
@@ -136,39 +172,61 @@ function SavedPage() {
 
                   <Link
                     to={`/product/${product.id}`}
+                    state={{ product }}
                     className="saved-product-link"
                   >
 
                     <div className="saved-image-wrapper">
+
                       <img
-                        src={product.image}
-                        alt={product.name}
+                        src={
+                          product.image ||
+                          '/image-placeholder.png'
+                        }
+                        alt={
+                          product.name ||
+                          'Furniture product'
+                        }
+                        onError={(event) => {
+                          event.currentTarget.onerror =
+                            null
+
+                          event.currentTarget.src =
+                            '/image-placeholder.png'
+                        }}
                       />
+
                     </div>
 
                     <span className="saved-product-category">
-                      {product.category}
+                      {product.category ||
+                        'Home'}
                     </span>
 
                     <div className="saved-product-heading">
 
                       <h2>
-                        {product.name}
+                        {product.name ||
+                          'Untitled product'}
                       </h2>
 
                       <span>
-                        ${product.price}
+                        {typeof product.price ===
+                        'number'
+                          ? `$${product.price}`
+                          : 'Price unavailable'}
                       </span>
 
                     </div>
 
                   </Link>
 
-
                   <button
                     className="saved-remove-button"
                     onClick={() =>
-                      toggleSavedProduct(product.id)
+                      toggleSavedProduct(
+                        product.id
+                      )
                     }
                   >
                     Remove
