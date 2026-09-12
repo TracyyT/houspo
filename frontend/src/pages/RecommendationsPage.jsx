@@ -48,11 +48,19 @@ function RecommendationsPage() {
   ]
 
 
-  const filteredRecommendations =
+    const visibleRecommendations =
+    recommendations.filter(
+        (product) =>
+        !preferences.dislikedProducts.includes(
+            product.id
+        )
+    )
+
+    const filteredRecommendations =
     selectedCategory === 'All'
-      ? recommendations
-      : recommendations.filter(
-          (product) =>
+        ? visibleRecommendations
+        : visibleRecommendations.filter(
+            (product) =>
             product.category === selectedCategory
         )
 
@@ -232,146 +240,116 @@ function RecommendationsPage() {
 
 
         <section className="recommendation-grid">
-
-          {sortedRecommendations.map((product, index) => {
-            const isDisliked =
-                preferences.dislikedProducts.includes(product.id)
+        {sortedRecommendations.map((product, index) => {
+            const isSaved =
+            preferences.savedProducts.includes(product.id)
 
             return (
-              <article
+            <article
                 key={product.id}
-                className={`product-card ${
-                    preferences.dislikedProducts.includes(product.id)
-                    ? 'disliked'
-                    : ''
-                }`}
-              >
-
+                className="product-card"
+            >
+                <Link
+                to={`/product/${product.id}`}
+                className="product-card-main-link"
+                >
                 <div className="product-image-wrapper">
-
-                  <img
+                    <img
                     src={product.image}
                     alt={product.name}
-                  />
+                    />
 
-                  <div className="product-rank">
+                    <div className="product-rank">
                     {String(index + 1).padStart(2, '0')}
-                  </div>
-
+                    </div>
                 </div>
 
-
                 <div className="product-content">
-
-                  <div className="product-heading-row">
-
+                    <div className="product-heading-row">
                     <div>
-                      <span className="product-category">
+                        <span className="product-category">
                         {product.category}
-                      </span>
+                        </span>
 
-                      <h2>
+                        <h2>
                         {product.name}
-                      </h2>
+                        </h2>
                     </div>
 
                     <span className="product-price">
-                      ${product.price}
+                        ${product.price}
                     </span>
-
-                  </div>
-
-
-                  <div className="product-match-section">
-
-                    <div className="match-heading">
-
-                      <span className="match-percentage">
-                        {product.matchPercentage}% match
-                      </span>
-
-                      <span className="match-label">
-                        FOR YOU
-                      </span>
-
                     </div>
 
+                    <div className="product-match-section">
+                    <div className="match-heading">
+                        <span className="match-percentage">
+                        {product.matchPercentage}% match
+                        </span>
+
+                        <span className="match-label">
+                        FOR YOU
+                        </span>
+                    </div>
 
                     <div className="match-bar">
-                      <div
+                        <div
                         className="match-bar-fill"
                         style={{
-                          width:
+                            width:
                             `${product.matchPercentage}%`,
                         }}
-                      />
+                        />
                     </div>
 
-
                     {product.matchReasons.length > 0 && (
-                      <div className="match-reasons">
-
+                        <div className="match-reasons">
                         <span className="why-label">
-                          Why this matches you
+                            Why this matches you
                         </span>
 
                         {product.matchReasons
-                          .slice(0, 3)
-                          .map((reason) => (
+                            .slice(0, 3)
+                            .map((reason) => (
                             <span
-                              key={reason}
-                              className="match-reason"
+                                key={reason}
+                                className="match-reason"
                             >
-                              {reason}
+                                {reason}
                             </span>
-                          ))}
-
-                      </div>
+                            ))}
+                        </div>
                     )}
-
-                  </div>
+                    </div>
+                </div>
+                </Link>
 
                 <div className="product-feedback">
-
                 <button
-                className={`feedback-button ${
-                    preferences.savedProducts.includes(product.id)
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={() =>
+                    className={`feedback-button ${
+                    isSaved ? 'active' : ''
+                    }`}
+                    onClick={() =>
                     toggleSavedProduct(product.id)
-                }
-                disabled={isDisliked}
+                    }
                 >
-                {preferences.savedProducts.includes(product.id)
+                    {isSaved
                     ? '♥ Saved'
                     : '♡ Save'}
                 </button>
 
-
                 <button
-                className={`feedback-button subtle ${
-                    isDisliked
-                    ? 'active negative'
-                    : ''
-                }`}
-                onClick={() =>
+                    className="feedback-button subtle"
+                    onClick={() =>
                     toggleDislikedProduct(product.id)
-                }
+                    }
                 >
-                {isDisliked
-                    ? 'Undo'
-                    : '× Not my style'}
+                    × Not my style
                 </button>
-
                 </div>
-                </div>
-
-              </article>
+            </article>
             )
         })}
-
         </section>
 
       </section>

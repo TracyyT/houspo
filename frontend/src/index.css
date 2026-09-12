@@ -3745,3 +3745,9 @@ button {
     cursor: pointer;
   }
 }
+
+.product-card-main-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
