@@ -35,7 +35,7 @@ function MyStylePage() {
             Saved
           </Link>
 
-          <Link to="/#about">
+          <Link to="/about">
             About
           </Link>
 

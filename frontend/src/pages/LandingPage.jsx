@@ -1,7 +1,23 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import logo from '../assets/houspoLOGO.png'
 
 function LandingPage() {
+    const location = useLocation()
+
+    useEffect(() => {
+    if (location.hash === '#about') {
+        const aboutSection =
+        document.getElementById('about')
+
+        if (aboutSection) {
+        aboutSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        })
+        }
+    }
+}, [location])
   return (
     <main className="landing-page">
       <header className="landing-nav">
@@ -95,6 +111,37 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
+        <section id="about" className="about-section">
+        <div className="about-number">
+            02
+        </div>
+
+        <div className="about-content">
+            <span className="eyebrow">
+            ABOUT HOUSPO
+            </span>
+
+            <h2>
+            Inspiration that
+            <br />
+            feels personal.
+            </h2>
+
+            <p>
+            houspo helps you discover furniture, decor,
+            and home inspiration based on your personal
+            style, space, and preferences.
+            </p>
+
+            <p>
+            Instead of searching through endless products,
+            houspo brings together pieces that better match
+            the kind of home you want to create.
+            </p>
+        </div>
+        </section>
+
     </main>
   )
 }
