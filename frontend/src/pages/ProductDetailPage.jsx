@@ -18,10 +18,6 @@ import {
 
 import { usePreferences } from '../context/PreferenceContext'
 
-useEffect(() => {
-  setImageIndex(0)
-}, [id])
-
 function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -49,6 +45,11 @@ function ProductDetailPage() {
     isLoadingSimilar,
     setIsLoadingSimilar,
   ] = useState(false)
+
+  useEffect(() => {
+    setImageIndex(0)
+    }, [id])
+
 
 
     const similarProducts = useMemo(() => {

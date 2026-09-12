@@ -3751,3 +3751,356 @@ button {
   color: inherit;
   text-decoration: none;
 }
+
+/* =========================================================
+   SAVED PAGE
+   ========================================================= */
+
+.saved-page {
+  min-height: 100vh;
+
+  background: var(--soft-white);
+  color: var(--dark-coffee);
+}
+
+
+.saved-content {
+  width: min(
+    1180px,
+    calc(100% - 64px)
+  );
+
+  margin: 0 auto;
+
+  padding:
+    70px 0
+    100px;
+}
+
+
+.saved-heading {
+  max-width: 560px;
+
+  margin-bottom: 55px;
+}
+
+
+.saved-heading h1 {
+  margin:
+    8px 0
+    12px;
+
+  font-family:
+    "Playfair Display",
+    serif;
+
+  font-size:
+    clamp(
+      42px,
+      5vw,
+      64px
+    );
+
+  font-weight: 500;
+
+  letter-spacing:
+    -0.035em;
+
+  line-height: 1;
+
+  color: var(--dark-coffee);
+}
+
+
+.saved-heading p {
+  margin: 0;
+
+  max-width: 430px;
+
+  font-size: 13px;
+  line-height: 1.7;
+
+  color: var(--muted);
+}
+
+
+/* empty state */
+
+.saved-empty-state {
+  min-height: 340px;
+
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  border-top:
+    1px solid
+    var(--line);
+
+  border-bottom:
+    1px solid
+    var(--line);
+}
+
+
+.saved-empty-state h2 {
+  margin:
+    0 0 10px;
+
+  font-family:
+    "Playfair Display",
+    serif;
+
+  font-size: 32px;
+  font-weight: 500;
+}
+
+
+.saved-empty-state p {
+  margin:
+    0 0 24px;
+
+  max-width: 360px;
+
+  font-size: 12px;
+  line-height: 1.7;
+
+  color: var(--muted);
+}
+
+
+.saved-browse-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding:
+    0 18px;
+
+  border-radius:
+    999px;
+
+  background:
+    var(--dark-coffee);
+
+  color:
+    var(--soft-white);
+
+  text-decoration: none;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+
+/* saved grid */
+
+.saved-products-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    42px 20px;
+}
+
+
+.saved-product-card {
+  min-width: 0;
+}
+
+
+.saved-product-link {
+  display: block;
+
+  color: inherit;
+
+  text-decoration: none;
+}
+
+
+.saved-image-wrapper {
+  width: 100%;
+
+  aspect-ratio:
+    4 / 5;
+
+  overflow: hidden;
+
+  margin-bottom: 14px;
+
+  background:
+    var(--warm-white);
+}
+
+
+.saved-image-wrapper img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  transition:
+    transform
+    0.3s ease,
+    opacity
+    0.3s ease;
+}
+
+
+.saved-product-link:hover
+.saved-image-wrapper img {
+  transform:
+    scale(1.015);
+
+  opacity: 0.9;
+}
+
+
+.saved-product-category {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing:
+    0.15em;
+
+  text-transform:
+    uppercase;
+
+  color: #9a9088;
+}
+
+
+.saved-product-heading {
+  display: flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    flex-start;
+
+  gap: 16px;
+}
+
+
+.saved-product-heading h2 {
+  margin: 0;
+
+  font-family:
+    "Playfair Display",
+    serif;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  color:
+    var(--dark-coffee);
+}
+
+
+.saved-product-heading span {
+  flex-shrink: 0;
+
+  font-size: 11px;
+
+  color:
+    var(--muted);
+}
+
+
+.saved-remove-button {
+  margin-top: 14px;
+
+  padding: 0;
+
+  border: none;
+
+  background: none;
+
+  color:
+    #8e8279;
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  text-decoration:
+    underline;
+
+  text-underline-offset:
+    4px;
+
+  cursor: none;
+}
+
+
+.saved-remove-button:hover {
+  color:
+    var(--dark-coffee);
+}
+
+
+@media (
+  max-width: 850px
+) {
+
+  .saved-content {
+    width:
+      calc(
+        100% - 36px
+      );
+  }
+
+  .saved-products-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0, 1fr)
+      );
+  }
+
+  .saved-remove-button {
+    cursor: pointer;
+  }
+
+}
+
+
+@media (
+  max-width: 520px
+) {
+
+  .saved-content {
+    width:
+      calc(
+        100% - 28px
+      );
+
+    padding-top:
+      45px;
+  }
+
+  .saved-products-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+}

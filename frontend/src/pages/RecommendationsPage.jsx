@@ -326,12 +326,17 @@ function RecommendationsPage() {
 
                 <div className="product-feedback">
                 <button
-                    className={`feedback-button ${
-                    isSaved ? 'active' : ''
-                    }`}
-                    onClick={() =>
+                className={`feedback-button ${
+                    preferences.savedProducts.includes(product.id)
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={(event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+
                     toggleSavedProduct(product.id)
-                    }
+                }}
                 >
                     {isSaved
                     ? '♥ Saved'
@@ -339,12 +344,15 @@ function RecommendationsPage() {
                 </button>
 
                 <button
-                    className="feedback-button subtle"
-                    onClick={() =>
+                className="feedback-button subtle"
+                onClick={(event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+
                     toggleDislikedProduct(product.id)
-                    }
+                }}
                 >
-                    × Not my style
+                × Not my style
                 </button>
                 </div>
             </article>

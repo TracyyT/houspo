@@ -22,30 +22,30 @@ const defaultPreferences = {
 }
 
 export function PreferenceProvider({ children }) {
-  const [preferences, setPreferences] = useState(() => {
+
+    const [preferences, setPreferences] = useState(() => {
     const savedPreferences =
-      sessionStorage.getItem('houspoPreferences')
+        localStorage.getItem('houspoPreferences')
 
     if (savedPreferences) {
-      const parsedPreferences =
+        const parsedPreferences =
         JSON.parse(savedPreferences)
 
-      return {
+        return {
         ...defaultPreferences,
         ...parsedPreferences,
-      }
+        }
     }
 
     return defaultPreferences
-  })
+    })
 
-
-  useEffect(() => {
-    sessionStorage.setItem(
-      'houspoPreferences',
-      JSON.stringify(preferences)
+    useEffect(() => {
+    localStorage.setItem(
+        'houspoPreferences',
+        JSON.stringify(preferences)
     )
-  }, [preferences])
+    }, [preferences])
 
     const toggleSavedProduct = (productId) => {
     setPreferences((current) => ({
@@ -57,7 +57,7 @@ export function PreferenceProvider({ children }) {
                 (id) => id !== productId
             )
             : [...current.savedProducts, productId],
-    }))
+     }))
     }
 
 
@@ -199,9 +199,12 @@ export function PreferenceProvider({ children }) {
   }
 
 
-  const resetPreferences = () => {
-    setPreferences(defaultPreferences)
-  }
+    const resetPreferences = () => {
+    setPreferences((current) => ({
+        ...defaultPreferences,
+        savedProducts: current.savedProducts,
+    }))
+    }
 
 
   return (

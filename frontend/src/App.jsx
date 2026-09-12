@@ -9,6 +9,7 @@ import CategoriesPage from './pages/CategoriesPage'
 import RecommendationsPage from './pages/RecommendationsPage'
 import RefinementsPage from './pages/RefinementsPage'
 import ProductDetailPage from './pages/ProductDetailPage'
+import SavedPage from './pages/SavedPage'
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/recommendations" element={<RecommendationsPage />}/>
         <Route path="/refinements" element={<RefinementsPage />}/>
         <Route path="/product/:id" element={<ProductDetailPage />}/>
+        <Route path="/saved" element={<SavedPage />}/>
       </Routes>
     </>
   )
