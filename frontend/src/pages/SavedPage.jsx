@@ -23,14 +23,36 @@ function SavedPage() {
   return (
     <main className="saved-page">
 
-      <header className="recommendations-nav">
+        <header className="recommendations-nav">
         <Link
-          to="/"
-          className="onboarding-logo"
+            to="/"
+            className="onboarding-logo"
         >
-          houspo
+            houspo
         </Link>
-      </header>
+
+        <nav className="main-nav-links">
+            <Link to="/recommendations">
+            Explore
+            </Link>
+
+            <Link to="/preferences">
+                Find Your Style
+            </Link>
+
+            <Link to="/saved">
+            Saved
+            </Link>
+
+            <Link to="/#about">
+            About
+            </Link>
+
+            <Link to="/my-style">
+            My Style
+            </Link>
+        </nav>
+        </header>
 
 
       <section className="saved-content">

@@ -4104,3 +4104,25 @@ button {
   }
 
 }
+.recommendations-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.main-nav-links a {
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.main-nav-links a:hover {
+  color: var(--dark-coffee);
+}

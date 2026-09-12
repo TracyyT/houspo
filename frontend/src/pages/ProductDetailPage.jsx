@@ -128,11 +128,42 @@ function ProductDetailPage() {
             (current) => current + 1
             )
             setIsLoadingSimilar(false)
-        }, 450)
+        }, 350)
     }
 
   return (
     <main className="product-detail-page">
+
+        <header className="recommendations-nav">
+        <Link
+            to="/"
+            className="onboarding-logo"
+        >
+            houspo
+        </Link>
+
+        <nav className="main-nav-links">
+            <Link to="/recommendations">
+            Explore
+            </Link>
+
+              <Link to="/preferences">
+                Find Your Style
+            </Link>
+
+            <Link to="/saved">
+            Saved
+            </Link>
+
+            <Link to="/#about">
+            About
+            </Link>
+
+            <Link to="/my-style">
+            My Style
+            </Link>
+        </nav>
+        </header>
 
       <div className="product-detail-container">
 
