@@ -7,6 +7,8 @@ import { getRecommendations } from '../services/recommendationService'
 
 
 function RecommendationsPage() {
+  const [searchTerm, setSearchTerm] = useState('')
+  const [recentlyDisliked, setRecentlyDisliked] = useState(null)
   const navigate = useNavigate()
 
   const {
@@ -48,12 +50,31 @@ function RecommendationsPage() {
   ]
 
 
-    const visibleRecommendations =
-    recommendations.filter(
-        (product) =>
-        !preferences.dislikedProducts.includes(
-            product.id
-        )
+    const visibleRecommendations = recommendations.filter(
+        (product) => {
+            const isNotDisliked =
+            !preferences.dislikedProducts.includes(product.id)
+
+            const searchableText = [
+            product.name,
+            product.category,
+            product.subcategory,
+            ...(product.styles || []),
+            ...(product.characteristics || []),
+            ...(product.colors || []),
+            ...(product.materials || []),
+            ...(product.spaces || []),
+            ]
+            .join(' ')
+            .toLowerCase()
+
+            const matchesSearch =
+            searchableText.includes(
+                searchTerm.toLowerCase().trim()
+            )
+
+            return isNotDisliked && matchesSearch
+        }
     )
 
     const filteredRecommendations =
@@ -207,6 +228,16 @@ function RecommendationsPage() {
 
         </div>
 
+            <div className="recommendation-search">
+                <input
+                    type="text"
+                    placeholder="Search furniture, styles, materials..."
+                    value={searchTerm}
+                    onChange={(event) =>
+                    setSearchTerm(event.target.value)
+                    }
+                />
+             </div>
 
         <div className="recommendation-controls">
 
@@ -260,7 +291,32 @@ function RecommendationsPage() {
           </div>
         </div>
 
+{recentlyDisliked && (
+  <div className="undo-dislike-message">
+    <span>
+      Removed from your picks.
+    </span>
 
+    <button
+      onClick={() => {
+        toggleDislikedProduct(recentlyDisliked)
+        setRecentlyDisliked(null)
+      }}
+    >
+      Undo
+    </button>
+  </div>
+)}
+
+    {sortedRecommendations.length === 0 ? (
+    <div className="recommendation-empty-state">
+            <h2>No products found.</h2>
+
+            <p>
+            Try a different search term or adjust your filters.
+            </p>
+        </div>
+        ) : (            
         <section className="recommendation-grid">
         {sortedRecommendations.map((product, index) => {
             const isSaved =
@@ -348,17 +404,17 @@ function RecommendationsPage() {
 
                 <div className="product-feedback">
                 <button
-                className={`feedback-button ${
+                    className={`feedback-button ${
                     preferences.savedProducts.includes(product.id)
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={(event) => {
+                        ? 'active'
+                        : ''
+                    }`}
+                    onClick={(event) => {
                     event.preventDefault()
                     event.stopPropagation()
 
                     toggleSavedProduct(product.id)
-                }}
+                    }}
                 >
                     {isSaved
                     ? '♥ Saved'
@@ -366,22 +422,24 @@ function RecommendationsPage() {
                 </button>
 
                 <button
-                className="feedback-button subtle"
-                onClick={(event) => {
+                    className="feedback-button subtle"
+                    onClick={(event) => {
                     event.preventDefault()
                     event.stopPropagation()
 
                     toggleDislikedProduct(product.id)
-                }}
+                    setRecentlyDisliked(product.id)
+                    }}
                 >
-                × Not my style
+                    × Not my style
                 </button>
-                </div>
+            </div>
+
             </article>
             )
         })}
         </section>
-
+)}
       </section>
 
     </main>
