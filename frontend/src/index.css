@@ -7289,3 +7289,55 @@ button {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* =========================================================
+   SITE FOOTER
+   ========================================================= */
+
+.site-footer {
+  width: 100%;
+
+  padding:
+    28px
+    24px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-top:
+    1px solid
+    rgba(38, 28, 22, 0.1);
+
+  background: #f7f4ef;
+}
+
+.site-footer p {
+  margin: 0;
+
+  font-size: 10px;
+
+  letter-spacing: 0.08em;
+
+  color: #8d837b;
+}
+
+
+/* mobile */
+
+@media (max-width: 600px) {
+
+  .site-footer {
+    padding:
+      24px
+      18px;
+  }
+
+  .site-footer p {
+    font-size: 9px;
+
+    text-align: center;
+  }
+
+}

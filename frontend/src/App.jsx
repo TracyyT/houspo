@@ -12,6 +12,7 @@ import ProductDetailPage from './pages/ProductDetailPage'
 import SavedPage from './pages/SavedPage'
 import MyStylePage from './pages/MyStylePage'
 import AboutPage from './pages/AboutPage'
+import Footer from './components/Footer'
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
         <Route path="/my-style" element={<MyStylePage />}/>
         <Route path="/about" element={<AboutPage />} />
       </Routes>
+
+      <Footer />
     </>
   )
 }
