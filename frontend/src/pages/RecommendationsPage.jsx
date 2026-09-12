@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, } from 'react'
 import { Link, useNavigate, useLocation, } from 'react-router-dom'
 
 import { products } from '../data/products'
 import { usePreferences } from '../context/PreferenceContext'
 import { getRecommendations } from '../services/recommendationService'
-
+import { searchProducts,} from '../services/productService'
 
 function RecommendationsPage() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -127,6 +127,30 @@ function RecommendationsPage() {
       a.recommendationScore
     )
   })
+
+    useEffect(() => {
+    async function testApi() {
+        try {
+        const products =
+            await searchProducts({
+            query: 'modern living room furniture',
+            limit: 5,
+            })
+
+        console.log(
+            'TEST RESULT:',
+            products
+        )
+        } catch (error) {
+        console.error(
+            'CHANNEL3 ERROR:',
+            error
+        )
+        }
+    }
+
+    testApi()
+    }, [])
 
 
   return (
