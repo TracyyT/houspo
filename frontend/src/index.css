@@ -2899,3 +2899,168 @@ button {
 .start-over-link:hover {
   color: #43362e;
 }
+
+/* =========================================================
+   PRODUCT FEEDBACK
+   ========================================================= */
+
+.product-feedback {
+  margin-top: 18px;
+  padding-top: 16px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  border-top:
+    1px solid rgba(38, 28, 22, 0.08);
+}
+
+
+.feedback-button {
+  padding: 8px 11px;
+
+  border:
+    1px solid rgba(38, 28, 22, 0.14);
+
+  border-radius: 999px;
+
+  background: transparent;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  color: #756b63;
+
+  cursor: none;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+.feedback-button:hover {
+  border-color: #6c5c51;
+
+  color: #34271f;
+}
+
+
+.feedback-button.active {
+  border-color: #34271f;
+
+  background: #34271f;
+
+  color: #fff;
+}
+
+
+.feedback-button.subtle {
+  margin-left: auto;
+
+  border-color: transparent;
+
+  color: #9a9088;
+}
+
+
+.feedback-button.subtle:hover {
+  color: #5f544d;
+}
+
+
+.feedback-button.subtle.active.negative {
+  background: transparent;
+
+  border-color: transparent;
+
+  color: #665a52;
+
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+
+@media (max-width: 520px) {
+  .feedback-button.subtle {
+    margin-left: 0;
+  }
+}
+
+.product-card {
+  transition:
+    opacity 0.2s ease,
+    filter 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+.product-card.disliked:hover {
+  opacity: 0.58;
+}
+
+/* Fade the disliked product content */
+.product-card.disliked
+.product-image-wrapper,
+.product-card.disliked
+.product-match-section,
+.product-card.disliked
+.product-info {
+  opacity: 0.38;
+  filter: grayscale(45%);
+  pointer-events: none;
+}
+
+
+/* Disable and fade buttons other than Undo */
+.product-card.disliked
+.feedback-button:not(.negative) {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+
+/* Keep Undo completely visible */
+.product-card.disliked
+.feedback-button.negative {
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+
+  color: #34271f;
+  border-color: rgba(38, 28, 22, 0.25);
+  background: #fbfaf7;
+}
+
+
+.product-card.disliked
+.product-image-wrapper,
+.product-card.disliked
+.product-content {
+  pointer-events: none;
+}
+
+
+.product-card.disliked
+.product-feedback {
+  pointer-events: auto;
+}
+
+
+.product-card.disliked
+.feedback-button {
+  pointer-events: none;
+}
+
+
+.product-card.disliked
+.feedback-button.active.negative {
+  pointer-events: auto;
+}
+
+.feedback-button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}

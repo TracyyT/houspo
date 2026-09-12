@@ -12,6 +12,8 @@ function RecommendationsPage() {
   const {
     preferences,
     resetPreferences,
+    toggleSavedProduct,
+    toggleDislikedProduct,
   } = usePreferences()
 
 
@@ -28,10 +30,12 @@ function RecommendationsPage() {
     useState('match')
 
 
-  const recommendations = getRecommendations(
-    products,
-    preferences
-  )
+    const [recommendations] = useState(() =>
+    getRecommendations(
+        products,
+        preferences
+    )
+    )
 
 
   const availableCategories = [
@@ -229,11 +233,18 @@ function RecommendationsPage() {
 
         <section className="recommendation-grid">
 
-          {sortedRecommendations.map(
-            (product, index) => (
+          {sortedRecommendations.map((product, index) => {
+            const isDisliked =
+                preferences.dislikedProducts.includes(product.id)
+
+            return (
               <article
                 key={product.id}
-                className="product-card"
+                className={`product-card ${
+                    preferences.dislikedProducts.includes(product.id)
+                    ? 'disliked'
+                    : ''
+                }`}
               >
 
                 <div className="product-image-wrapper">
@@ -319,11 +330,47 @@ function RecommendationsPage() {
                     )}
 
                   </div>
+
+                <div className="product-feedback">
+
+                <button
+                className={`feedback-button ${
+                    preferences.savedProducts.includes(product.id)
+                    ? 'active'
+                    : ''
+                }`}
+                onClick={() =>
+                    toggleSavedProduct(product.id)
+                }
+                disabled={isDisliked}
+                >
+                {preferences.savedProducts.includes(product.id)
+                    ? '♥ Saved'
+                    : '♡ Save'}
+                </button>
+
+
+                <button
+                className={`feedback-button subtle ${
+                    isDisliked
+                    ? 'active negative'
+                    : ''
+                }`}
+                onClick={() =>
+                    toggleDislikedProduct(product.id)
+                }
+                >
+                {isDisliked
+                    ? 'Undo'
+                    : '× Not my style'}
+                </button>
+
+                </div>
                 </div>
 
               </article>
             )
-          )}
+        })}
 
         </section>
 

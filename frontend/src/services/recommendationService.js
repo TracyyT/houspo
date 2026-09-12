@@ -35,9 +35,98 @@ function calculateMaximumScore(preferences) {
 
   return maxScore
 }
+function calculateFeedbackScore(
+  product,
+  products,
+  preferences
+) {
+  let feedbackScore = 0
+
+  const likedProducts = products.filter((item) =>
+    preferences.likedProducts.includes(item.id)
+  )
+
+  const dislikedProducts = products.filter((item) =>
+    preferences.dislikedProducts.includes(item.id)
+  )
 
 
-export function scoreProduct(product, preferences) {
+
+  likedProducts.forEach((likedProduct) => {
+    if (likedProduct.id === product.id) {
+      return
+    }
+
+    feedbackScore +=
+      countMatches(
+        product.styles,
+        likedProduct.styles
+      ) * 2
+
+    feedbackScore +=
+      countMatches(
+        product.materials,
+        likedProduct.materials
+      )
+
+    feedbackScore +=
+      countMatches(
+        product.colors,
+        likedProduct.colors
+      )
+
+    if (
+      product.category === likedProduct.category
+    ) {
+      feedbackScore += 1
+    }
+  })
+
+
+  dislikedProducts.forEach(
+    (dislikedProduct) => {
+      if (
+        dislikedProduct.id === product.id
+      ) {
+        return
+      }
+
+      feedbackScore -=
+        countMatches(
+          product.styles,
+          dislikedProduct.styles
+        ) * 2
+
+      feedbackScore -=
+        countMatches(
+          product.materials,
+          dislikedProduct.materials
+        )
+
+      feedbackScore -=
+        countMatches(
+          product.colors,
+          dislikedProduct.colors
+        )
+
+      if (
+        product.category ===
+        dislikedProduct.category
+      ) {
+        feedbackScore -= 1
+      }
+    }
+  )
+
+
+  return feedbackScore
+}
+
+export function scoreProduct(
+  product,
+  preferences,
+  products
+) {
   let score = 0
   const reasons = []
 
@@ -50,9 +139,10 @@ export function scoreProduct(product, preferences) {
   if (styleMatches > 0) {
     score += styleMatches * 3
 
-    const matchedStyles = product.styles.filter(
-      (style) => preferences.styles.includes(style)
-    )
+    const matchedStyles =
+      product.styles.filter((style) =>
+        preferences.styles.includes(style)
+      )
 
     reasons.push(
       `Matches your ${matchedStyles.join(' + ')} style`
@@ -69,9 +159,8 @@ export function scoreProduct(product, preferences) {
     score += characteristicMatches * 2
 
     const matchedCharacteristics =
-      product.characteristics.filter(
-        (item) =>
-          preferences.characteristics.includes(item)
+      product.characteristics.filter((item) =>
+        preferences.characteristics.includes(item)
       )
 
     reasons.push(
@@ -115,7 +204,9 @@ export function scoreProduct(product, preferences) {
   if (colorMatches > 0) {
     score += colorMatches
 
-    reasons.push('Matches your color preferences')
+    reasons.push(
+      'Matches your color preferences'
+    )
   }
 
 
@@ -127,12 +218,40 @@ export function scoreProduct(product, preferences) {
   if (materialMatches > 0) {
     score += materialMatches
 
-    reasons.push('Matches your material preferences')
+    reasons.push(
+      'Matches your material preferences'
+    )
   }
 
 
+  const baseScore = score
+
   const maximumScore =
     calculateMaximumScore(preferences)
+
+
+  const feedbackScore =
+    calculateFeedbackScore(
+      product,
+      products,
+      preferences
+    )
+
+  score += feedbackScore
+
+
+  if (feedbackScore > 0) {
+    reasons.push(
+      'Similar to products you liked'
+    )
+  }
+
+  if (feedbackScore < 0) {
+    reasons.push(
+      'Adjusted using your style feedback'
+    )
+  }
+
 
   const matchPercentage =
     maximumScore === 0
@@ -140,7 +259,7 @@ export function scoreProduct(product, preferences) {
       : Math.min(
           100,
           Math.round(
-            (score / maximumScore) * 100
+            (baseScore / maximumScore) * 100
           )
         )
 
@@ -152,23 +271,29 @@ export function scoreProduct(product, preferences) {
   }
 }
 
-
 export function getRecommendations(
   products,
   preferences
 ) {
   return products
-    .map((product) => {
+    .map((product, index) => {
       const result = scoreProduct(
         product,
-        preferences
+        preferences,
+        products
       )
 
       return {
         ...product,
 
+        originalOrder: index,
+
         recommendationScore:
-          result.score,
+          preferences.dislikedProducts.includes(
+            product.id
+          )
+            ? result.score - 100
+            : result.score,
 
         matchPercentage:
           result.matchPercentage,
@@ -188,11 +313,17 @@ export function getRecommendations(
       )
     })
 
-    .sort(
-      (a, b) =>
+    .sort((a, b) => {
+      const scoreDifference =
         b.recommendationScore -
         a.recommendationScore
-    )
+
+    //   if (scoreDifference !== 0) {
+    //     return scoreDifference
+    //   }
+
+    //   return a.originalOrder - b.originalOrder
+    })
 }
 
 // Preferences

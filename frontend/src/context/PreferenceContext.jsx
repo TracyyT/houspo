@@ -15,6 +15,10 @@ const defaultPreferences = {
   space: null,
   categories: [],
   subcategories: [],
+
+  savedProducts: [],
+  likedProducts: [],
+  dislikedProducts: [],
 }
 
 export function PreferenceProvider({ children }) {
@@ -42,6 +46,57 @@ export function PreferenceProvider({ children }) {
       JSON.stringify(preferences)
     )
   }, [preferences])
+
+    const toggleSavedProduct = (productId) => {
+    setPreferences((current) => ({
+        ...current,
+
+        savedProducts:
+        current.savedProducts.includes(productId)
+            ? current.savedProducts.filter(
+                (id) => id !== productId
+            )
+            : [...current.savedProducts, productId],
+    }))
+    }
+
+
+    const toggleLikedProduct = (productId) => {
+    setPreferences((current) => ({
+        ...current,
+
+        likedProducts:
+        current.likedProducts.includes(productId)
+            ? current.likedProducts.filter(
+                (id) => id !== productId
+            )
+            : [...current.likedProducts, productId],
+
+        dislikedProducts:
+        current.dislikedProducts.filter(
+            (id) => id !== productId
+        ),
+    }))
+    }
+
+
+    const toggleDislikedProduct = (productId) => {
+    setPreferences((current) => ({
+        ...current,
+
+        dislikedProducts:
+        current.dislikedProducts.includes(productId)
+            ? current.dislikedProducts.filter(
+                (id) => id !== productId
+            )
+            : [...current.dislikedProducts, productId],
+
+        likedProducts:
+        current.likedProducts.filter(
+            (id) => id !== productId
+        ),
+    }))
+    }
 
 
   const toggleStyle = (style) => {
@@ -159,6 +214,9 @@ export function PreferenceProvider({ children }) {
         toggleCategory,
         toggleColor,
         toggleMaterial,
+        toggleSavedProduct,
+        toggleLikedProduct,
+        toggleDislikedProduct,   
         resetPreferences,
       }}
     >
