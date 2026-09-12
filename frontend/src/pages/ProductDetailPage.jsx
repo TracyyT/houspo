@@ -147,9 +147,9 @@ function ProductDetailPage() {
             Explore
             </Link>
 
-              <Link to="/preferences">
+              {/* <Link to="/preferences">
                 Find Your Style
-            </Link>
+            </Link> */}
 
             <Link to="/saved">
             Saved

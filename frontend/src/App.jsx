@@ -10,6 +10,7 @@ import RecommendationsPage from './pages/RecommendationsPage'
 import RefinementsPage from './pages/RefinementsPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import SavedPage from './pages/SavedPage'
+import MyStylePage from './pages/MyStylePage'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/refinements" element={<RefinementsPage />}/>
         <Route path="/product/:id" element={<ProductDetailPage />}/>
         <Route path="/saved" element={<SavedPage />}/>
+        <Route path="/my-style" element={<MyStylePage />}/>
       </Routes>
     </>
   )

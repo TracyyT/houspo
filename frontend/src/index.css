@@ -4126,3 +4126,138 @@ button {
 .main-nav-links a:hover {
   color: var(--dark-coffee);
 }
+
+/* =========================================================
+   MY STYLE PAGE
+   ========================================================= */
+
+.my-style-page {
+  min-height: 100vh;
+  background: var(--soft-white);
+}
+
+.my-style-content {
+  width: min(1180px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 72px 0 100px;
+}
+
+.my-style-heading {
+  max-width: 620px;
+  margin-bottom: 52px;
+}
+
+.my-style-heading h1 {
+  margin: 10px 0 14px;
+  color: var(--dark-coffee);
+  font-family: "Playfair Display", serif;
+  font-size: clamp(42px, 6vw, 68px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.my-style-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.my-style-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.my-style-card {
+  min-height: 170px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  background: var(--warm-white);
+}
+
+.my-style-card > span {
+  display: block;
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.my-style-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.my-style-tags span {
+  padding: 9px 13px;
+  border: 1px solid var(--line);
+  color: var(--dark-coffee);
+  font-size: 12px;
+}
+
+.my-style-tags p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.my-style-actions {
+  margin-top: 36px;
+}
+
+.my-style-edit-button {
+  display: inline-block;
+  padding: 13px 20px;
+  border: 1px solid var(--dark-coffee);
+  background: var(--dark-coffee);
+  color: var(--soft-white);
+  font-size: 11px;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.my-style-edit-button:hover {
+  background: transparent;
+  color: var(--dark-coffee);
+}
+
+.my-style-empty {
+  padding: 50px;
+  border: 1px solid var(--line);
+  background: var(--warm-white);
+  text-align: center;
+}
+
+.my-style-empty h2 {
+  margin: 0 0 10px;
+  color: var(--dark-coffee);
+  font-family: "Playfair Display", serif;
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.my-style-empty p {
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .my-style-content {
+    width: calc(100% - 36px);
+    padding-top: 48px;
+  }
+
+  .my-style-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .my-style-card {
+    min-height: auto;
+  }
+}
