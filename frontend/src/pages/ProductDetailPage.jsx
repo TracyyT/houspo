@@ -22,92 +22,104 @@ import { usePreferences } from '../context/PreferenceContext'
 function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+
   const {
     preferences,
     toggleSavedProduct,
   } = usePreferences()
 
-  const location = useLocation()
-  const product = products.find(
-    (item) =>
-      item.id === Number(id)
-  )
+  const cachedApiProducts = useMemo(() => {
+    try {
+      return (
+        JSON.parse(
+          sessionStorage.getItem(
+            'houspoApiProducts'
+          )
+        ) || []
+      )
+    } catch {
+      return []
+    }
+  }, [])
 
+  const productCatalog =
+    cachedApiProducts.length > 0
+      ? cachedApiProducts
+      : products
+
+  const product =
+    location.state?.product ??
+    productCatalog.find(
+      (item) =>
+        String(item.id) === String(id)
+    )
 
   const [imageIndex, setImageIndex] =
     useState(0)
 
-    const [
+  const [
     shuffleCount,
     setShuffleCount,
-    ] = useState(0)
+  ] = useState(0)
 
   const [
     isLoadingSimilar,
     setIsLoadingSimilar,
   ] = useState(false)
 
-    useEffect(() => {
+  useEffect(() => {
     setImageIndex(0)
 
     window.scrollTo({
-        top: 0,
-        behavior: 'smooth',
+      top: 0,
+      behavior: 'smooth',
     })
-    }, [id])
+  }, [id])
 
-
-
-    const similarProducts = useMemo(() => {
-
+  const similarProducts = useMemo(() => {
     if (!product) {
-        return []
+      return []
     }
 
     const matches = getSimilarProducts(
-        products,
-        product,
-        true
+      productCatalog,
+      product,
+      true
     )
 
     const shuffled = [...matches].sort(
-        () => Math.random() - 0.5
+      () => Math.random() - 0.5
     )
 
     return shuffled.slice(0, 6)
-
-    }, [
+  }, [
     product,
+    productCatalog,
     shuffleCount,
-    ])
-
+  ])
 
   if (!product) {
     return (
       <main className="product-detail-page">
-
         <p>Product not found.</p>
 
         <Link to="/recommendations">
           Back to recommendations
         </Link>
-
       </main>
     )
   }
-
 
   const productImages =
     product.images?.length
       ? product.images
       : [product.image]
 
-
   const isSaved =
     preferences.savedProducts.includes(
       product.id
     )
-
 
   const showPreviousImage = () => {
     setImageIndex((current) =>
@@ -117,7 +129,6 @@ function ProductDetailPage() {
     )
   }
 
-
   const showNextImage = () => {
     setImageIndex((current) =>
       current === productImages.length - 1
@@ -126,85 +137,88 @@ function ProductDetailPage() {
     )
   }
 
+  const handleMoreLikeThis = () => {
+    setIsLoadingSimilar(true)
 
-    const handleMoreLikeThis = () => {
-        setIsLoadingSimilar(true)
-        setTimeout(() => {
-            setShuffleCount(
-            (current) => current + 1
-            )
-            setIsLoadingSimilar(false)
-        }, 350)
-    }
+    setTimeout(() => {
+      setShuffleCount(
+        (current) => current + 1
+      )
+
+      setIsLoadingSimilar(false)
+    }, 350)
+  }
 
   return (
     <main className="product-detail-page">
 
-        <header className="recommendations-nav">
+      <header className="recommendations-nav">
         <Link
-            to="/"
-            className="onboarding-logo"
+          to="/"
+          className="onboarding-logo"
         >
-            houspo
+          houspo
         </Link>
 
-       <nav className="main-nav-links">
-  <Link
-    to="/recommendations"
-    className={
-      location.pathname === '/recommendations' ||
-  location.pathname.startsWith('/product/')
-        ? 'active'
-        : ''
-    }
-  >
-    Explore
-  </Link>
+        <nav className="main-nav-links">
+          <Link
+            to="/recommendations"
+            className={
+              location.pathname ===
+                '/recommendations' ||
+              location.pathname.startsWith(
+                '/product/'
+              )
+                ? 'active'
+                : ''
+            }
+          >
+            Explore
+          </Link>
 
-  <Link
-    to="/saved"
-    className={
-      location.pathname === '/saved'
-        ? 'active'
-        : ''
-    }
-  >
-    Saved
-  </Link>
+          <Link
+            to="/saved"
+            className={
+              location.pathname === '/saved'
+                ? 'active'
+                : ''
+            }
+          >
+            Saved
+          </Link>
 
-  <Link
-    to="/about"
-    className={
-      location.pathname === '/about'
-        ? 'active'
-        : ''
-    }
-  >
-    About
-  </Link>
+          <Link
+            to="/about"
+            className={
+              location.pathname === '/about'
+                ? 'active'
+                : ''
+            }
+          >
+            About
+          </Link>
 
-  <Link
-    to="/my-style"
-    className={
-      location.pathname === '/my-style'
-        ? 'active'
-        : ''
-    }
-  >
-    My Style
-  </Link>
-</nav>
-        </header>
+          <Link
+            to="/my-style"
+            className={
+              location.pathname === '/my-style'
+                ? 'active'
+                : ''
+            }
+          >
+            My Style
+          </Link>
+        </nav>
+      </header>
 
       <div className="product-detail-container">
 
         <button
-        className="product-detail-back"
-        onClick={() => navigate(-1)}
+          className="product-detail-back"
+          onClick={() => navigate(-1)}
         >
-        ← Back
+          ← Back
         </button>
-
 
         <section className="product-detail-layout">
 
@@ -213,10 +227,11 @@ function ProductDetailPage() {
             <div className="product-main-image">
 
               <img
-                src={productImages[imageIndex]}
+                src={
+                  productImages[imageIndex]
+                }
                 alt={product.name}
               />
-
 
               {productImages.length > 1 && (
                 <>
@@ -239,7 +254,6 @@ function ProductDetailPage() {
               )}
 
             </div>
-
 
             {productImages.length > 1 && (
               <div className="product-thumbnails">
@@ -272,13 +286,17 @@ function ProductDetailPage() {
 
           </div>
 
-
           <div className="product-detail-info">
 
             <span className="product-detail-category">
               {product.category}
-              {' / '}
-              {product.subcategory}
+
+              {product.subcategory && (
+                <>
+                  {' / '}
+                  {product.subcategory}
+                </>
+              )}
             </span>
 
             <h1>{product.name}</h1>
@@ -288,22 +306,34 @@ function ProductDetailPage() {
             </p>
 
             <div className="product-detail-status">
-                <span className="product-rating">
-                    ★ {product.rating}
-                    <span>
-                    ({product.reviewCount} reviews)
-                    </span>
-                </span>
 
+              {product.rating !== null &&
+                product.rating !== undefined && (
+                  <span className="product-rating">
+                    ★ {product.rating}
+
+                    <span>
+                      (
+                      {product.reviewCount}
+                      {' '}
+                      reviews)
+                    </span>
+                  </span>
+                )}
+
+              {product.availability && (
                 <span
-                    className={`product-availability ${
-                    product.availability === 'Low Stock'
-                        ? 'low-stock'
-                        : ''
-                    }`}
+                  className={`product-availability ${
+                    product.availability ===
+                    'Low Stock'
+                      ? 'low-stock'
+                      : ''
+                  }`}
                 >
-                    {product.availability}
+                  {product.availability}
                 </span>
+              )}
+
             </div>
 
             <div className="product-detail-actions">
@@ -313,7 +343,9 @@ function ProductDetailPage() {
                   isSaved ? 'active' : ''
                 }`}
                 onClick={() =>
-                  toggleSavedProduct(product.id)
+                  toggleSavedProduct(
+                    product.id
+                  )
                 }
               >
                 {isSaved
@@ -321,73 +353,102 @@ function ProductDetailPage() {
                   : '♡ Save'}
               </button>
 
-
-              {/* <button
-                className="detail-action-button primary"
-                onClick={handleMoreLikeThis}
-              >
-                More like this
-              </button> */}
-
             </div>
 
-
-            {product.seller && (
+            {product.seller?.url && (
               <a
                 href={product.seller.url}
                 target="_blank"
                 rel="noreferrer"
                 className="seller-link"
               >
-                View at {product.seller.name} ↗
+                View at {product.seller.name}
+                {' '}
+                ↗
               </a>
             )}
 
-
             <div className="product-detail-meta">
 
-              <div>
-                <span>STYLE</span>
-                <p>
-                  {product.styles.join(', ')}
-                </p>
-              </div>
+              {product.styles?.length >
+                0 && (
+                <div>
+                  <span>STYLE</span>
 
-              <div>
-                <span>COLORS</span>
-                <p>
-                  {product.colors.join(', ')}
-                </p>
-              </div>
+                  <p>
+                    {product.styles.join(
+                      ', '
+                    )}
+                  </p>
+                </div>
+              )}
 
-              <div>
-                <span>MATERIAL</span>
-                <p>
-                  {product.materials.join(', ')}
-                </p>
-              </div>
+              {product.colors?.length >
+                0 && (
+                <div>
+                  <span>COLORS</span>
 
-              <div>
-                <span>FOR</span>
-                <p>
-                  {product.spaces.join(', ')}
-                </p>
-              </div>
+                  <p>
+                    {product.colors.join(
+                      ', '
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {product.materials?.length >
+                0 && (
+                <div>
+                  <span>MATERIAL</span>
+
+                  <p>
+                    {product.materials.join(
+                      ', '
+                    )}
+                  </p>
+                </div>
+              )}
+
+              {product.spaces?.length >
+                0 && (
+                <div>
+                  <span>FOR</span>
+
+                  <p>
+                    {product.spaces.join(
+                      ', '
+                    )}
+                  </p>
+                </div>
+              )}
 
               {product.dimensions && (
                 <div>
-                    <span>DIMENSIONS</span>
-                    <p>
-                    {product.dimensions.width}
+                  <span>DIMENSIONS</span>
+
+                  <p>
+                    {
+                      product.dimensions
+                        .width
+                    }
                     {' × '}
-                    {product.dimensions.depth}
+                    {
+                      product.dimensions
+                        .depth
+                    }
                     {' × '}
-                    {product.dimensions.height}
+                    {
+                      product.dimensions
+                        .height
+                    }
                     {' '}
-                    {product.dimensions.unit}
-                    </p>
+                    {
+                      product.dimensions
+                        .unit
+                    }
+                  </p>
                 </div>
-                )}
+              )}
 
             </div>
 
@@ -395,38 +456,35 @@ function ProductDetailPage() {
 
         </section>
 
-
         <section className="similar-products-section">
 
-            <div className="similar-products-header">
+          <div className="similar-products-header">
 
             <div className="similar-products-heading">
 
-                {/* <span className="section-eyebrow">
-                INSPIRED BY THIS PIECE
-                </span> */}
+              <h2>
+                Inspired by this piece
+              </h2>
 
-                <h2>Inspired by this piece</h2>
-
-                <p>
+              <p>
                 Selected by shared colors,
-                styles, materials, and product type.
-                </p>
+                styles, materials, and
+                product type.
+              </p>
 
             </div>
 
-
             <button
-                className="more-like-this-button"
-                onClick={handleMoreLikeThis}
-                disabled={isLoadingSimilar}
+              className="more-like-this-button"
+              onClick={handleMoreLikeThis}
+              disabled={isLoadingSimilar}
             >
-                {isLoadingSimilar
+              {isLoadingSimilar
                 ? 'Finding pieces...'
                 : 'More like this ↻'}
             </button>
 
-            </div>
+          </div>
 
           {isLoadingSimilar ? (
 
@@ -440,6 +498,14 @@ function ProductDetailPage() {
 
             </div>
 
+          ) : similarProducts.length === 0 ? (
+
+            <div className="similar-empty-state">
+              <p>
+                No similar pieces found yet.
+              </p>
+            </div>
+
           ) : (
 
             <div className="similar-products-grid">
@@ -450,16 +516,27 @@ function ProductDetailPage() {
                   <Link
                     key={similarProduct.id}
                     to={`/product/${similarProduct.id}`}
+                    state={{
+                      product:
+                        similarProduct,
+                    }}
                     className="similar-product-card"
                   >
 
                     <img
-                      src={similarProduct.image}
-                      alt={similarProduct.name}
+                      src={
+                        similarProduct.image
+                      }
+                      alt={
+                        similarProduct.name
+                      }
                     />
 
                     <span>
-                      {similarProduct.category}
+                      {
+                        similarProduct
+                          .category
+                      }
                     </span>
 
                     <h3>
@@ -467,7 +544,8 @@ function ProductDetailPage() {
                     </h3>
 
                     <p>
-                      ${similarProduct.price}
+                      $
+                      {similarProduct.price}
                     </p>
 
                   </Link>
@@ -486,6 +564,5 @@ function ProductDetailPage() {
     </main>
   )
 }
-
 
 export default ProductDetailPage

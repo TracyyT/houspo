@@ -1,19 +1,23 @@
-import { useState, useEffect, } from 'react'
-import { Link, useNavigate, useLocation, } from 'react-router-dom'
+import {
+  useEffect,
+  useState,
+} from 'react'
+
+import {
+  Link,
+  useNavigate,
+  useLocation,
+} from 'react-router-dom'
 
 import { products } from '../data/products'
 import { usePreferences } from '../context/PreferenceContext'
 import { getRecommendations } from '../services/recommendationService'
-import { searchProducts,} from '../services/productService'
+import { searchProducts } from '../services/productService'
 
 function RecommendationsPage() {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [recentlyDisliked, setRecentlyDisliked] = useState(null)
-  const [apiProducts, setApiProducts] = useState([])
-  const [isLoadingProducts, setIsLoadingProducts] = useState(true)
-//   console.log('API PRODUCTS STATE:', apiProducts)
   const navigate = useNavigate()
   const location = useLocation()
+
   const {
     preferences,
     resetPreferences,
@@ -21,105 +25,258 @@ function RecommendationsPage() {
     toggleDislikedProduct,
   } = usePreferences()
 
+  // Search/filter UI state.
+  const [searchTerm, setSearchTerm] =
+    useState('')
 
+  const [
+    recentlyDisliked,
+    setRecentlyDisliked,
+  ] = useState(null)
+
+  const [priceRange, setPriceRange] =
+    useState('all')
+
+  const [
+    selectedCategory,
+    setSelectedCategory,
+  ] = useState('All')
+
+  const [sortOption, setSortOption] =
+    useState('match')
+
+  // Build the Channel3 search from the
+  // user's currently selected room.
+  const productSearchQuery =
+    preferences.space
+      ? `${preferences.space} furniture`
+      : 'home furniture'
+
+  // Give every room its own cache.
+  // Example:
+  // houspoApiProducts:Living Room furniture
+  const productCacheKey =
+    `houspoApiProducts:${productSearchQuery}`
+
+  // Products returned from Channel3.
+  const [apiProducts, setApiProducts] =
+    useState([])
+
+  const [
+    isLoadingProducts,
+    setIsLoadingProducts,
+  ] = useState(true)
+
+  // Reset the quiz while keeping saved
+  // products through PreferenceContext.
   const handleStartOver = () => {
     resetPreferences()
     navigate('/')
   }
 
-  const [priceRange, setPriceRange] = useState('all')
-  const [selectedCategory, setSelectedCategory] =
-    useState('All')
+  // Check whether a product fits the
+  // manually selected price filter.
+  const matchesPriceRange = (price) => {
+    switch (priceRange) {
+      case 'under-200':
+        return price < 200
 
-  const [sortOption, setSortOption] =
-    useState('match')
+      case '200-500':
+        return (
+          price >= 200 &&
+          price <= 500
+        )
 
-    const productSource =
+      case '500-1000':
+        return (
+          price > 500 &&
+          price <= 1000
+        )
+
+      case '1000-plus':
+        return price > 1000
+
+      default:
+        return true
+    }
+  }
+
+  // Load furniture for the selected room.
+  //
+  // If we already searched this room during
+  // the current browser tab, use the cached
+  // products instead of spending another
+  // Channel3 search.
+  useEffect(() => {
+    async function loadProducts() {
+      const cachedProducts =
+        sessionStorage.getItem(
+          productCacheKey
+        )
+
+      if (cachedProducts) {
+        try {
+          const parsedProducts =
+            JSON.parse(cachedProducts)
+
+          setApiProducts(
+            parsedProducts
+          )
+
+          // Keep one active catalog for the
+          // product detail + similar items page.
+          sessionStorage.setItem(
+            'houspoActiveProducts',
+            JSON.stringify(
+              parsedProducts
+            )
+          )
+
+          setIsLoadingProducts(false)
+
+          return
+        } catch {
+          // If cache data is broken, remove it
+          // and fetch a clean copy.
+          sessionStorage.removeItem(
+            productCacheKey
+          )
+        }
+      }
+
+      try {
+        setIsLoadingProducts(true)
+
+        const fetchedProducts =
+          await searchProducts({
+            query: productSearchQuery,
+            limit: 20,
+          })
+
+        setApiProducts(
+          fetchedProducts
+        )
+
+        // Save products under this specific room.
+        sessionStorage.setItem(
+          productCacheKey,
+          JSON.stringify(
+            fetchedProducts
+          )
+        )
+
+        // Also save the currently active catalog
+        // so ProductDetailPage can use it.
+        sessionStorage.setItem(
+          'houspoActiveProducts',
+          JSON.stringify(
+            fetchedProducts
+          )
+        )
+      } catch (error) {
+        console.error(
+          'CHANNEL3 ERROR:',
+          error
+        )
+
+        setApiProducts([])
+      } finally {
+        setIsLoadingProducts(false)
+      }
+    }
+
+    loadProducts()
+  }, [
+    productSearchQuery,
+    productCacheKey,
+  ])
+
+  // While Channel3 is loading, keep the
+  // recommendation source empty so the
+  // skeleton cards remain visible.
+  //
+  // If Channel3 fails, fall back to the
+  // original local demo products.
+  const productSource =
     isLoadingProducts
-        ? []
-        : apiProducts.length > 0
+      ? []
+      : apiProducts.length > 0
         ? apiProducts
         : products
 
-    const recommendations = getRecommendations(
-        productSource,
-        preferences
+  // Score and rank the available catalog
+  // using the user's houspo preferences.
+  const recommendations =
+    getRecommendations(
+      productSource,
+      preferences
     )
 
-    console.log('PRODUCT SOURCE:', productSource)
-    console.log('RECOMMENDATIONS:', recommendations)
-    console.log('PREFERENCES:', preferences)    
-
+  // Build category filter buttons from
+  // whatever products are currently shown.
   const availableCategories = [
     'All',
     ...new Set(
       recommendations.map(
-        (product) => product.category
+        (product) =>
+          product.category
       )
     ),
   ]
 
-  const matchesPriceRange = (price) => {
-    switch (priceRange) {
-        case 'under-200':
-        return price < 200
+  // Apply dislike, search, and price filters.
+  const visibleRecommendations =
+    recommendations.filter(
+      (product) => {
+        const isNotDisliked =
+          !preferences.dislikedProducts.includes(
+            product.id
+          )
 
-        case '200-500':
-        return price >= 200 && price <= 500
+        const searchableText = [
+          product.name,
+          product.category,
+          product.subcategory,
+          ...(product.styles || []),
+          ...(product.characteristics || []),
+          ...(product.colors || []),
+          ...(product.materials || []),
+          ...(product.spaces || []),
+        ]
+          .join(' ')
+          .toLowerCase()
 
-        case '500-1000':
-        return price > 500 && price <= 1000
+        const matchesSearch =
+          searchableText.includes(
+            searchTerm
+              .toLowerCase()
+              .trim()
+          )
 
-        case '1000-plus':
-        return price > 1000
+        const matchesPrice =
+          matchesPriceRange(
+            product.price
+          )
 
-        default:
-        return true
-    }
-  }
-    const visibleRecommendations = recommendations.filter(
-        (product) => {
-            const isNotDisliked =
-            !preferences.dislikedProducts.includes(product.id)
-
-            const searchableText = [
-            product.name,
-            product.category,
-            product.subcategory,
-            ...(product.styles || []),
-            ...(product.characteristics || []),
-            ...(product.colors || []),
-            ...(product.materials || []),
-            ...(product.spaces || []),
-            ]
-            .join(' ')
-            .toLowerCase()
-
-            const matchesSearch =
-            searchableText.includes(
-                searchTerm.toLowerCase().trim()
-            )
-
-            const matchesPrice =
-                matchesPriceRange(product.price)
-
-            return (
-            isNotDisliked &&
-            matchesSearch &&
-            matchesPrice
-            )
-        }
+        return (
+          isNotDisliked &&
+          matchesSearch &&
+          matchesPrice
+        )
+      }
     )
 
-    const filteredRecommendations =
+  // Apply the category filter.
+  const filteredRecommendations =
     selectedCategory === 'All'
-        ? visibleRecommendations
-        : visibleRecommendations.filter(
-            (product) =>
-            product.category === selectedCategory
+      ? visibleRecommendations
+      : visibleRecommendations.filter(
+          (product) =>
+            product.category ===
+            selectedCategory
         )
 
-
+  // Sort after all filters have been applied.
   const sortedRecommendations = [
     ...filteredRecommendations,
   ].sort((a, b) => {
@@ -137,92 +294,67 @@ function RecommendationsPage() {
     )
   })
 
-    useEffect(() => {
-    async function loadProducts() {
-        try {
-        setIsLoadingProducts(true)
-
-        const products =
-            await searchProducts({
-            query: 'modern living room furniture',
-            limit: 20,
-            })
-
-        setApiProducts(products)
-        } catch (error) {
-        console.error(
-            'CHANNEL3 ERROR:',
-            error
-        )
-
-        setApiProducts([])
-        } finally {
-        setIsLoadingProducts(false)
-        }
-    }
-
-    loadProducts()
-    }, [])
-
-
   return (
     <main className="recommendations-page">
 
-        <header className="recommendations-nav">
+      <header className="recommendations-nav">
         <Link
-            to="/"
-            className="onboarding-logo"
+          to="/"
+          className="onboarding-logo"
         >
-            houspo
+          houspo
         </Link>
 
         <nav className="main-nav-links">
-  <Link
-    to="/recommendations"
-    className={
-      location.pathname === '/recommendations'
-        ? 'active'
-        : ''
-    }
-  >
-    Explore
-  </Link>
+          <Link
+            to="/recommendations"
+            className={
+              location.pathname ===
+              '/recommendations'
+                ? 'active'
+                : ''
+            }
+          >
+            Explore
+          </Link>
 
-  <Link
-    to="/saved"
-    className={
-      location.pathname === '/saved'
-        ? 'active'
-        : ''
-    }
-  >
-    Saved
-  </Link>
+          <Link
+            to="/saved"
+            className={
+              location.pathname ===
+              '/saved'
+                ? 'active'
+                : ''
+            }
+          >
+            Saved
+          </Link>
 
-  <Link
-    to="/about"
-    className={
-      location.pathname === '/about'
-        ? 'active'
-        : ''
-    }
-  >
-    About
-  </Link>
+          <Link
+            to="/about"
+            className={
+              location.pathname ===
+              '/about'
+                ? 'active'
+                : ''
+            }
+          >
+            About
+          </Link>
 
-  <Link
-    to="/my-style"
-    className={
-      location.pathname === '/my-style'
-        ? 'active'
-        : ''
-    }
-  >
-    My Style
-  </Link>
-</nav>
-        </header>
-
+          <Link
+            to="/my-style"
+            className={
+              location.pathname ===
+              '/my-style'
+                ? 'active'
+                : ''
+            }
+          >
+            My Style
+          </Link>
+        </nav>
+      </header>
 
       <section className="recommendations-content">
 
@@ -236,10 +368,10 @@ function RecommendationsPage() {
           </h1>
 
           <p>
-            Based on your style, space, and product
+            Based on your style,
+            space, and product
             preferences.
           </p>
-
 
           <div className="recommendation-edit-actions">
 
@@ -268,117 +400,139 @@ function RecommendationsPage() {
               className="start-over-link"
               onClick={handleStartOver}
             >
-              <strong>Start over</strong>
+              <strong>
+                Start over
+              </strong>
             </button>
 
           </div>
         </div>
 
-
         <div className="profile-summary">
 
-        <span className="profile-summary-label">
+          <span className="profile-summary-label">
             Your selections
-        </span>
+          </span>
 
-        <div className="profile-summary-values">
+          <div className="profile-summary-values">
 
-            {preferences.styles.length > 0 && (
-            <span>
-                {preferences.styles.join(', ')}
-            </span>
+            {preferences.styles.length >
+              0 && (
+              <span>
+                {preferences.styles.join(
+                  ', '
+                )}
+              </span>
             )}
 
             {preferences.space && (
-            <>
-                <span className="summary-divider">•</span>
+              <>
+                <span className="summary-divider">
+                  •
+                </span>
 
                 <span>
-                {preferences.space}
+                  {preferences.space}
                 </span>
-            </>
+              </>
             )}
 
-            {preferences.categories.length > 0 && (
-            <>
-                <span className="summary-divider">•</span>
+            {preferences.categories
+              .length > 0 && (
+              <>
+                <span className="summary-divider">
+                  •
+                </span>
 
                 <span>
-                {preferences.categories.join(', ')}
+                  {preferences.categories.join(
+                    ', '
+                  )}
                 </span>
-            </>
+              </>
             )}
+
+          </div>
 
         </div>
 
+        <div className="recommendation-search">
+          <input
+            type="text"
+            placeholder="Search furniture, styles, materials..."
+            value={searchTerm}
+            onChange={(event) =>
+              setSearchTerm(
+                event.target.value
+              )
+            }
+          />
         </div>
-
-            <div className="recommendation-search">
-                <input
-                    type="text"
-                    placeholder="Search furniture, styles, materials..."
-                    value={searchTerm}
-                    onChange={(event) =>
-                    setSearchTerm(event.target.value)
-                    }
-                />
-             </div>
 
         <div className="recommendation-controls">
 
           <div className="category-filters">
 
-            {availableCategories.map((category) => (
-              <button
-                key={category}
-                className={`filter-button ${
-                  selectedCategory === category
-                    ? 'active'
-                    : ''
-                }`}
-                onClick={() =>
-                  setSelectedCategory(category)
-                }
-              >
-                {category}
-              </button>
-            ))}
+            {availableCategories.map(
+              (category) => (
+                <button
+                  key={category}
+                  className={`filter-button ${
+                    selectedCategory ===
+                    category
+                      ? 'active'
+                      : ''
+                  }`}
+                  onClick={() =>
+                    setSelectedCategory(
+                      category
+                    )
+                  }
+                >
+                  {category}
+                </button>
+              )
+            )}
 
           </div>
 
-            <div className="price-filter">
+          <div className="price-filter">
+
             <label htmlFor="price-filter">
-                Price
+              Price
             </label>
 
             <select
-                id="price-filter"
-                value={priceRange}
-                onChange={(event) =>
-                setPriceRange(event.target.value)
-                }
+              id="price-filter"
+              value={priceRange}
+              onChange={(event) =>
+                setPriceRange(
+                  event.target.value
+                )
+              }
             >
-                <option value="all">
+              <option value="all">
                 All prices
-                </option>
+              </option>
 
-                <option value="under-200">
+              <option value="under-200">
                 Under $200
-                </option>
+              </option>
 
-                <option value="200-500">
+              <option value="200-500">
                 $200–$500
-                </option>
+              </option>
 
-                <option value="500-1000">
+              <option value="500-1000">
                 $500–$1,000
-                </option>
+              </option>
 
-                <option value="1000-plus">
+              <option value="1000-plus">
                 $1,000+
-                </option>
+              </option>
             </select>
-            </div>
+
+          </div>
 
           <div className="sort-control">
 
@@ -390,7 +544,9 @@ function RecommendationsPage() {
               id="sort"
               value={sortOption}
               onChange={(event) =>
-                setSortOption(event.target.value)
+                setSortOption(
+                  event.target.value
+                )
               }
             >
               <option value="match">
@@ -409,186 +565,297 @@ function RecommendationsPage() {
           </div>
         </div>
 
-{recentlyDisliked && (
-  <div className="undo-dislike-message">
-    <span>
-      Removed from your picks.
-    </span>
+        {recentlyDisliked && (
+          <div className="undo-dislike-message">
 
-    <button
-      onClick={() => {
-        toggleDislikedProduct(recentlyDisliked)
-        setRecentlyDisliked(null)
-      }}
-    >
-      Undo
-    </button>
-  </div>
-)}
+            <span>
+              Removed from your picks.
+            </span>
 
-    {isLoadingProducts ? (
-        <section className="recommendation-grid">
-            {Array.from({ length: 6 }).map((_, index) => (
-            <article
+            <button
+              onClick={() => {
+                toggleDislikedProduct(
+                  recentlyDisliked
+                )
+
+                setRecentlyDisliked(
+                  null
+                )
+              }}
+            >
+              Undo
+            </button>
+
+          </div>
+        )}
+
+        {isLoadingProducts ? (
+
+          <section className="recommendation-grid">
+
+            {Array.from({
+              length: 6,
+            }).map((_, index) => (
+
+              <article
                 key={index}
                 className="product-card skeleton-card"
-            >
+              >
+
                 <div className="skeleton-image" />
 
                 <div className="product-content">
-                <div className="skeleton-line skeleton-small" />
-                <div className="skeleton-line skeleton-title" />
-                <div className="skeleton-line skeleton-price" />
 
-                <div className="skeleton-line skeleton-match" />
-                <div className="skeleton-line skeleton-reason" />
-                <div className="skeleton-line skeleton-reason short" />
+                  <div className="skeleton-line skeleton-small" />
+
+                  <div className="skeleton-line skeleton-title" />
+
+                  <div className="skeleton-line skeleton-price" />
+
+                  <div className="skeleton-line skeleton-match" />
+
+                  <div className="skeleton-line skeleton-reason" />
+
+                  <div className="skeleton-line skeleton-reason short" />
+
                 </div>
 
                 <div className="product-feedback">
-                <div className="skeleton-button" />
-                <div className="skeleton-button" />
+                  <div className="skeleton-button" />
+                  <div className="skeleton-button" />
                 </div>
-            </article>
+
+              </article>
+
             ))}
-        </section>
-        ) : sortedRecommendations.length === 0 ? (
-        <div className="recommendation-empty-state">
-            <h2>No products found.</h2>
+
+          </section>
+
+        ) : sortedRecommendations.length ===
+          0 ? (
+
+          <div className="recommendation-empty-state">
+
+            <h2>
+              No products found.
+            </h2>
 
             <p>
-            Try a different search term or adjust your filters.
+              Try a different search
+              term or adjust your
+              filters.
             </p>
-        </div>
-        ) : (         
-        <section className="recommendation-grid">
-        {sortedRecommendations.map((product, index) => {
-            const isSaved =
-            preferences.savedProducts.includes(product.id)
 
-            return (
-            <article
-                key={product.id}
-                className="product-card"
-            >
-                <Link
-                to={`/product/${product.id}`}
-                className="product-card-main-link"
-                >
-                <div className="product-image-wrapper">
-                    <img
-                    src={product.image}
-                    alt={product.name}
-                    />
+          </div>
 
-                    <div className="product-rank">
-                    {String(index + 1).padStart(2, '0')}
-                    </div>
-                </div>
+        ) : (
 
-                <div className="product-content">
-                    <div className="product-heading-row">
-                    <div>
-                        <span className="product-category">
-                        {product.category}
-                        </span>
+          <section className="recommendation-grid">
 
-                        <h2>
-                        {product.name}
-                        </h2>
-                    </div>
+            {sortedRecommendations.map(
+              (product, index) => {
 
-                    <span className="product-price">
-                        ${product.price}
-                    </span>
-                    </div>
+                const isSaved =
+                  preferences.savedProducts.includes(
+                    product.id
+                  )
 
-                    <div className="product-match-section">
-                    <div className="match-heading">
-                        <span className="match-percentage">
-                        {product.matchPercentage}% match
-                        </span>
+                return (
+                  <article
+                    key={product.id}
+                    className="product-card"
+                  >
 
-                        <span className="match-label">
-                        FOR YOU
-                        </span>
-                    </div>
+                    <Link
+                      to={`/product/${product.id}`}
+                      state={{
+                        product,
+                      }}
+                      className="product-card-main-link"
+                    >
 
-                    <div className="match-bar">
-                        <div
-                        className="match-bar-fill"
-                        style={{
-                            width:
-                            `${product.matchPercentage}%`,
-                        }}
+                      <div className="product-image-wrapper">
+
+                        <img
+                          src={
+                            product.image
+                          }
+                          alt={
+                            product.name
+                          }
                         />
-                    </div>
 
-                    {product.matchReasons.length > 0 && (
-                        <div className="match-reasons">
-                        <span className="why-label">
-                            Why this matches you
-                        </span>
-
-                        {product.matchReasons
-                            .slice(0, 3)
-                            .map((reason) => (
-                            <span
-                                key={reason}
-                                className="match-reason"
-                            >
-                                {reason}
-                            </span>
-                            ))}
+                        <div className="product-rank">
+                          {String(
+                            index + 1
+                          ).padStart(
+                            2,
+                            '0'
+                          )}
                         </div>
-                    )}
+
+                      </div>
+
+                      <div className="product-content">
+
+                        <div className="product-heading-row">
+
+                          <div>
+                            <span className="product-category">
+                              {
+                                product.category
+                              }
+                            </span>
+
+                            <h2>
+                              {
+                                product.name
+                              }
+                            </h2>
+                          </div>
+
+                          <span className="product-price">
+                            $
+                            {
+                              product.price
+                            }
+                          </span>
+
+                        </div>
+
+                        <div className="product-match-section">
+
+                          <div className="match-heading">
+
+                            <span className="match-percentage">
+                              {
+                                product.matchPercentage
+                              }
+                              % match
+                            </span>
+
+                            <span className="match-label">
+                              FOR YOU
+                            </span>
+
+                          </div>
+
+                          <div className="match-bar">
+
+                            <div
+                              className="match-bar-fill"
+                              style={{
+                                width:
+                                  `${product.matchPercentage}%`,
+                              }}
+                            />
+
+                          </div>
+
+                          {product.matchReasons
+                            .length >
+                            0 && (
+
+                            <div className="match-reasons">
+
+                              <span className="why-label">
+                                Why this
+                                matches you
+                              </span>
+
+                              {product.matchReasons
+                                .slice(
+                                  0,
+                                  3
+                                )
+                                .map(
+                                  (
+                                    reason
+                                  ) => (
+
+                                    <span
+                                      key={
+                                        reason
+                                      }
+                                      className="match-reason"
+                                    >
+                                      {
+                                        reason
+                                      }
+                                    </span>
+
+                                  )
+                                )}
+
+                            </div>
+
+                          )}
+
+                        </div>
+
+                      </div>
+
+                    </Link>
+
+                    <div className="product-feedback">
+
+                      <button
+                        className={`feedback-button ${
+                          isSaved
+                            ? 'active'
+                            : ''
+                        }`}
+                        onClick={(
+                          event
+                        ) => {
+                          event.preventDefault()
+                          event.stopPropagation()
+
+                          toggleSavedProduct(
+                            product.id
+                          )
+                        }}
+                      >
+                        {isSaved
+                          ? '♥ Saved'
+                          : '♡ Save'}
+                      </button>
+
+                      <button
+                        className="feedback-button subtle"
+                        onClick={(
+                          event
+                        ) => {
+                          event.preventDefault()
+                          event.stopPropagation()
+
+                          toggleDislikedProduct(
+                            product.id
+                          )
+
+                          setRecentlyDisliked(
+                            product.id
+                          )
+                        }}
+                      >
+                        × Not my style
+                      </button>
+
                     </div>
-                </div>
-                </Link>
 
-                <div className="product-feedback">
-                <button
-                    className={`feedback-button ${
-                    preferences.savedProducts.includes(product.id)
-                        ? 'active'
-                        : ''
-                    }`}
-                    onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
+                  </article>
+                )
+              }
+            )}
 
-                    toggleSavedProduct(product.id)
-                    }}
-                >
-                    {isSaved
-                    ? '♥ Saved'
-                    : '♡ Save'}
-                </button>
+          </section>
 
-                <button
-                    className="feedback-button subtle"
-                    onClick={(event) => {
-                    event.preventDefault()
-                    event.stopPropagation()
+        )}
 
-                    toggleDislikedProduct(product.id)
-                    setRecentlyDisliked(product.id)
-                    }}
-                >
-                    × Not my style
-                </button>
-            </div>
-
-            </article>
-            )
-        })}
-        </section>
-)}
       </section>
 
     </main>
   )
 }
-
 
 export default RecommendationsPage
