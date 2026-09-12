@@ -1,23 +1,51 @@
 export const products = [
-  {
-    id: 1,
-    name: 'Oak Platform Bed',
-    category: 'Furniture',
-    subcategory: 'Beds',
-    price: 799,
-    image:
-      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
 
-    styles: ['Japandi', 'Scandinavian', 'Minimalist'],
-    characteristics: [
-      'Natural wood',
-      'Clean lines',
-      'Neutral colors',
+{
+  id: 1,
+  name: 'Oak Platform Bed',
+  category: 'Furniture',
+  subcategory: 'Beds',
+  price: 799,
+
+    image:
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+
+    images: [
+    'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80',
     ],
-    colors: ['Beige', 'Brown'],
-    materials: ['Wood'],
-    spaces: ['Bedroom'],
+
+  seller: {
+    name: 'Demo Seller',
+    url: 'https://example.com',
   },
+
+  styles: [
+    'Japandi',
+    'Scandinavian',
+    'Minimalist',
+  ],
+
+  characteristics: [
+    'Natural wood',
+    'Clean lines',
+    'Neutral colors',
+  ],
+
+  colors: [
+    'Beige',
+    'Brown',
+  ],
+
+  materials: [
+    'Wood',
+  ],
+
+  spaces: [
+    'Bedroom',
+  ],
+},
 
   {
     id: 2,
