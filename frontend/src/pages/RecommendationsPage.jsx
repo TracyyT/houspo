@@ -92,54 +92,77 @@ function RecommendationsPage() {
     const space =
       preferences.space || 'home'
 
-    const categories =
+    const selectedCategories =
       preferences.categories.length > 0
-        ? preferences.categories.join(' ')
-        : 'furniture'
+        ? preferences.categories.slice(0, 3)
+        : ['furniture']
 
     const selectedStyles =
       preferences.styles.slice(0, 3)
 
-    const buildQuery = (style = '') =>
-      [
-        style,
-        space,
-        categories,
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
+    const queries = []
 
-    const broadQuery =
-      `${space} ${categories} adult home`
-        .toLowerCase()
+    // Create one search per selected category.
+    selectedCategories.forEach(
+      (category, index) => {
+        const style =
+          selectedStyles.length > 0
+            ? selectedStyles[
+                index %
+                  selectedStyles.length
+              ]
+            : ''
 
-    const styleQueries =
-      selectedStyles.map((style) =>
-        buildQuery(style)
-      )
+        queries.push(
+          [style, space, category]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase()
+        )
+      }
+    )
 
-    const queries = [
-      ...styleQueries,
-    ]
+    // Fill remaining search slots with
+    // other style/category combinations.
+    let styleIndex = 0
 
-    if (queries.length === 0) {
-      queries.push(broadQuery)
+    while (
+      queries.length < 3 &&
+      selectedStyles.length > 0
+    ) {
+      const style =
+        selectedStyles[
+          styleIndex %
+            selectedStyles.length
+        ]
+
+      const category =
+        selectedCategories[
+          styleIndex %
+            selectedCategories.length
+        ]
+
+      const query =
+        `${style} ${space} ${category}`
+          .toLowerCase()
+
+      if (!queries.includes(query)) {
+        queries.push(query)
+      }
+
+      styleIndex += 1
+
+      if (styleIndex > 6) {
+        break
+      }
     }
 
-    if (
-      preferences.budget ===
-        'under-200' &&
-      queries.length < 3
-    ) {
+    // Fallback if no style was selected.
+    if (queries.length === 0) {
       queries.push(
-        `affordable ${space} ${categories} adult home`
+        `${space} furniture`
           .toLowerCase()
       )
-    }
-
-    while (queries.length < 3) {
-      queries.push(broadQuery)
     }
 
     return [
@@ -149,7 +172,6 @@ function RecommendationsPage() {
     preferences.styles,
     preferences.space,
     preferences.categories,
-    preferences.budget,
   ])
 
   const productCacheKey =
