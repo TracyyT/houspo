@@ -58,10 +58,16 @@ function RecommendationsPage() {
         preferences.budget || 'all'
     )
 
-  const [
+    const [
     selectedCategory,
     setSelectedCategory,
-  ] = useState('All')
+    ] = useState(() => {
+    return (
+        sessionStorage.getItem(
+        'houspoSelectedCategory'
+        ) || 'All'
+    )
+    })
 
   const [sortOption, setSortOption] =
     useState('match')
@@ -87,6 +93,7 @@ function RecommendationsPage() {
     setAICandidateIds,
   ] = useState([])
 
+
  const uniqueSearchQueries =
   useMemo(() => {
     const space =
@@ -102,67 +109,40 @@ function RecommendationsPage() {
 
     const queries = []
 
-    // Create one search per selected category.
-    selectedCategories.forEach(
-      (category, index) => {
-        const style =
-          selectedStyles.length > 0
-            ? selectedStyles[
-                index %
-                  selectedStyles.length
-              ]
-            : ''
+    // If multiple categories are selected,
+    // search each category broadly.
+    if (selectedCategories.length > 1) {
+      selectedCategories.forEach(
+        (category) => {
+          queries.push(
+            `${space} ${category} adult home`
+              .toLowerCase()
+          )
+        }
+      )
+    }
 
+    // If only one category is selected,
+    // use styles to create more variety.
+    else {
+      const category =
+        selectedCategories[0]
+
+      if (selectedStyles.length > 0) {
+        selectedStyles.forEach(
+          (style) => {
+            queries.push(
+              `${style} ${space} ${category}`
+                .toLowerCase()
+            )
+          }
+        )
+      } else {
         queries.push(
-          [style, space, category]
-            .filter(Boolean)
-            .join(' ')
+          `${space} ${category} adult home`
             .toLowerCase()
         )
       }
-    )
-
-    // Fill remaining search slots with
-    // other style/category combinations.
-    let styleIndex = 0
-
-    while (
-      queries.length < 3 &&
-      selectedStyles.length > 0
-    ) {
-      const style =
-        selectedStyles[
-          styleIndex %
-            selectedStyles.length
-        ]
-
-      const category =
-        selectedCategories[
-          styleIndex %
-            selectedCategories.length
-        ]
-
-      const query =
-        `${style} ${space} ${category}`
-          .toLowerCase()
-
-      if (!queries.includes(query)) {
-        queries.push(query)
-      }
-
-      styleIndex += 1
-
-      if (styleIndex > 6) {
-        break
-      }
-    }
-
-    // Fallback if no style was selected.
-    if (queries.length === 0) {
-      queries.push(
-        `${space} furniture`
-          .toLowerCase()
-      )
     }
 
     return [
@@ -177,10 +157,13 @@ function RecommendationsPage() {
   const productCacheKey =
     `houspoApiProducts:${uniqueSearchQueries.join('|')}`
 
-  const handleStartOver = () => {
-    resetPreferences()
-    navigate('/')
-  }
+    const handleStartOver = () => {
+      sessionStorage.removeItem(
+        'houspoSelectedCategory'
+    )
+      resetPreferences()
+      navigate('/')
+    }
 
   const matchesPriceRange = (price) => {
     if (typeof price !== 'number') {
@@ -243,6 +226,8 @@ function RecommendationsPage() {
       )
     }
   }, [])
+
+
 
   useEffect(() => {
     async function loadProducts() {
@@ -331,11 +316,35 @@ function RecommendationsPage() {
         ? apiProducts
         : products
 
+// console.log(
+//   'SEARCH QUERIES:',
+//   uniqueSearchQueries
+// )
+
+// console.log(
+//   'API PRODUCTS:',
+//   apiProducts.map((product) => ({
+//     name: product.name,
+//     category: product.category,
+//     subcategory: product.subcategory,
+//   }))
+// )
+
   const recommendations =
     getRecommendations(
       productSource,
       preferences
     )
+
+// console.log(
+//   'RECOMMENDATIONS:',
+//   recommendations.map((product) => ({
+//     name: product.name,
+//     category: product.category,
+//     subcategory: product.subcategory,
+//   }))
+// )
+
 
   const aiPreferenceKey =
     JSON.stringify({
@@ -364,6 +373,14 @@ function RecommendationsPage() {
 
   const aiCacheKey =
     `houspoAI:${aiPreferenceKey}:${productCatalogKey}`
+
+  useEffect(() => {
+    sessionStorage.setItem(
+        'houspoSelectedCategory',
+        selectedCategory
+    )
+    }, [selectedCategory])
+
 
   useEffect(() => {
     let cancelled = false

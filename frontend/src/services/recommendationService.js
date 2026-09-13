@@ -10,6 +10,51 @@ function normalizeValues(values = []) {
     )
 }
 
+function matchesSelectedCategory(
+  product,
+  selectedCategories = []
+) {
+  if (selectedCategories.length === 0) {
+    return true
+  }
+
+  const productCategory =
+    String(product.category || '')
+      .trim()
+      .toLowerCase()
+
+  const normalizedSelectedCategories =
+    normalizeValues(selectedCategories)
+
+  return normalizedSelectedCategories.some(
+    (selectedCategory) => {
+      if (selectedCategory === 'furniture') {
+        return [
+          'seating',
+          'tables',
+          'storage',
+          'beds',
+        ].includes(productCategory)
+      }
+
+      if (selectedCategory === 'decor') {
+        return [
+          'home',
+          'decor',
+        ].includes(productCategory)
+      }
+
+      if (selectedCategory === 'lighting') {
+        return productCategory === 'lighting'
+      }
+
+      return (
+        productCategory === selectedCategory
+      )
+    }
+  )
+}
+
 // Count matching values without
 // worrying about capitalization.
 function countMatches(
@@ -350,20 +395,17 @@ export function scoreProduct(
 
 
   if (
-    normalizeValues(
+    matchesSelectedCategory(
+        product,
         preferences.categories
-    ).includes(
-        String(product.category)
-        .trim()
-        .toLowerCase()
     )
     ) {
     score += 4
 
     reasons.push(
-      `Matches your ${product.category} search`
+        'Matches your selected category'
     )
-  }
+    }
 
   const colorMatches =
     countMatches(
@@ -486,20 +528,6 @@ export function getRecommendations(
   products,
   preferences
 ) {
-  const normalizedCategories =
-    normalizeValues(
-        preferences.categories
-    )
-
-    const hasMatchingCategories =
-    normalizedCategories.length === 0 ||
-    products.some((product) =>
-        normalizedCategories.includes(
-        String(product.category)
-            .trim()
-            .toLowerCase()
-        )
-    )
 
   return products
     .map((product, index) => {
@@ -531,21 +559,12 @@ export function getRecommendations(
           result.reasons,
       }
     })
-    .filter((product) => {
-      if (
-        preferences.categories.length ===
-          0 ||
-        !hasMatchingCategories
-      ) {
-        return true
-      }
-
-      return normalizedCategories.includes(
-        String(product.category)
-          .trim()
-          .toLowerCase()
+    .filter((product) =>
+        matchesSelectedCategory(
+            product,
+            preferences.categories
         )
-    })
+        )
 
     .sort((a, b) => {
       const scoreDifference =
