@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useState,
 } from 'react'
 
@@ -12,7 +13,9 @@ import {
 import { products } from '../data/products'
 import { usePreferences } from '../context/PreferenceContext'
 import { getRecommendations } from '../services/recommendationService'
-import { searchProducts } from '../services/productService'
+import {
+  searchMultipleProducts,
+} from '../services/productService'
 
 function RecommendationsPage() {
   const navigate = useNavigate()
@@ -25,9 +28,22 @@ function RecommendationsPage() {
     toggleDislikedProduct,
   } = usePreferences()
 
+  // Start the recommendations page
+    // from the top when it opens.
+    useEffect(() => {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant',
+    })
+    }, [])
+
   // Search/filter UI state.
   const [searchTerm, setSearchTerm] =
     useState('')
+
+    const [showNavbar, setShowNavbar] =
+        useState(true)
 
   const [
     recentlyDisliked,
@@ -59,39 +75,71 @@ function RecommendationsPage() {
     setProductLoadError,
   ] = useState(false)
 
-  // Build a more specific Channel3 search
-  // from the user's main preferences.
-  const searchParts = []
+   // Build multiple searches so houspo gets
+    // a larger and more varied product pool.
+    const uniqueSearchQueries =
+        useMemo(() => {
+        const space =
+            preferences.space || 'home'
 
-  if (preferences.styles.length > 0) {
-    searchParts.push(
-      preferences.styles[0]
-    )
-  }
+        const category =
+            preferences.categories[0] ||
+            'furniture'
 
-  if (preferences.space) {
-    searchParts.push(
-      preferences.space
-    )
-  }
+        const styleQueries =
+            preferences.styles
+            .slice(0, 2)
+            .map((style) =>
+                `${style} ${space} ${category} furniture`
+                .toLowerCase()
+            )
 
-  if (preferences.categories.length > 0) {
-    searchParts.push(
-      preferences.categories[0]
-    )
-  }
+        const broadQuery =
+            `${space} ${category} furniture`
+            .toLowerCase()
 
-  // Keep the query short so the API
-  // still returns enough product variety.
-  const productSearchQuery =
-    searchParts.length > 0
-      ? `${searchParts.join(' ')} furniture`
-          .toLowerCase()
-      : 'home furniture'
+        const queries = []
 
-  // Each unique query gets its own cache.
-  const productCacheKey =
-    `houspoApiProducts:${productSearchQuery}`
+        // Search selected styles first.
+        queries.push(...styleQueries)
+
+        // If the user selected the lowest
+        // budget, guarantee an affordable
+        // search is included.
+        if (
+            preferences.budget ===
+            'under-200'
+        ) {
+            queries.push(
+            `affordable ${space} ${category} furniture`
+                .toLowerCase()
+            )
+        } else {
+            // Otherwise use the last search
+            // for a broader variety of products.
+            queries.push(broadQuery)
+        }
+
+        // If there are fewer than three
+        // searches, add the broad query too.
+        if (queries.length < 3) {
+            queries.push(broadQuery)
+        }
+
+        return [
+            ...new Set(queries),
+        ].slice(0, 3)
+        }, [
+        preferences.styles,
+        preferences.space,
+        preferences.categories,
+        preferences.budget,
+        ])
+
+    // Each unique group of searches gets
+    // its own browser-session cache.
+    const productCacheKey =
+        `houspoApiProducts:${uniqueSearchQueries.join('|')}`
 
   // Reset the quiz while keeping saved
   // products through PreferenceContext.
@@ -130,6 +178,40 @@ function RecommendationsPage() {
         return true
     }
   }
+  // Hide the navbar while scrolling down
+    // and show it again when scrolling up.
+    useEffect(() => {
+    let lastScrollY = window.scrollY
+
+    const handleScroll = () => {
+        const currentScrollY =
+        window.scrollY
+
+        if (currentScrollY <= 20) {
+        setShowNavbar(true)
+        } else if (
+        currentScrollY > lastScrollY
+        ) {
+        setShowNavbar(false)
+        } else {
+        setShowNavbar(true)
+        }
+
+        lastScrollY = currentScrollY
+    }
+
+    window.addEventListener(
+        'scroll',
+        handleScroll
+    )
+
+    return () => {
+        window.removeEventListener(
+        'scroll',
+        handleScroll
+        )
+    }
+    }, [])
 
   // Load products for the current
   // preference-based Channel3 search.
@@ -181,10 +263,9 @@ function RecommendationsPage() {
         setProductLoadError(false)
 
         const fetchedProducts =
-          await searchProducts({
-            query: productSearchQuery,
-            limit: 20,
-          })
+            await searchMultipleProducts(
+                uniqueSearchQueries
+            )
 
         setApiProducts(
           fetchedProducts
@@ -220,10 +301,10 @@ function RecommendationsPage() {
     }
 
     loadProducts()
-  }, [
-    productSearchQuery,
-    productCacheKey,
-  ])
+    }, [
+        productCacheKey,
+        uniqueSearchQueries,
+    ])
 
   // While Channel3 is loading, keep the
   // recommendation source empty so the
@@ -356,7 +437,11 @@ function RecommendationsPage() {
   return (
     <main className="recommendations-page">
 
-      <header className="recommendations-nav">
+      <header
+        className={`recommendations-nav ${
+            showNavbar ? 'nav-visible' : 'nav-hidden'
+        }`}
+        >
         <Link
           to="/"
           className="onboarding-logo"

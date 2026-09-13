@@ -7366,3 +7366,43 @@ button {
   }
 
 }
+/* Quick page transition when recommendations open */
+.recommendations-content {
+  animation: recommendations-enter 0.3s ease-out;
+}
+
+@keyframes recommendations-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Navbar stays available while browsing,
+   but hides when scrolling down. */
+.recommendations-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: rgba(245, 241, 235, 0.96);
+
+  transition:
+    transform 0.32s ease,
+    opacity 0.32s ease;
+}
+
+.recommendations-nav.nav-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.recommendations-nav.nav-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
