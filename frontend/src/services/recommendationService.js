@@ -563,6 +563,152 @@ export function getRecommendations(
     })
 }
 
+// Blend the existing recommendation score
+// with AI scores for a small group of products.
+export function blendAIScores(
+  products,
+  aiScores,
+  aiWeight = 0.3
+) {
+  if (
+    !Array.isArray(aiScores) ||
+    aiScores.length === 0
+  ) {
+    return products
+  }
+
+  const aiScoreMap =
+    new Map(
+      aiScores.map((item) => [
+        String(item.id),
+        {
+          score: Number(item.score),
+          reason: item.reason,
+        },
+      ])
+    )
+
+  const productsWithAIScores =
+    products.filter((product) =>
+      aiScoreMap.has(
+        String(product.id)
+      )
+    )
+
+  if (
+    productsWithAIScores.length === 0
+  ) {
+    return products
+  }
+
+  // Find the range of the existing
+  // recommendation scores.
+  const ruleScores =
+    productsWithAIScores.map(
+      (product) =>
+        product.recommendationScore
+    )
+
+  const minimumRuleScore =
+    Math.min(...ruleScores)
+
+  const maximumRuleScore =
+    Math.max(...ruleScores)
+
+  const ruleWeight =
+    1 - aiWeight
+
+  return products
+    .map((product, index) => {
+      const aiResult =
+        aiScoreMap.get(
+          String(product.id)
+        )
+
+      // If AI did not score this product,
+      // leave its normal ranking untouched.
+      if (!aiResult) {
+        return {
+          ...product,
+          hybridScore: null,
+          aiScore: null,
+          aiReason: null,
+          aiOriginalOrder: index,
+        }
+      }
+
+      // Convert the existing rule score
+      // into the same 0-100 range as AI.
+      const normalizedRuleScore =
+        maximumRuleScore ===
+        minimumRuleScore
+          ? 100
+          : (
+              (
+                product.recommendationScore -
+                minimumRuleScore
+              ) /
+              (
+                maximumRuleScore -
+                minimumRuleScore
+              )
+            ) * 100
+
+      const hybridScore =
+        normalizedRuleScore *
+          ruleWeight +
+        aiResult.score *
+          aiWeight
+
+      return {
+        ...product,
+
+        // Keep the existing score available.
+        ruleRecommendationScore:
+          product.recommendationScore,
+
+        normalizedRuleScore:
+          Math.round(
+            normalizedRuleScore
+          ),
+
+        aiScore:
+          aiResult.score,
+
+        aiReason:
+          aiResult.reason,
+
+        hybridScore,
+
+        aiOriginalOrder: index,
+      }
+    })
+
+    // This function will only be used
+    // with the top AI candidate group.
+    .sort((a, b) => {
+      const aScore =
+        a.hybridScore ??
+        -Infinity
+
+      const bScore =
+        b.hybridScore ??
+        -Infinity
+
+      const difference =
+        bScore - aScore
+
+      if (difference !== 0) {
+        return difference
+      }
+
+      return (
+        a.aiOriginalOrder -
+        b.aiOriginalOrder
+      )
+    })
+}
+
 // Preferences
 //      ↓
 // recommendationService.js

@@ -12,10 +12,24 @@ import {
 
 import { products } from '../data/products'
 import { usePreferences } from '../context/PreferenceContext'
-import { getRecommendations } from '../services/recommendationService'
+
+import {
+  getRecommendations,
+  blendAIScores,
+} from '../services/recommendationService'
+
 import {
   searchMultipleProducts,
 } from '../services/productService'
+
+import {
+  createAIStyleProfile,
+  scoreProductsWithAI,
+} from '../services/aiRecommendationService'
+
+// Prevent duplicate AI requests while
+// the same request is already running.
+const aiRequestCache = new Map()
 
 function RecommendationsPage() {
   const navigate = useNavigate()
@@ -28,30 +42,21 @@ function RecommendationsPage() {
     toggleDislikedProduct,
   } = usePreferences()
 
-  // Start the recommendations page
-    // from the top when it opens.
-    // useEffect(() => {
-    // window.scrollTo({
-    //     top: 0,
-    //     left: 0,
-    //     behavior: 'instant',
-    // })
-    // }, [])
-
-  // Search/filter UI state.
   const [searchTerm, setSearchTerm] =
     useState('')
 
-    const [showNavbar, setShowNavbar] =
-        useState(true)
+  const [showNavbar, setShowNavbar] =
+    useState(true)
 
   const [
     recentlyDisliked,
     setRecentlyDisliked,
   ] = useState(null)
 
-  const [priceRange, setPriceRange] =
-    useState('all')
+    const [priceRange, setPriceRange] =
+    useState(
+        preferences.budget || 'all'
+    )
 
   const [
     selectedCategory,
@@ -61,7 +66,6 @@ function RecommendationsPage() {
   const [sortOption, setSortOption] =
     useState('match')
 
-  // Products returned from Channel3.
   const [apiProducts, setApiProducts] =
     useState([])
 
@@ -75,81 +79,73 @@ function RecommendationsPage() {
     setProductLoadError,
   ] = useState(false)
 
-   // Build multiple searches so houspo gets
-    // a larger and more varied product pool.
-    const uniqueSearchQueries =
-        useMemo(() => {
-        const space =
-            preferences.space || 'home'
+  const [aiScores, setAIScores] =
+    useState([])
 
-        const category =
-            preferences.categories[0] ||
-            'furniture'
+  const [
+    aiCandidateIds,
+    setAICandidateIds,
+  ] = useState([])
 
-        const styleQueries =
-            preferences.styles
-            .slice(0, 2)
-            .map((style) =>
-                `${style} ${space} ${category} furniture`
-                .toLowerCase()
-            )
+  const uniqueSearchQueries =
+    useMemo(() => {
+      const space =
+        preferences.space || 'home'
 
-        const broadQuery =
-            `${space} ${category} furniture`
+      const category =
+        preferences.categories[0] ||
+        'furniture'
+
+      const styleQueries =
+        preferences.styles
+          .slice(0, 2)
+          .map((style) =>
+            `${style} ${space} ${category} furniture`
+              .toLowerCase()
+          )
+
+      const broadQuery =
+        `${space} ${category} adult home furniture`
+          .toLowerCase()
+
+      const queries = [
+        ...styleQueries,
+      ]
+
+      if (
+        preferences.budget ===
+        'under-200'
+      ) {
+        queries.push(
+          `affordable ${space} ${category} furniture`
             .toLowerCase()
+        )
+      } else {
+        queries.push(broadQuery)
+      }
 
-        const queries = []
+      if (queries.length < 3) {
+        queries.push(broadQuery)
+      }
 
-        // Search selected styles first.
-        queries.push(...styleQueries)
+      return [
+        ...new Set(queries),
+      ].slice(0, 3)
+    }, [
+      preferences.styles,
+      preferences.space,
+      preferences.categories,
+      preferences.budget,
+    ])
 
-        // If the user selected the lowest
-        // budget, guarantee an affordable
-        // search is included.
-        if (
-            preferences.budget ===
-            'under-200'
-        ) {
-            queries.push(
-            `affordable ${space} ${category} furniture`
-                .toLowerCase()
-            )
-        } else {
-            // Otherwise use the last search
-            // for a broader variety of products.
-            queries.push(broadQuery)
-        }
+  const productCacheKey =
+    `houspoApiProducts:${uniqueSearchQueries.join('|')}`
 
-        // If there are fewer than three
-        // searches, add the broad query too.
-        if (queries.length < 3) {
-            queries.push(broadQuery)
-        }
-
-        return [
-            ...new Set(queries),
-        ].slice(0, 3)
-        }, [
-        preferences.styles,
-        preferences.space,
-        preferences.categories,
-        preferences.budget,
-        ])
-
-    // Each unique group of searches gets
-    // its own browser-session cache.
-    const productCacheKey =
-        `houspoApiProducts:${uniqueSearchQueries.join('|')}`
-
-  // Reset the quiz while keeping saved
-  // products through PreferenceContext.
   const handleStartOver = () => {
     resetPreferences()
     navigate('/')
   }
 
-  // Check whether a product fits the
-  // manually selected price filter.
   const matchesPriceRange = (price) => {
     if (typeof price !== 'number') {
       return priceRange === 'all'
@@ -178,47 +174,40 @@ function RecommendationsPage() {
         return true
     }
   }
-  // Hide the navbar while scrolling down
-    // and show it again when scrolling up.
-    useEffect(() => {
+
+  useEffect(() => {
     let lastScrollY = window.scrollY
 
     const handleScroll = () => {
-        const currentScrollY =
+      const currentScrollY =
         window.scrollY
 
-        if (currentScrollY <= 20) {
+      if (currentScrollY <= 20) {
         setShowNavbar(true)
-        } else if (
+      } else if (
         currentScrollY > lastScrollY
-        ) {
+      ) {
         setShowNavbar(false)
-        } else {
+      } else {
         setShowNavbar(true)
-        }
+      }
 
-        lastScrollY = currentScrollY
+      lastScrollY = currentScrollY
     }
 
     window.addEventListener(
-        'scroll',
-        handleScroll
+      'scroll',
+      handleScroll
     )
 
     return () => {
-        window.removeEventListener(
+      window.removeEventListener(
         'scroll',
         handleScroll
-        )
+      )
     }
-    }, [])
+  }, [])
 
-  // Load products for the current
-  // preference-based Channel3 search.
-  //
-  // If we already searched this combination
-  // during the current browser tab, use the
-  // cached products instead of another request.
   useEffect(() => {
     async function loadProducts() {
       const cachedProducts =
@@ -237,8 +226,6 @@ function RecommendationsPage() {
 
           setProductLoadError(false)
 
-          // Keep one active catalog for the
-          // product detail + similar items page.
           sessionStorage.setItem(
             'houspoActiveProducts',
             JSON.stringify(
@@ -250,8 +237,6 @@ function RecommendationsPage() {
 
           return
         } catch {
-          // If cache data is broken, remove it
-          // and fetch a clean copy.
           sessionStorage.removeItem(
             productCacheKey
           )
@@ -263,15 +248,14 @@ function RecommendationsPage() {
         setProductLoadError(false)
 
         const fetchedProducts =
-            await searchMultipleProducts(
-                uniqueSearchQueries
-            )
+          await searchMultipleProducts(
+            uniqueSearchQueries
+          )
 
         setApiProducts(
           fetchedProducts
         )
 
-        // Save products under this specific query.
         sessionStorage.setItem(
           productCacheKey,
           JSON.stringify(
@@ -279,8 +263,6 @@ function RecommendationsPage() {
           )
         )
 
-        // Also save the currently active catalog
-        // so ProductDetailPage can use it.
         sessionStorage.setItem(
           'houspoActiveProducts',
           JSON.stringify(
@@ -301,17 +283,11 @@ function RecommendationsPage() {
     }
 
     loadProducts()
-    }, [
-        productCacheKey,
-        uniqueSearchQueries,
-    ])
+  }, [
+    productCacheKey,
+    uniqueSearchQueries,
+  ])
 
-  // While Channel3 is loading, keep the
-  // recommendation source empty so the
-  // skeleton cards remain visible.
-  //
-  // If Channel3 fails, fall back to the
-  // original local demo products.
   const productSource =
     isLoadingProducts
       ? []
@@ -319,20 +295,231 @@ function RecommendationsPage() {
         ? apiProducts
         : products
 
-  // Score and rank the available catalog
-  // using the user's houspo preferences.
   const recommendations =
     getRecommendations(
       productSource,
       preferences
     )
 
-  // Build category filter buttons from
-  // whatever products are currently shown.
+  const aiPreferenceKey =
+    JSON.stringify({
+      styles:
+        preferences.styles,
+      characteristics:
+        preferences.characteristics,
+      colors:
+        preferences.colors,
+      materials:
+        preferences.materials,
+      space:
+        preferences.space,
+      categories:
+        preferences.categories,
+      budget:
+        preferences.budget,
+    })
+
+  const productCatalogKey =
+    productSource
+      .map((product) =>
+        String(product.id)
+      )
+      .join('|')
+
+  const aiCacheKey =
+    `houspoAI:${aiPreferenceKey}:${productCatalogKey}`
+
+  useEffect(() => {
+    let cancelled = false
+
+    async function loadAIRecommendations() {
+      if (
+        isLoadingProducts ||
+        recommendations.length === 0
+      ) {
+        return
+      }
+
+      const cachedAI =
+        sessionStorage.getItem(
+          aiCacheKey
+        )
+
+      if (cachedAI) {
+        try {
+          const parsedAI =
+            JSON.parse(cachedAI)
+
+          setAIScores(
+            parsedAI.scores || []
+          )
+
+          setAICandidateIds(
+            parsedAI.candidateIds || []
+          )
+
+          return
+        } catch {
+          sessionStorage.removeItem(
+            aiCacheKey
+          )
+        }
+      }
+
+      const aiCandidates =
+        recommendations.slice(0, 15)
+
+      const candidateIds =
+        aiCandidates.map(
+          (product) =>
+            String(product.id)
+        )
+
+      try {
+        let request =
+          aiRequestCache.get(
+            aiCacheKey
+          )
+
+        if (!request) {
+          request = (async () => {
+            const styleProfile =
+              await createAIStyleProfile(
+                preferences
+              )
+
+            if (!styleProfile) {
+              return null
+            }
+
+            const scores =
+              await scoreProductsWithAI(
+                styleProfile,
+                aiCandidates
+              )
+
+            if (scores.length === 0) {
+              return null
+            }
+
+            return {
+              scores,
+              candidateIds,
+            }
+          })()
+
+          aiRequestCache.set(
+            aiCacheKey,
+            request
+          )
+        }
+
+        const result =
+          await request
+
+        if (
+          cancelled ||
+          !result
+        ) {
+          return
+        }
+
+        setAIScores(
+          result.scores
+        )
+
+        setAICandidateIds(
+          result.candidateIds
+        )
+
+        sessionStorage.setItem(
+          aiCacheKey,
+          JSON.stringify(result)
+        )
+      } catch (error) {
+        console.error(
+          'AI recommendations unavailable:',
+          error
+        )
+      }
+    }
+
+    loadAIRecommendations()
+
+    return () => {
+      cancelled = true
+    }
+  }, [
+    aiCacheKey,
+    isLoadingProducts,
+  ])
+
+  const rankedRecommendations =
+    useMemo(() => {
+      if (
+        aiScores.length === 0 ||
+        aiCandidateIds.length === 0
+      ) {
+        return recommendations
+      }
+
+      const recommendationMap =
+        new Map(
+          recommendations.map(
+            (product) => [
+              String(product.id),
+              product,
+            ]
+          )
+        )
+
+      const aiCandidates =
+        aiCandidateIds
+          .map((id) =>
+            recommendationMap.get(
+              String(id)
+            )
+          )
+          .filter(Boolean)
+
+      if (aiCandidates.length === 0) {
+        return recommendations
+      }
+
+      const rerankedCandidates =
+        blendAIScores(
+          aiCandidates,
+          aiScores,
+          0.3
+        )
+
+      const candidateIdSet =
+        new Set(
+          aiCandidateIds.map(String)
+        )
+
+      const remainingProducts =
+        recommendations.filter(
+          (product) =>
+            !candidateIdSet.has(
+              String(product.id)
+            )
+        )
+
+      return [
+        ...rerankedCandidates,
+        ...remainingProducts,
+      ]
+    }, [
+      recommendations,
+      aiScores,
+      aiCandidateIds,
+    ])
+
   const availableCategories = [
     'All',
     ...new Set(
-      recommendations
+      rankedRecommendations
         .map(
           (product) =>
             product.category
@@ -341,9 +528,8 @@ function RecommendationsPage() {
     ),
   ]
 
-  // Apply dislike, search, and price filters.
   const visibleRecommendations =
-    recommendations.filter(
+    rankedRecommendations.filter(
       (product) => {
         const isNotDisliked =
           !preferences.dislikedProducts.some(
@@ -386,7 +572,6 @@ function RecommendationsPage() {
       }
     )
 
-  // Apply the category filter.
   const filteredRecommendations =
     selectedCategory === 'All'
       ? visibleRecommendations
@@ -396,7 +581,6 @@ function RecommendationsPage() {
             selectedCategory
         )
 
-  // Sort after all filters have been applied.
   const sortedRecommendations = [
     ...filteredRecommendations,
   ].sort((a, b) => {
@@ -428,20 +612,18 @@ function RecommendationsPage() {
       return priceB - priceA
     }
 
-    return (
-      b.recommendationScore -
-      a.recommendationScore
-    )
+    return 0
   })
 
   return (
     <main className="recommendations-page">
-
       <header
         className={`recommendations-nav ${
-            showNavbar ? 'nav-visible' : 'nav-hidden'
+          showNavbar
+            ? 'nav-visible'
+            : 'nav-hidden'
         }`}
-        >
+      >
         <Link
           to="/"
           className="onboarding-logo"
@@ -501,7 +683,6 @@ function RecommendationsPage() {
       </header>
 
       <section className="recommendations-content">
-
         <div className="recommendations-heading">
           <span className="section-label">
             CURATED FOR YOU
@@ -518,7 +699,6 @@ function RecommendationsPage() {
           </p>
 
           <div className="recommendation-edit-actions">
-
             <Link
               to="/preferences"
               className="edit-action-button"
@@ -548,18 +728,15 @@ function RecommendationsPage() {
                 Start over
               </strong>
             </button>
-
           </div>
         </div>
 
         <div className="profile-summary">
-
           <span className="profile-summary-label">
             Your selections
           </span>
 
           <div className="profile-summary-values">
-
             {preferences.styles.length >
               0 && (
               <span>
@@ -595,9 +772,7 @@ function RecommendationsPage() {
                 </span>
               </>
             )}
-
           </div>
-
         </div>
 
         <div className="recommendation-search">
@@ -614,9 +789,7 @@ function RecommendationsPage() {
         </div>
 
         <div className="recommendation-controls">
-
           <div className="category-filters">
-
             {availableCategories.map(
               (category) => (
                 <button
@@ -637,11 +810,9 @@ function RecommendationsPage() {
                 </button>
               )
             )}
-
           </div>
 
           <div className="price-filter">
-
             <label htmlFor="price-filter">
               Price
             </label>
@@ -675,11 +846,9 @@ function RecommendationsPage() {
                 $1,000+
               </option>
             </select>
-
           </div>
 
           <div className="sort-control">
-
             <label htmlFor="sort">
               Sort by
             </label>
@@ -705,7 +874,6 @@ function RecommendationsPage() {
                 Price: High to Low
               </option>
             </select>
-
           </div>
         </div>
 
@@ -721,7 +889,6 @@ function RecommendationsPage() {
 
         {recentlyDisliked && (
           <div className="undo-dislike-message">
-
             <span>
               Removed from your picks.
             </span>
@@ -739,57 +906,39 @@ function RecommendationsPage() {
             >
               Undo
             </button>
-
           </div>
         )}
 
         {isLoadingProducts ? (
-
           <section className="recommendation-grid">
-
             {Array.from({
               length: 6,
             }).map((_, index) => (
-
               <article
                 key={index}
                 className="product-card skeleton-card"
               >
-
                 <div className="skeleton-image" />
 
                 <div className="product-content">
-
                   <div className="skeleton-line skeleton-small" />
-
                   <div className="skeleton-line skeleton-title" />
-
                   <div className="skeleton-line skeleton-price" />
-
                   <div className="skeleton-line skeleton-match" />
-
                   <div className="skeleton-line skeleton-reason" />
-
                   <div className="skeleton-line skeleton-reason short" />
-
                 </div>
 
                 <div className="product-feedback">
                   <div className="skeleton-button" />
                   <div className="skeleton-button" />
                 </div>
-
               </article>
-
             ))}
-
           </section>
-
         ) : sortedRecommendations.length ===
           0 ? (
-
           <div className="recommendation-empty-state">
-
             <h2>
               No products found.
             </h2>
@@ -799,16 +948,11 @@ function RecommendationsPage() {
               term or adjust your
               filters.
             </p>
-
           </div>
-
         ) : (
-
           <section className="recommendation-grid">
-
             {sortedRecommendations.map(
               (product, index) => {
-
                 const isSaved =
                   preferences.savedProducts.some(
                     (productId) =>
@@ -821,7 +965,6 @@ function RecommendationsPage() {
                     key={product.id}
                     className="product-card"
                   >
-
                     <Link
                       to={`/product/${product.id}`}
                       state={{
@@ -829,9 +972,7 @@ function RecommendationsPage() {
                       }}
                       className="product-card-main-link"
                     >
-
                       <div className="product-image-wrapper">
-
                         <img
                           src={
                             product.image ||
@@ -858,13 +999,10 @@ function RecommendationsPage() {
                             '0'
                           )}
                         </div>
-
                       </div>
 
                       <div className="product-content">
-
                         <div className="product-heading-row">
-
                           <div>
                             <span className="product-category">
                               {
@@ -887,13 +1025,10 @@ function RecommendationsPage() {
                               ? `$${product.price}`
                               : 'Price unavailable'}
                           </span>
-
                         </div>
 
                         <div className="product-match-section">
-
                           <div className="match-heading">
-
                             <span className="match-percentage">
                               {
                                 product.matchPercentage
@@ -904,11 +1039,9 @@ function RecommendationsPage() {
                             <span className="match-label">
                               FOR YOU
                             </span>
-
                           </div>
 
                           <div className="match-bar">
-
                             <div
                               className="match-bar-fill"
                               style={{
@@ -916,15 +1049,12 @@ function RecommendationsPage() {
                                   `${product.matchPercentage}%`,
                               }}
                             />
-
                           </div>
 
                           {product.matchReasons
                             .length >
                             0 && (
-
                             <div className="match-reasons">
-
                               <span className="why-label">
                                 Why this
                                 matches you
@@ -939,7 +1069,6 @@ function RecommendationsPage() {
                                   (
                                     reason
                                   ) => (
-
                                     <span
                                       key={
                                         reason
@@ -950,22 +1079,15 @@ function RecommendationsPage() {
                                         reason
                                       }
                                     </span>
-
                                   )
                                 )}
-
                             </div>
-
                           )}
-
                         </div>
-
                       </div>
-
                     </Link>
 
                     <div className="product-feedback">
-
                       <button
                         className={`feedback-button ${
                           isSaved
@@ -1008,20 +1130,14 @@ function RecommendationsPage() {
                       >
                         × Not my style
                       </button>
-
                     </div>
-
                   </article>
                 )
               }
             )}
-
           </section>
-
         )}
-
       </section>
-
     </main>
   )
 }

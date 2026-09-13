@@ -21,6 +21,33 @@ function includesAny(text, keywords) {
   })
 }
 
+const blockedTerms = [
+  'miniature',
+  'dollhouse',
+  'playset',
+  'toy furniture',
+  '1 12 scale',
+]
+
+export function isValidFurnitureProduct(
+  product
+) {
+  const productText = [
+    product.name,
+    product.description,
+    product.subcategory,
+    product.category,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+
+  return !blockedTerms.some(
+    (term) =>
+      productText.includes(term)
+  )
+}
+
 function inferStyles(text) {
   const styles = []
 

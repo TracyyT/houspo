@@ -1,4 +1,7 @@
-import { normalizeProduct } from './productAdapter'
+import {
+  normalizeProduct,
+  isValidFurnitureProduct,
+} from './productAdapter'
 
 const API_URL =
   'https://houspo-backend.onrender.com/api/products/search'
@@ -39,8 +42,10 @@ export async function searchProducts({
     data.items ??
     []
 
-  const normalizedProducts =
-    rawProducts.map(normalizeProduct)
+    const normalizedProducts =
+    rawProducts
+        .map(normalizeProduct)
+        .filter(isValidFurnitureProduct)
 
   console.log(
     'NORMALIZED PRODUCTS:',
