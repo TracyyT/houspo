@@ -1,5 +1,6 @@
 import OpenAI from 'openai'
 import express from 'express'
+import rateLimit from 'express-rate-limit'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import {
@@ -20,6 +21,12 @@ const PORT = process.env.PORT || 3001
 
 app.use(cors())
 app.use(express.json())
+const aiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 app.post('/api/products/search', async (req, res) => {
   try {
@@ -73,6 +80,7 @@ app.post('/api/products/search', async (req, res) => {
 // the user's quiz preferences.
 app.post(
   '/api/ai/style-profile',
+  aiLimiter,
   async (req, res) => {
     try {
       const {
@@ -137,6 +145,7 @@ app.post(
 // interior style profile.
 app.post(
   '/api/ai/score-products',
+  aiLimiter,
   async (req, res) => {
     try {
       const {
@@ -160,12 +169,14 @@ app.post(
             'Products are required',
         })
       }
+      const limitedProducts =
+         products.slice(0, 15)
 
       const prompt =
         buildProductScoringPrompt(
-          styleProfile,
-          products
-        )
+            styleProfile,
+            limitedProducts
+          )
 
       const response =
         await openai.responses.create({

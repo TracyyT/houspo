@@ -1,6 +1,7 @@
 // Use the local backend while developing
 // the AI recommendation feature.
 const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
   'http://localhost:3001'
 
 // Create an AI style profile from the

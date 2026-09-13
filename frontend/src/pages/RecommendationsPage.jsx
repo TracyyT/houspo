@@ -87,56 +87,70 @@ function RecommendationsPage() {
     setAICandidateIds,
   ] = useState([])
 
-  const uniqueSearchQueries =
-    useMemo(() => {
-      const space =
-        preferences.space || 'home'
+ const uniqueSearchQueries =
+  useMemo(() => {
+    const space =
+      preferences.space || 'home'
 
-      const category =
-        preferences.categories[0] ||
-        'furniture'
+    const categories =
+      preferences.categories.length > 0
+        ? preferences.categories.join(' ')
+        : 'furniture'
 
-      const styleQueries =
-        preferences.styles
-          .slice(0, 2)
-          .map((style) =>
-            `${style} ${space} ${category} furniture`
-              .toLowerCase()
-          )
+    const selectedStyles =
+      preferences.styles.slice(0, 3)
 
-      const broadQuery =
-        `${space} ${category} adult home furniture`
-          .toLowerCase()
-
-      const queries = [
-        ...styleQueries,
+    const buildQuery = (style = '') =>
+      [
+        style,
+        space,
+        categories,
       ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
 
-      if (
-        preferences.budget ===
-        'under-200'
-      ) {
-        queries.push(
-          `affordable ${space} ${category} furniture`
-            .toLowerCase()
-        )
-      } else {
-        queries.push(broadQuery)
-      }
+    const broadQuery =
+      `${space} ${categories} adult home`
+        .toLowerCase()
 
-      if (queries.length < 3) {
-        queries.push(broadQuery)
-      }
+    const styleQueries =
+      selectedStyles.map((style) =>
+        buildQuery(style)
+      )
 
-      return [
-        ...new Set(queries),
-      ].slice(0, 3)
-    }, [
-      preferences.styles,
-      preferences.space,
-      preferences.categories,
-      preferences.budget,
-    ])
+    const queries = [
+      ...styleQueries,
+    ]
+
+    if (queries.length === 0) {
+      queries.push(broadQuery)
+    }
+
+    if (
+      preferences.budget ===
+        'under-200' &&
+      queries.length < 3
+    ) {
+      queries.push(
+        `affordable ${space} ${categories} adult home`
+          .toLowerCase()
+      )
+    }
+
+    while (queries.length < 3) {
+      queries.push(broadQuery)
+    }
+
+    return [
+      ...new Set(queries),
+    ].slice(0, 3)
+  }, [
+    preferences.styles,
+    preferences.space,
+    preferences.categories,
+    preferences.budget,
+  ])
 
   const productCacheKey =
     `houspoApiProducts:${uniqueSearchQueries.join('|')}`

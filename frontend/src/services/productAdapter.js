@@ -27,6 +27,7 @@ const blockedTerms = [
   'playset',
   'toy furniture',
   '1 12 scale',
+  'for dolls'
 ]
 
 export function isValidFurnitureProduct(
