@@ -280,7 +280,11 @@ function RefinementsPage() {
           <button
             className="continue-button"
             onClick={() =>
-              navigate('/recommendations')
+              navigate('/recommendations', {
+                state: {
+                    fromQuiz: true,
+                },
+                })
             }
           >
             <span>

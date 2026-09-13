@@ -13,11 +13,13 @@ import SavedPage from './pages/SavedPage'
 import MyStylePage from './pages/MyStylePage'
 import AboutPage from './pages/AboutPage'
 import Footer from './components/Footer'
+import ScrollRestoration from './components/ScrollRestoration'
 
 function App() {
   return (
     <>
       <CustomCursor />
+      <ScrollRestoration />
 
       <Routes>
         <Route path="/" element={<LandingPage />} />

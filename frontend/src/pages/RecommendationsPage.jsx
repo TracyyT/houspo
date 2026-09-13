@@ -30,13 +30,13 @@ function RecommendationsPage() {
 
   // Start the recommendations page
     // from the top when it opens.
-    useEffect(() => {
-    window.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: 'instant',
-    })
-    }, [])
+    // useEffect(() => {
+    // window.scrollTo({
+    //     top: 0,
+    //     left: 0,
+    //     behavior: 'instant',
+    // })
+    // }, [])
 
   // Search/filter UI state.
   const [searchTerm, setSearchTerm] =
