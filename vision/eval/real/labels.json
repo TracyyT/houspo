@@ -1,0 +1,2838 @@
+[
+ {
+  "image": "001.jpg",
+  "width": 960,
+  "height": 1280,
+  "items": [
+   {
+    "key": "001.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     686.7,
+     482.2,
+     765.6,
+     765.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Kcm7atv",
+     "BRX2kvK",
+     "fzwaDUR"
+    ]
+   },
+   {
+    "key": "001.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     466.4,
+     801.7,
+     651,
+     935.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4Q0k2zZ",
+     "A7o84Qy"
+    ]
+   },
+   {
+    "key": "001.jpg#2",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0.8,
+     727.2,
+     598.4,
+     1280
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sHXCWrd",
+     "7zWpsqi",
+     "O0Q111n",
+     "hyA5NK6"
+    ]
+   },
+   {
+    "key": "001.jpg#3",
+    "label": "ottoman",
+    "category": "ottoman",
+    "box": [
+     530,
+     908.1,
+     960,
+     1262.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "5F8Xj5M",
+     "WFVpcOl"
+    ]
+   },
+   {
+    "key": "001.jpg#4",
+    "label": "framed wall art",
+    "category": "wall art",
+    "box": [
+     101.9,
+     369.1,
+     206,
+     596
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "5jxUbxM"
+    ]
+   },
+   {
+    "key": "001.jpg#5",
+    "label": "desk",
+    "category": "desk",
+    "box": [
+     706.1,
+     765.8,
+     959.9,
+     960.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "vPcdnAf",
+     "3qZphbw",
+     "kGlv3aK",
+     "3YDEi4T"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "002.jpg",
+  "width": 1080,
+  "height": 1080,
+  "items": [
+   {
+    "key": "002.jpg#0",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     680.6,
+     648.1,
+     1079.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "002.jpg#1",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     736.8,
+     159.2,
+     863.9,
+     327.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "NNPXHr1",
+     "MdzdLdN"
+    ]
+   },
+   {
+    "key": "002.jpg#2",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     75.9,
+     772.4,
+     249.5,
+     956.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "YhFh3DR",
+     "jw1jvj4"
+    ]
+   },
+   {
+    "key": "002.jpg#3",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     0,
+     596,
+     268.5,
+     869.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "OMeE1tl",
+     "TrBHq8Y",
+     "qx8CwXU",
+     "1tnJnxB",
+     "OmM74n3",
+     "XZJ8lEN"
+    ]
+   },
+   {
+    "key": "002.jpg#4",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     110.5,
+     531.7,
+     213.6,
+     620.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "JcHZQFM",
+     "YhFh3DR",
+     "jw1jvj4"
+    ]
+   },
+   {
+    "key": "002.jpg#5",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     194.8,
+     186.7,
+     369.1,
+     442.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "ZZ7SOtE",
+     "M2cpjgn",
+     "sonaUyB"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "003.jpg",
+  "width": 386,
+  "height": 518,
+  "items": [
+   {
+    "key": "003.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     48.2,
+     184,
+     166.9,
+     276.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Kcm7atv",
+     "DJseNjw"
+    ]
+   },
+   {
+    "key": "003.jpg#1",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     156.8,
+     278,
+     309.6,
+     385.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "QhoYlbT",
+     "K6RgUxP",
+     "y7ZeDVs"
+    ]
+   },
+   {
+    "key": "003.jpg#2",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0.1,
+     357.9,
+     311,
+     506.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4qctNpD",
+     "Lj16TI3"
+    ]
+   },
+   {
+    "key": "003.jpg#3",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     66,
+     336,
+     195.1,
+     419.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "1u3MHNK",
+     "XZJ8lEN",
+     "auvv3Cu",
+     "TrBHq8Y"
+    ]
+   },
+   {
+    "key": "003.jpg#4",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     293.3,
+     316.9,
+     386,
+     513.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "ZZ7SOtE",
+     "wKxaj7X"
+    ]
+   },
+   {
+    "key": "003.jpg#5",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     216.6,
+     182.9,
+     257.5,
+     232.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "D55dRZs",
+     "rbxPMsA",
+     "5OFUIr7"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "004.jpg",
+  "width": 499,
+  "height": 615,
+  "items": [
+   {
+    "key": "004.jpg#0",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     268,
+     423.8,
+     498.7,
+     594
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "TrBHq8Y",
+     "OMeE1tl",
+     "1tnJnxB"
+    ]
+   },
+   {
+    "key": "004.jpg#1",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     485.9,
+     499,
+     614.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "fjk6dmH",
+     "K0iZ1PH",
+     "JBO88lE"
+    ]
+   },
+   {
+    "key": "004.jpg#2",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     315.8,
+     403.8,
+     377.3,
+     466.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "OBNYwbz",
+     "i5niaIb",
+     "7npNXqK"
+    ]
+   },
+   {
+    "key": "004.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     432.4,
+     384.8,
+     486.6,
+     445.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "7npNXqK",
+     "i5niaIb"
+    ]
+   },
+   {
+    "key": "004.jpg#4",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0,
+     331.7,
+     499,
+     519
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sHXCWrd",
+     "uyHi74j",
+     "7L4FVZv"
+    ]
+   },
+   {
+    "key": "004.jpg#5",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     272,
+     173.7,
+     343.3,
+     313.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "5ZBvoVM"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "006.jpg",
+  "width": 480,
+  "height": 640,
+  "items": [
+   {
+    "key": "006.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     202,
+     0,
+     314.3,
+     89.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "BoFzoJN",
+     "lElmyYM",
+     "7PrqdlX",
+     "Urns35A",
+     "peEWFwy",
+     "qZyhXQg"
+    ]
+   },
+   {
+    "key": "006.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     192.8,
+     337.4,
+     362.7,
+     439.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "1tnJnxB"
+    ]
+   },
+   {
+    "key": "006.jpg#2",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     243.5,
+     337.5,
+     271.8,
+     374.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "006.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     60.5,
+     242.5,
+     79,
+     257.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "plYVObZ"
+    ]
+   },
+   {
+    "key": "006.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     0.1,
+     171.2,
+     48.7,
+     266.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "DJseNjw",
+     "MH67Wx6",
+     "5ceFkIS",
+     "BRX2kvK"
+    ]
+   },
+   {
+    "key": "006.jpg#5",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0,
+     276.9,
+     258.8,
+     625
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "O0Q111n"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "007.jpg",
+  "width": 387,
+  "height": 516,
+  "items": [
+   {
+    "key": "007.jpg#0",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     59.1,
+     294.5,
+     205.1,
+     516
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "VMDg76K",
+     "KoJmHhJ",
+     "T1ao4Of"
+    ]
+   },
+   {
+    "key": "007.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     332.4,
+     187.1,
+     386.5,
+     263.7
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "007.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     243.2,
+     321.4,
+     387,
+     516
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "vxKrfc0"
+    ]
+   },
+   {
+    "key": "007.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     215,
+     80.1,
+     247.9,
+     131.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "PnswS2B"
+    ]
+   },
+   {
+    "key": "007.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     112.9,
+     0,
+     253.1,
+     50.6
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "007.jpg#5",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     109,
+     252.8,
+     165.6,
+     308.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "008.jpg",
+  "width": 710,
+  "height": 640,
+  "items": [
+   {
+    "key": "008.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     290.9,
+     1,
+     531,
+     212.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "qyaAlg2"
+    ]
+   },
+   {
+    "key": "008.jpg#1",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     521.7,
+     344.1,
+     710,
+     576.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "8MbtEXi",
+     "EPwvk5W"
+    ]
+   },
+   {
+    "key": "008.jpg#2",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     1.3,
+     478.3,
+     708.4,
+     627
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "JBO88lE"
+    ]
+   },
+   {
+    "key": "008.jpg#3",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0,
+     376,
+     240,
+     588.7
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "008.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     188.4,
+     351.9,
+     223.8,
+     398.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Uq8Fq4J"
+    ]
+   },
+   {
+    "key": "008.jpg#5",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     346.6,
+     400.2,
+     387.2,
+     442.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "FRRslD5"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "009.jpg",
+  "width": 712,
+  "height": 1061,
+  "items": [
+   {
+    "key": "009.jpg#0",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     327.7,
+     689.1,
+     669.5,
+     838.5
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "009.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     241.3,
+     611.4,
+     309.7,
+     722.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sfs1uJL",
+     "tQeyP0E"
+    ]
+   },
+   {
+    "key": "009.jpg#2",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     14.9,
+     811.6,
+     362.5,
+     1061
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "QQDSMyJ"
+    ]
+   },
+   {
+    "key": "009.jpg#3",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     355.9,
+     789.9,
+     630.6,
+     894.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "9CjmnQi"
+    ]
+   },
+   {
+    "key": "009.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     415.6,
+     0.5,
+     572.8,
+     329.6
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "009.jpg#5",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     679.5,
+     611.6,
+     711.5,
+     716.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "eAxcwXm"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "010.jpg",
+  "width": 399,
+  "height": 501,
+  "items": [
+   {
+    "key": "010.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     176.5,
+     0.1,
+     223.6,
+     75.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "RDODlXK",
+     "t4eRfqt"
+    ]
+   },
+   {
+    "key": "010.jpg#1",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     111.2,
+     383.3,
+     313,
+     501
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "BGAHPmp",
+     "cN9kwDi",
+     "tmxYaXr",
+     "JRD11Cd"
+    ]
+   },
+   {
+    "key": "010.jpg#2",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     137.1,
+     238.8,
+     157.1,
+     261
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "ZZ7SOtE"
+    ]
+   },
+   {
+    "key": "010.jpg#3",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     8.1,
+     297.1,
+     55.1,
+     343.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "wXUImkM"
+    ]
+   },
+   {
+    "key": "010.jpg#4",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     218.2,
+     99.3,
+     254.6,
+     138
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sonaUyB",
+     "i5niaIb"
+    ]
+   },
+   {
+    "key": "010.jpg#5",
+    "label": "dining table",
+    "category": "dining table",
+    "box": [
+     0,
+     346.6,
+     87.5,
+     501
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "oS0Nxl1",
+     "2qr8kf7",
+     "1xNeiRA"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "011.jpg",
+  "width": 500,
+  "height": 613,
+  "items": [
+   {
+    "key": "011.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     60.3,
+     0,
+     230.8,
+     113.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Urns35A",
+     "BoFzoJN",
+     "7PrqdlX",
+     "4vxQly9",
+     "nQZ2VFi",
+     "JGQposT"
+    ]
+   },
+   {
+    "key": "011.jpg#1",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     0.2,
+     497.9,
+     231.3,
+     613
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "011.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     0.3,
+     362.3,
+     56.6,
+     461.6
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "011.jpg#3",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     370,
+     0.1,
+     498.3,
+     260.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "i5niaIb",
+     "OBNYwbz",
+     "EN6abAO",
+     "wKxaj7X"
+    ]
+   },
+   {
+    "key": "011.jpg#4",
+    "label": "shelf",
+    "category": "bookshelf",
+    "box": [
+     274.6,
+     441.8,
+     395.2,
+     612.9
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "011.jpg#5",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     16.6,
+     195.3,
+     82.1,
+     324.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "i5niaIb"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "012.jpg",
+  "width": 600,
+  "height": 800,
+  "items": [
+   {
+    "key": "012.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     70.2,
+     296.9,
+     138.7,
+     604.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "wj6VBSx",
+     "qQL5YwT",
+     "HGhvSKq"
+    ]
+   },
+   {
+    "key": "012.jpg#1",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     116.7,
+     472,
+     260.2,
+     652.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "9t9Vj4G"
+    ]
+   },
+   {
+    "key": "012.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     377.3,
+     471.9,
+     530.6,
+     652.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "9t9Vj4G"
+    ]
+   },
+   {
+    "key": "012.jpg#3",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     313.9,
+     513.6,
+     386.8,
+     617.5
+    ],
+    "status": "unlabeled",
+    "correct_ids": []
+   },
+   {
+    "key": "012.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     401.6,
+     281.1,
+     416.5,
+     360.5
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "013.jpg",
+  "width": 678,
+  "height": 452,
+  "items": [
+   {
+    "key": "013.jpg#0",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     489,
+     266,
+     670.2,
+     436.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "w0jiFDs",
+     "73kw4Vc",
+     "ECmpmj8"
+    ]
+   },
+   {
+    "key": "013.jpg#1",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     128.9,
+     320.9,
+     670.3,
+     437.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "tmxYaXr",
+     "hIGEOFW"
+    ]
+   },
+   {
+    "key": "013.jpg#2",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     537.3,
+     146,
+     594.7,
+     291.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "b7km9Ai"
+    ]
+   },
+   {
+    "key": "013.jpg#3",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     246.4,
+     235.5,
+     497.7,
+     327.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "y7ZeDVs",
+     "T2WLHMs",
+     "K6RgUxP",
+     "QhoYlbT"
+    ]
+   },
+   {
+    "key": "013.jpg#4",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     269.1,
+     318.1,
+     347.8,
+     407.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "EkkebN6"
+    ]
+   },
+   {
+    "key": "013.jpg#5",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     334.3,
+     290.6,
+     443.4,
+     368.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "014.jpg",
+  "width": 819,
+  "height": 1024,
+  "items": [
+   {
+    "key": "014.jpg#0",
+    "label": "ottoman",
+    "category": "ottoman",
+    "box": [
+     668.4,
+     709.2,
+     818.9,
+     905.9
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "014.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     152,
+     718.9,
+     667.3,
+     908
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "OMeE1tl",
+     "V0PHug0",
+     "6ZxOXmP"
+    ]
+   },
+   {
+    "key": "014.jpg#2",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     294.5,
+     657.1,
+     413.9,
+     749
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "OBNYwbz",
+     "4HsZVCS"
+    ]
+   },
+   {
+    "key": "014.jpg#3",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     0,
+     715.2,
+     332,
+     1024
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "6hU3c5H",
+     "ECmpmj8"
+    ]
+   },
+   {
+    "key": "014.jpg#4",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     418.7,
+     531.3,
+     818.8,
+     751.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "uyHi74j",
+     "7L4FVZv"
+    ]
+   },
+   {
+    "key": "014.jpg#5",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     221,
+     220.8,
+     270,
+     274.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4HsZVCS",
+     "FRRslD5",
+     "XEQKBmc"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "015.jpg",
+  "width": 452,
+  "height": 678,
+  "items": [
+   {
+    "key": "015.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     223.2,
+     103.7,
+     289.9,
+     239.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "9yeLVoz"
+    ]
+   },
+   {
+    "key": "015.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     285.4,
+     94.4,
+     366.5,
+     270.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "9yeLVoz"
+    ]
+   },
+   {
+    "key": "015.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     18.7,
+     393.2,
+     116.7,
+     495.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "6hU3c5H",
+     "vDx0KuZ"
+    ]
+   },
+   {
+    "key": "015.jpg#3",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     208.7,
+     447.4,
+     424.6,
+     519.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "W7eN1qS"
+    ]
+   },
+   {
+    "key": "015.jpg#4",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     232.3,
+     368.7,
+     306.8,
+     460.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "WkpzGfA",
+     "EN6abAO"
+    ]
+   },
+   {
+    "key": "015.jpg#5",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     301.1,
+     373.4,
+     364.7,
+     437.6
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "016.jpg",
+  "width": 335,
+  "height": 597,
+  "items": [
+   {
+    "key": "016.jpg#0",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     69.5,
+     393.9,
+     115.6,
+     457.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "i5niaIb"
+    ]
+   },
+   {
+    "key": "016.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     1.1,
+     439.8,
+     237.4,
+     559.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "xuirBQQ",
+     "xVNJUQf"
+    ]
+   },
+   {
+    "key": "016.jpg#2",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     503.8,
+     334.9,
+     597
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Lj16TI3"
+    ]
+   },
+   {
+    "key": "016.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     193.5,
+     173.3,
+     227.1,
+     219.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "XEQKBmc"
+    ]
+   },
+   {
+    "key": "016.jpg#4",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0,
+     276.3,
+     334.5,
+     513.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sHXCWrd",
+     "7L4FVZv"
+    ]
+   },
+   {
+    "key": "016.jpg#5",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     83.5,
+     131.5,
+     99.3,
+     166.8
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "017.jpg",
+  "width": 736,
+  "height": 1104,
+  "items": [
+   {
+    "key": "017.jpg#0",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     0.4,
+     776.3,
+     129.4,
+     911.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "YhFh3DR",
+     "jw1jvj4"
+    ]
+   },
+   {
+    "key": "017.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     182.2,
+     755,
+     553,
+     956.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "W7eN1qS",
+     "iNSQxUF"
+    ]
+   },
+   {
+    "key": "017.jpg#2",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     818.2,
+     681.7,
+     985.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4qctNpD",
+     "K0iZ1PH",
+     "IT2I6HO"
+    ]
+   },
+   {
+    "key": "017.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     489.1,
+     658.4,
+     523.6,
+     688.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "017.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     252,
+     151.7,
+     500.3,
+     531.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "BoFzoJN",
+     "nQZ2VFi"
+    ]
+   },
+   {
+    "key": "017.jpg#5",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0,
+     971.8,
+     735.3,
+     1104
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "018.jpg",
+  "width": 1280,
+  "height": 1024,
+  "items": [
+   {
+    "key": "018.jpg#0",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     523.4,
+     731.9,
+     612.2,
+     828.5
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "018.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     807.6,
+     0,
+     898.7,
+     280.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "nQZ2VFi",
+     "Urns35A"
+    ]
+   },
+   {
+    "key": "018.jpg#2",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     558.5,
+     870,
+     713.3,
+     1024
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "018.jpg#3",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     644.1,
+     704.3,
+     946.3,
+     1013
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "018.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     0,
+     0.1,
+     58.9,
+     124.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "nQZ2VFi"
+    ]
+   },
+   {
+    "key": "018.jpg#5",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     23.2,
+     5.5,
+     131.3,
+     311.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "nQZ2VFi"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "019.jpg",
+  "width": 495,
+  "height": 619,
+  "items": [
+   {
+    "key": "019.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     0,
+     112,
+     36.6,
+     261.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "2JFt0at",
+     "t4eRfqt"
+    ]
+   },
+   {
+    "key": "019.jpg#1",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     309.6,
+     453.6,
+     407.7,
+     509.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "rsMrZ0s",
+     "qx8CwXU",
+     "V0PHug0",
+     "00Pcks1"
+    ]
+   },
+   {
+    "key": "019.jpg#2",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     0.1,
+     446.7,
+     219.5,
+     619
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "019.jpg#3",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     230.1,
+     404.9,
+     312.6,
+     471.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "6hU3c5H",
+     "qGp8a3y"
+    ]
+   },
+   {
+    "key": "019.jpg#4",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     226.7,
+     465.9,
+     438.1,
+     533.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "H9kcZth"
+    ]
+   },
+   {
+    "key": "019.jpg#5",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     437,
+     507.6,
+     474.1,
+     534.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "MYSetBD"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "020.jpg",
+  "width": 853,
+  "height": 1280,
+  "items": [
+   {
+    "key": "020.jpg#0",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     1.2,
+     818.8,
+     183.8,
+     1141
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "WkpzGfA",
+     "zOFDExU"
+    ]
+   },
+   {
+    "key": "020.jpg#1",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     552.9,
+     708.8,
+     618.7,
+     796.2
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "020.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     663.7,
+     819.7,
+     804.1,
+     918.4
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "020.jpg#3",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     150.3,
+     747.6,
+     339.9,
+     1082.6
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "020.jpg#4",
+    "label": "dining table",
+    "category": "dining table",
+    "box": [
+     449.1,
+     776.8,
+     853,
+     911.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Qa6yA3z",
+     "df4fJ6K",
+     "buZGROY"
+    ]
+   },
+   {
+    "key": "020.jpg#5",
+    "label": "cushion",
+    "category": "throw pillow",
+    "box": [
+     181,
+     779,
+     330.2,
+     918.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "P5exPGo"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "021.jpg",
+  "width": 452,
+  "height": 678,
+  "items": [
+   {
+    "key": "021.jpg#0",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     130.6,
+     449.9,
+     262.8,
+     635.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "T9vVh35"
+    ]
+   },
+   {
+    "key": "021.jpg#1",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     104.1,
+     386.2,
+     320.6,
+     495.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "6hU3c5H"
+    ]
+   },
+   {
+    "key": "021.jpg#2",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     383.6,
+     422.4,
+     451.9,
+     579.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "wKxaj7X"
+    ]
+   },
+   {
+    "key": "021.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     63.7,
+     266.4,
+     95.3,
+     337.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Urns35A"
+    ]
+   },
+   {
+    "key": "021.jpg#4",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     257.9,
+     469.4,
+     362.8,
+     546.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "qx8CwXU",
+     "OMeE1tl"
+    ]
+   },
+   {
+    "key": "021.jpg#5",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     474.7,
+     404.5,
+     635.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Lj16TI3",
+     "JRD11Cd"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "022.jpg",
+  "width": 1120,
+  "height": 1121,
+  "items": [
+   {
+    "key": "022.jpg#0",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     773.4,
+     48.3,
+     1062.1,
+     590.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "0JbPkOc"
+    ]
+   },
+   {
+    "key": "022.jpg#1",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     92.6,
+     918.7,
+     405.7,
+     1121
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "H9kcZth",
+     "dn0l08Z"
+    ]
+   },
+   {
+    "key": "022.jpg#2",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     520.3,
+     275.7,
+     613.4,
+     560.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "yl2Pfv5",
+     "0JbPkOc",
+     "DmreUhh"
+    ]
+   },
+   {
+    "key": "022.jpg#3",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     413.9,
+     458.4,
+     490,
+     646.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "HKSi9Gc"
+    ]
+   },
+   {
+    "key": "022.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     650.1,
+     182.2,
+     695.4,
+     434.2
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "022.jpg#5",
+    "label": "shelf",
+    "category": "bookshelf",
+    "box": [
+     520.2,
+     812.8,
+     778.9,
+     1120.9
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "023.jpg",
+  "width": 452,
+  "height": 678,
+  "items": [
+   {
+    "key": "023.jpg#0",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     0.7,
+     50.3,
+     143.8,
+     295.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "BHRlNhD"
+    ]
+   },
+   {
+    "key": "023.jpg#1",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     212.3,
+     589.2,
+     451.4,
+     678
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "JRD11Cd"
+    ]
+   },
+   {
+    "key": "023.jpg#2",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     157.1,
+     91.1,
+     202.1,
+     156.4
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "023.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     42.1,
+     0,
+     104.9,
+     68.7
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "023.jpg#4",
+    "label": "potted plant",
+    "category": "planter",
+    "box": [
+     135.7,
+     273,
+     267.5,
+     393.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "g9Sf4Aj",
+     "wKxaj7X"
+    ]
+   },
+   {
+    "key": "023.jpg#5",
+    "label": "shelf",
+    "category": "bookshelf",
+    "box": [
+     237.6,
+     402.5,
+     292.3,
+     611.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "lwB8qAe"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "024.jpg",
+  "width": 335,
+  "height": 597,
+  "items": [
+   {
+    "key": "024.jpg#0",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0.7,
+     398.3,
+     123.6,
+     493.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "JRD11Cd",
+     "Lj16TI3"
+    ]
+   },
+   {
+    "key": "024.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     138.7,
+     233.8,
+     191.8,
+     308.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4UfLMu4",
+     "eAxcwXm"
+    ]
+   },
+   {
+    "key": "024.jpg#2",
+    "label": "desk",
+    "category": "desk",
+    "box": [
+     69,
+     351.5,
+     334.1,
+     517.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "7Dy0vnR",
+     "WBdel59"
+    ]
+   },
+   {
+    "key": "024.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     317.8,
+     289.6,
+     334.7,
+     313
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   },
+   {
+    "key": "024.jpg#4",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     0,
+     405.2,
+     334.8,
+     597
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "dn0l08Z",
+     "JBO88lE"
+    ]
+   },
+   {
+    "key": "024.jpg#5",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     214,
+     308.3,
+     288.3,
+     451.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Key2Kaa",
+     "reEZPXV"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "025.jpg",
+  "width": 365,
+  "height": 547,
+  "items": [
+   {
+    "key": "025.jpg#0",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     215.6,
+     323.8,
+     335.5,
+     495.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "vxKrfc0"
+    ]
+   },
+   {
+    "key": "025.jpg#1",
+    "label": "couch",
+    "category": "sofa",
+    "box": [
+     94.7,
+     311.3,
+     279.2,
+     388
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "pPRMV4S"
+    ]
+   },
+   {
+    "key": "025.jpg#2",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     60.3,
+     386.4,
+     126,
+     436.8
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   },
+   {
+    "key": "025.jpg#3",
+    "label": "carpet",
+    "category": "rug",
+    "box": [
+     7.5,
+     392,
+     311.8,
+     547
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "lCKZhXW"
+    ]
+   },
+   {
+    "key": "025.jpg#4",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     0.7,
+     383.4,
+     87.4,
+     547
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   },
+   {
+    "key": "025.jpg#5",
+    "label": "coffee table",
+    "category": "coffee table",
+    "box": [
+     176.4,
+     318,
+     279.8,
+     377.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "1XWgSWU"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "026.jpg",
+  "width": 415,
+  "height": 739,
+  "items": [
+   {
+    "key": "026.jpg#0",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     2.8,
+     330.1,
+     170.8,
+     644.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4OhnwSC"
+    ]
+   },
+   {
+    "key": "026.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     77.3,
+     358,
+     104.8,
+     402.1
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "WbODzk9"
+    ]
+   },
+   {
+    "key": "026.jpg#2",
+    "label": "desk",
+    "category": "desk",
+    "box": [
+     66.5,
+     388,
+     386.4,
+     619.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "bPTMEKP"
+    ]
+   },
+   {
+    "key": "026.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     0.5,
+     7.1,
+     31.5,
+     64.3
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "026.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     350.6,
+     195.9,
+     385.2,
+     231.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "HGhvSKq"
+    ]
+   },
+   {
+    "key": "026.jpg#5",
+    "label": "pouf",
+    "category": "ottoman",
+    "box": [
+     164.9,
+     459.6,
+     264.6,
+     553.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "laRaIXp"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "027.jpg",
+  "width": 236,
+  "height": 421,
+  "items": [
+   {
+    "key": "027.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     32.2,
+     0.2,
+     92.2,
+     91.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Urns35A",
+     "JGQposT"
+    ]
+   },
+   {
+    "key": "027.jpg#1",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     56.1,
+     254.2,
+     185.8,
+     414.9
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "jrmcjM2"
+    ]
+   },
+   {
+    "key": "027.jpg#2",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     106.7,
+     0.2,
+     151.3,
+     110
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "Urns35A"
+    ]
+   },
+   {
+    "key": "027.jpg#3",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     72.9,
+     208.7,
+     114.5,
+     240.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "4HsZVCS"
+    ]
+   },
+   {
+    "key": "027.jpg#4",
+    "label": "vase",
+    "category": "vase",
+    "box": [
+     11.1,
+     230.1,
+     72.8,
+     259.5
+    ],
+    "status": "wrong",
+    "correct_ids": []
+   },
+   {
+    "key": "027.jpg#5",
+    "label": "dining table",
+    "category": "dining table",
+    "box": [
+     0.1,
+     214.2,
+     199.9,
+     398
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "028.jpg",
+  "width": 479,
+  "height": 640,
+  "items": [
+   {
+    "key": "028.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     171.4,
+     0.3,
+     266.1,
+     124.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "e8Rmn8e",
+     "RDODlXK",
+     "t4eRfqt",
+     "2JFt0at"
+    ]
+   },
+   {
+    "key": "028.jpg#1",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     272,
+     0.6,
+     349,
+     135.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "2JFt0at",
+     "e8Rmn8e"
+    ]
+   },
+   {
+    "key": "028.jpg#2",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     0,
+     299.8,
+     178.9,
+     615.5
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "VcqMzMl"
+    ]
+   },
+   {
+    "key": "028.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     341.1,
+     0.4,
+     408,
+     144.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "2JFt0at",
+     "e8Rmn8e"
+    ]
+   },
+   {
+    "key": "028.jpg#4",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     211.4,
+     311.8,
+     351.6,
+     551.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "028.jpg#5",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     333.9,
+     317.6,
+     423.9,
+     503.8
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "LlUWGQ3"
+    ]
+   }
+  ]
+ },
+ {
+  "image": "029.jpg",
+  "width": 1280,
+  "height": 640,
+  "items": [
+   {
+    "key": "029.jpg#0",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     747.7,
+     24.6,
+     861.8,
+     354.4
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "3u68e3E"
+    ]
+   },
+   {
+    "key": "029.jpg#1",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     349.1,
+     472.8,
+     435.8,
+     587.2
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "029.jpg#2",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     443.8,
+     24.4,
+     555.2,
+     354.2
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "zY0Tc4D"
+    ]
+   },
+   {
+    "key": "029.jpg#3",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     614.1,
+     489.9,
+     702,
+     612.8
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "029.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     594.1,
+     25.1,
+     708.9,
+     355.9
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "029.jpg#5",
+    "label": "chair",
+    "category": "chair",
+    "box": [
+     876.8,
+     474.1,
+     965.2,
+     586.7
+    ],
+    "status": "ok",
+    "correct_ids": []
+   }
+  ]
+ },
+ {
+  "image": "030.jpg",
+  "width": 1120,
+  "height": 1120,
+  "items": [
+   {
+    "key": "030.jpg#0",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     26.7,
+     791.8,
+     221.2,
+     1012.1
+    ],
+    "status": "ok",
+    "correct_ids": []
+   },
+   {
+    "key": "030.jpg#1",
+    "label": "mirror",
+    "category": "mirror",
+    "box": [
+     742.1,
+     224.9,
+     919,
+     398.3
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "D55dRZs"
+    ]
+   },
+   {
+    "key": "030.jpg#2",
+    "label": "stool",
+    "category": "chair",
+    "box": [
+     845.9,
+     903.5,
+     983.2,
+     1063
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "YhFh3DR",
+     "jw1jvj4"
+    ]
+   },
+   {
+    "key": "030.jpg#3",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     636,
+     433,
+     702.2,
+     562
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "eAxcwXm",
+     "sfs1uJL"
+    ]
+   },
+   {
+    "key": "030.jpg#4",
+    "label": "lamp",
+    "category": "lamp",
+    "box": [
+     429.3,
+     432.6,
+     502.6,
+     551.7
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "sfs1uJL",
+     "eAxcwXm",
+     "yre3Tv2",
+     "4UfLMu4"
+    ]
+   },
+   {
+    "key": "030.jpg#5",
+    "label": "bed",
+    "category": "bed",
+    "box": [
+     717.7,
+     428.9,
+     1120,
+     946.6
+    ],
+    "status": "ok",
+    "correct_ids": [
+     "3LwnenX"
+    ]
+   }
+  ]
+ }
+]

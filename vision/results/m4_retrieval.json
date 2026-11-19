@@ -1,0 +1,61 @@
+{
+  "gallery_size": 779,
+  "queries": 544,
+  "runs": {
+    "clip-b32 | full photo": {
+      "queries": 544,
+      "recall@1": 0.4191,
+      "recall@5": 0.693,
+      "recall@10": 0.7739,
+      "mrr": 0.5369,
+      "latency_p50_ms": 11.6,
+      "latency_p95_ms": 12.5
+    },
+    "clip-b32 | full photo | oracle category": {
+      "queries": 544,
+      "recall@1": 0.4816,
+      "recall@5": 0.8088,
+      "recall@10": 0.9099,
+      "mrr": 0.6204,
+      "latency_p50_ms": 11.0,
+      "latency_p95_ms": 12.0
+    },
+    "clip-b32 | full photo | channel3 subset": {
+      "queries": 30,
+      "recall@1": 0.3,
+      "recall@5": 0.6667,
+      "recall@10": 0.7667,
+      "mrr": 0.4153,
+      "latency_p50_ms": 10.9,
+      "latency_p95_ms": 11.7
+    },
+    "siglip2-base | full photo": {
+      "queries": 544,
+      "recall@1": 0.5331,
+      "recall@5": 0.7794,
+      "recall@10": 0.8438,
+      "mrr": 0.6413,
+      "latency_p50_ms": 17.6,
+      "latency_p95_ms": 19.3
+    },
+    "siglip2-base | full photo | oracle category": {
+      "queries": 544,
+      "recall@1": 0.5772,
+      "recall@5": 0.8456,
+      "recall@10": 0.9301,
+      "mrr": 0.6958,
+      "latency_p50_ms": 17.6,
+      "latency_p95_ms": 18.8
+    },
+    "siglip2-base | full photo | channel3 subset": {
+      "queries": 30,
+      "recall@1": 0.5,
+      "recall@5": 0.8333,
+      "recall@10": 0.8333,
+      "mrr": 0.6361,
+      "latency_p50_ms": 17.4,
+      "latency_p95_ms": 18.7
+    }
+  },
+  "device": "mps"
+}

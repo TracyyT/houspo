@@ -1,0 +1,9 @@
+{
+  "queries": 30,
+  "recall@1": 0.3,
+  "recall@5": 0.3667,
+  "recall@10": 0.4667,
+  "mrr": 0.3484,
+  "latency_p50_ms": 1074.5,
+  "latency_p95_ms": 1250.2
+}

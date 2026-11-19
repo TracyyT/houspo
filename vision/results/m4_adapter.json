@@ -1,0 +1,69 @@
+{
+  "features": "features_siglip2-base-patch16-224_yoloe-26s-seg-v3",
+  "folds": 5,
+  "final_epochs": 3,
+  "best_epochs_per_fold": [
+    3,
+    3,
+    2,
+    1,
+    4
+  ],
+  "training_photos": 1420,
+  "siglip2_box_crop": {
+    "queries": 544,
+    "recall@1": 0.6305,
+    "recall@5": 0.8511,
+    "recall@10": 0.9081,
+    "mrr": 0.7302
+  },
+  "siglip2_box_crop_adapter": {
+    "queries": 544,
+    "recall@1": 0.6875,
+    "recall@5": 0.8879,
+    "recall@10": 0.9265,
+    "mrr": 0.7779
+  },
+  "per_fold": [
+    {
+      "fold": 0,
+      "train_photos": 983,
+      "test_queries": 106,
+      "best_epoch": 3,
+      "base_recall@5": 0.8491,
+      "adapter_recall@5": 0.8868
+    },
+    {
+      "fold": 1,
+      "train_photos": 993,
+      "test_queries": 108,
+      "best_epoch": 3,
+      "base_recall@5": 0.8241,
+      "adapter_recall@5": 0.8611
+    },
+    {
+      "fold": 2,
+      "train_photos": 992,
+      "test_queries": 115,
+      "best_epoch": 2,
+      "base_recall@5": 0.8522,
+      "adapter_recall@5": 0.8957
+    },
+    {
+      "fold": 3,
+      "train_photos": 1031,
+      "test_queries": 93,
+      "best_epoch": 1,
+      "base_recall@5": 0.8602,
+      "adapter_recall@5": 0.8817
+    },
+    {
+      "fold": 4,
+      "train_photos": 951,
+      "test_queries": 122,
+      "best_epoch": 4,
+      "base_recall@5": 0.8689,
+      "adapter_recall@5": 0.9098
+    }
+  ]
+}

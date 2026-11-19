@@ -20,6 +20,131 @@ const app = express()
 const PORT = process.env.PORT || 3001
 
 app.use(cors())
+
+const visionLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+// The vision service scales to zero, so the first
+// photo after a quiet period includes its start-up.
+const VISION_TIMEOUT_MS =
+  Number(process.env.VISION_TIMEOUT_MS) || 60000
+
+const warmLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+// Start the vision service when someone opens the
+// Shop this room page, so it's ready by the time
+// they pick a photo. Responds right away.
+app.get(
+  '/api/vision/warm',
+  warmLimiter,
+  (req, res) => {
+    if (!process.env.VISION_SERVICE_URL) {
+      return res.json({ warming: false })
+    }
+
+    fetch(
+      `${process.env.VISION_SERVICE_URL}/health`,
+      { signal: AbortSignal.timeout(VISION_TIMEOUT_MS) }
+    ).catch((error) => {
+      console.error(
+        'Vision warm-up failed:',
+        error.message
+      )
+    })
+
+    res.json({ warming: true })
+  }
+)
+
+// Shop this room: send a room photo to the
+// vision service and return detected items
+// with visually similar products.
+//
+// Registered before the global JSON parser
+// because photos are larger than its 100kb limit.
+app.post(
+  '/api/vision/shop-room',
+  visionLimiter,
+  express.json({ limit: '8mb' }),
+  async (req, res) => {
+    const { image } = req.body || {}
+
+    if (
+      typeof image !== 'string' ||
+      image.length === 0
+    ) {
+      return res.status(400).json({
+        error: 'Image is required',
+      })
+    }
+
+    // The app still works without the vision
+    // service; the frontend falls back to
+    // regular product search.
+    if (!process.env.VISION_SERVICE_URL) {
+      return res.json({
+        items: [],
+        room_matches: [],
+        visionUsed: false,
+      })
+    }
+
+    try {
+      const response = await fetch(
+        `${process.env.VISION_SERVICE_URL}/detect-and-match`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Vision-Key':
+              process.env.VISION_API_KEY || '',
+          },
+          body: JSON.stringify({
+            image_base64: image,
+            k: 8,
+          }),
+          signal: AbortSignal.timeout(
+            VISION_TIMEOUT_MS
+          ),
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error(
+          `Vision service failed: ${response.status}`
+        )
+      }
+
+      const data = await response.json()
+
+      res.json({
+        ...data,
+        visionUsed: true,
+      })
+    } catch (error) {
+      console.error(
+        'Vision service error:',
+        error.message
+      )
+
+      res.json({
+        items: [],
+        room_matches: [],
+        visionUsed: false,
+      })
+    }
+  }
+)
+
 app.use(express.json())
 const aiLimiter = rateLimit({
   windowMs: 60 * 1000,
