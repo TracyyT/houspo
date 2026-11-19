@@ -22,7 +22,7 @@
 
 ## Reading the results
 
-- **SigLIP 2 vs CLIP:** SigLIP 2 roughly doubles Recall@5 gains over CLIP's starting point: +11.4 to +15.2 points Recall@5, and +14.5 points Recall@1.
+- **SigLIP 2 vs CLIP:** with the same detections (v3 prompts), SigLIP 2 beats CLIP by 11.4 points Recall@5 (74.8% vs 63.4%) and 14.5 points Recall@1 (37.4% vs 22.9%).
 - **New prompts (v3):** +1.5 points Recall@5 over v2. That's within noise for 131 items, but there was no loss, and false detections stayed low (95.9% precision).
 - **Adapter:** +3.8 points Recall@5 on real photos, with no change at Recall@1. On its own that's within noise (±7 points at n=131). It is switched on because it also gains on the catalog set under 5-fold cross-validation, with improvements in every fold (Recall@5 +3.7, Recall@1 +5.7), and it never hurt.
 - **Real rooms are harder than catalog photos.** Recall@1 drops from about 69% on catalog photos to about 37% here. Real rooms are cluttered, the lighting varies, and an exact product is rarely in the catalog. Matches in real rooms are usually "close in style" rather than identical.
