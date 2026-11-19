@@ -6,6 +6,10 @@ houspo helps users discover furniture, decor, and lighting that match their pers
 
 With **Shop this room**, users can also upload a photo of a room. houspo finds each piece of furniture and decor in it and matches it with visually similar products from the live catalog, ranked for the user's style and budget.
 
+![Shop this room: upload a room photo, click a detected item, see similar products](docs/shop-room.gif)
+
+<sub>Demo room photo from Unsplash.</sub>
+
 ## Live Demo
 
 **[Visit houspo →](https://houspo-nu.vercel.app/)**
