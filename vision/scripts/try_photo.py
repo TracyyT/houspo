@@ -10,9 +10,10 @@ import json
 from pathlib import Path
 
 import requests
-from PIL import Image, ImageDraw
+from PIL import ImageDraw
 
 from houspo_vision import config
+from houspo_vision.images import open_rgb
 
 
 def main():
@@ -22,7 +23,7 @@ def main():
     args = parser.parse_args()
 
     photo = Path(args.photo)
-    image = Image.open(photo).convert('RGB')
+    image = open_rgb(photo)
     image.thumbnail((1280, 1280))
     image.save(config.DATA_DIR / 'try_upload.jpg', 'JPEG', quality=90)
     body = {'image_base64': base64.b64encode(

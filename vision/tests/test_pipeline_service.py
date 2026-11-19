@@ -110,6 +110,19 @@ def test_service_rejects_bad_images(client):
     assert client.post('/detect-and-match', json={'image_base64': not_image}).status_code == 400
 
 
+def test_service_applies_phone_rotation():
+    from service.app import decode_image
+    # A 60x40 landscape picture stored with "rotate 90" in its EXIF,
+    # the way phones save portrait photos.
+    image = Image.new('RGB', (60, 40), (10, 20, 30))
+    exif = Image.Exif()
+    exif[0x0112] = 6
+    buffer = io.BytesIO()
+    image.save(buffer, 'JPEG', exif=exif)
+    decoded = decode_image(base64.b64encode(buffer.getvalue()).decode())
+    assert decoded.size == (40, 60)
+
+
 def test_service_key(client, monkeypatch):
     monkeypatch.setenv('VISION_API_KEY', 'secret')
     body = {'image_base64': image_b64()}

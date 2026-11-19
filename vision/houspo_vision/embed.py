@@ -3,6 +3,8 @@ import numpy as np
 import torch
 from PIL import Image
 
+from .images import open_rgb, upright
+
 
 def pick_device():
     if torch.cuda.is_available():
@@ -13,7 +15,7 @@ def pick_device():
 
 
 def _load(images):
-    return [img if isinstance(img, Image.Image) else Image.open(img).convert('RGB')
+    return [upright(img) if isinstance(img, Image.Image) else open_rgb(img)
             for img in images]
 
 

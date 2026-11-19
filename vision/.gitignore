@@ -5,3 +5,9 @@ results/raw/
 *.pt
 *.ts
 *.mlpackage
+
+# room photos stay local unless explicitly added (they can contain location data)
+eval/real/*.jpg
+eval/real/*.jpeg
+eval/real/*.png
+eval/real/*.heic

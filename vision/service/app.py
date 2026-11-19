@@ -10,6 +10,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Header, HTTPException
 from PIL import Image, UnidentifiedImageError
+
+from houspo_vision.images import upright
 from pydantic import BaseModel, Field
 
 MAX_IMAGE_BYTES = 8 * 1024 * 1024
@@ -32,7 +34,7 @@ def decode_image(data):
     if len(raw) > MAX_IMAGE_BYTES:
         raise HTTPException(413, 'image is larger than 8 MB')
     try:
-        image = Image.open(io.BytesIO(raw)).convert('RGB')
+        image = upright(Image.open(io.BytesIO(raw)))
     except (UnidentifiedImageError, OSError):
         raise HTTPException(400, 'could not read image')
     image.thumbnail((MAX_SIDE, MAX_SIDE))
@@ -57,7 +59,11 @@ def create_app(pipeline_factory=default_pipeline):
 
     @asynccontextmanager
     async def lifespan(app):
-        state['pipeline'] = pipeline_factory()
+        pipeline = pipeline_factory()
+        # The first request on a fresh model is slow, so pay that
+        # cost at startup instead of on a user's upload.
+        pipeline.analyze(Image.new('RGB', (640, 480), (200, 200, 200)))
+        state['pipeline'] = pipeline
         yield
         state.clear()
 

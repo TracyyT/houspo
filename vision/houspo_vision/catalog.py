@@ -9,6 +9,7 @@ import requests
 from PIL import Image
 
 from . import config
+from .images import upright
 from .channel3 import products_from_response
 
 # Detectable room items -> the text query used to fill the catalog.
@@ -151,7 +152,7 @@ def download_image(url, max_side=640, session=None):
         response = session.get(url, timeout=20, headers={
             'User-Agent': 'Mozilla/5.0 (Macintosh) houspo-eval/1.0'})
         response.raise_for_status()
-        image = Image.open(io.BytesIO(response.content)).convert('RGB')
+        image = upright(Image.open(io.BytesIO(response.content)))
     except Exception:
         return None
     image.thumbnail((max_side, max_side))

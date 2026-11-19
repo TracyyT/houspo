@@ -8,7 +8,6 @@ import json
 import time
 
 import numpy as np
-from PIL import Image
 from tqdm import tqdm
 
 from houspo_vision import config
@@ -18,6 +17,7 @@ from houspo_vision.crops import make_crop
 from houspo_vision.detect import YoloeDetector
 from houspo_vision.embed import get_embedder
 from houspo_vision.gallery import build_index
+from houspo_vision.images import open_rgb
 from houspo_vision.metrics import first_hit_rank, summarize
 from houspo_vision.pipeline import ShopRoom
 
@@ -44,7 +44,7 @@ def main():
     pipeline = ShopRoom(detector, embedder, index, products, crop_mode='box')
 
     # Warm up both models before timing anything.
-    warm = Image.open(config.VISION_DIR / pairs[0]['query_image']).convert('RGB')
+    warm = open_rgb(config.VISION_DIR / pairs[0]['query_image'])
     pipeline.analyze(warm)
 
     ranks = {mode: [] for mode in MODES}
@@ -54,7 +54,7 @@ def main():
     per_category = {}
 
     for pair in tqdm(pairs, desc='photos'):
-        image = Image.open(config.VISION_DIR / pair['query_image']).convert('RGB')
+        image = open_rgb(config.VISION_DIR / pair['query_image'])
         image.thumbnail((1280, 1280))
 
         # End-to-end: everything the API does for one photo.
