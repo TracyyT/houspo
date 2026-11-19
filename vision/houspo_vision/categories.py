@@ -1,37 +1,58 @@
 """Room items we look for, and which catalog categories each
 detection is allowed to match against.
 
-Some pairs are easy to confuse from a photo (a sofa vs. a
-sectional, a nightstand vs. a side table), so a detection
-searches its whole group instead of a single category.
+Specific prompts ("dining chair") map to one category. Generic
+prompts ("chair") catch items the specific ones miss and search
+a wider group. Easily confused categories (sofa vs. sectional)
+also search each other.
 """
 
-# Detector prompt -> catalog category.
+# Detector prompt -> category or generic group.
 PROMPTS = {
     'sofa': 'sofa',
+    'couch': 'sofa',
     'sectional sofa': 'sectional',
     'armchair': 'armchair',
+    'chair': 'chair',
+    'dining chair': 'dining chair',
+    'office chair': 'office chair',
+    'stool': 'chair',
     'coffee table': 'coffee table',
     'side table': 'side table',
     'dining table': 'dining table',
-    'dining chair': 'dining chair',
+    'table': 'table',
+    'desk': 'desk',
     'bed': 'bed',
     'nightstand': 'nightstand',
     'dresser': 'dresser',
-    'bookshelf': 'bookshelf',
-    'desk': 'desk',
-    'office chair': 'office chair',
+    'cabinet': 'storage',
     'tv stand': 'tv stand',
+    'media console': 'tv stand',
+    'bookshelf': 'bookshelf',
+    'shelf': 'bookshelf',
     'bench': 'bench',
+    'lamp': 'lamp',
     'floor lamp': 'floor lamp',
     'table lamp': 'table lamp',
     'pendant light': 'pendant light',
-    'area rug': 'rug',
-    'wall mirror': 'mirror',
+    'chandelier': 'pendant light',
+    'ceiling light': 'pendant light',
+    'rug': 'rug',
+    'carpet': 'rug',
+    'mirror': 'mirror',
     'framed wall art': 'wall art',
+    'painting': 'wall art',
     'potted plant': 'planter',
     'vase': 'vase',
     'throw pillow': 'throw pillow',
+    'cushion': 'throw pillow',
+}
+
+GENERIC = {
+    'chair': {'dining chair', 'armchair', 'office chair'},
+    'table': {'coffee table', 'side table', 'dining table', 'desk', 'nightstand'},
+    'storage': {'dresser', 'tv stand', 'nightstand', 'bookshelf'},
+    'lamp': {'floor lamp', 'table lamp', 'pendant light'},
 }
 
 GROUPS = [
@@ -46,6 +67,8 @@ GROUPS = [
 
 
 def search_categories(category):
+    if category in GENERIC:
+        return set(GENERIC[category])
     allowed = {category}
     for group in GROUPS:
         if category in group:

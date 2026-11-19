@@ -53,7 +53,8 @@ def test_detection_only_matches_its_category_group():
     # The lamp is the closest vector, but a sofa may only match sofas/sectionals.
     assert [m['id'] for m in item['matches']] == ['sofa1', 'sect1']
     assert item['matches'][0]['image'] == 'i1'
-    assert result['room_matches'] == []
+    # The whole-photo row is always there.
+    assert result['room_matches'][0]['id'] == 'lamp1'
     assert set(result['timings_ms']) == {'detect_ms', 'embed_ms', 'search_ms'}
 
 
@@ -61,6 +62,13 @@ def test_no_detections_falls_back_to_whole_photo():
     result = make_pipeline([]).analyze(Image.new('RGB', (100, 80)))
     assert result['items'] == []
     assert result['room_matches'][0]['id'] == 'lamp1'
+
+
+def test_generic_prompts_search_their_group():
+    from houspo_vision.categories import PROMPTS, search_categories
+    assert search_categories(PROMPTS['chair']) == {'dining chair', 'armchair', 'office chair'}
+    assert 'pendant light' in search_categories(PROMPTS['lamp'])
+    assert search_categories('sofa') == {'sofa', 'sectional'}
 
 
 def test_crops():

@@ -30,6 +30,7 @@ def main():
     parser.add_argument('--detector', default='yoloe-26s-seg.pt')
     parser.add_argument('--conf', type=float, default=0.25)
     parser.add_argument('--limit', type=int, default=0)
+    parser.add_argument('--tag', default='')
     args = parser.parse_args()
 
     products = load_catalog()
@@ -40,7 +41,7 @@ def main():
     embedder = get_embedder(args.embedder)
     detector = YoloeDetector(args.detector, conf=args.conf)
     index = build_index(embedder, products)
-    pipeline = ShopRoom(detector, embedder, index, products, crop_mode='mask')
+    pipeline = ShopRoom(detector, embedder, index, products, crop_mode='box')
 
     # Warm up both models before timing anything.
     warm = Image.open(config.VISION_DIR / pairs[0]['query_image']).convert('RGB')
@@ -48,14 +49,13 @@ def main():
 
     ranks = {mode: [] for mode in MODES}
     ranks['whole photo, no detection'] = []
-    any_item_ranks, end_to_end_ms, detect_ms, items_per_photo = [], [], [], []
+    any_item_ranks, with_room_row, end_to_end_ms, detect_ms, items_per_photo = [], [], [], []
     detected = 0
     per_category = {}
 
     for pair in tqdm(pairs, desc='photos'):
         image = Image.open(config.VISION_DIR / pair['query_image']).convert('RGB')
         image.thumbnail((1280, 1280))
-        allowed = search_categories(pair['category'])
 
         # End-to-end: everything the API does for one photo.
         start = time.perf_counter()
@@ -67,15 +67,17 @@ def main():
         # Best rank over every detected item, i.e. the user clicks the right one.
         item_ranks = [first_hit_rank([m['id'] for m in item['matches']], pair['correct_ids'])
                       for item in result['items']]
-        if not result['items']:
-            item_ranks = [first_hit_rank([m['id'] for m in result['room_matches']],
-                                         pair['correct_ids'])]
         found = [r for r in item_ranks if r]
         any_item_ranks.append(min(found) if found else None)
+        room_rank = first_hit_rank([m['id'] for m in result['room_matches']],
+                                   pair['correct_ids'])
+        found += [room_rank] if room_rank else []
+        with_room_row.append(min(found) if found else None)
 
         # Per-mode: use the detection that matches the target category.
         detections = detector.detect(image)
-        target = next((d for d in detections if d['category'] in allowed), None)
+        target = next((d for d in detections
+                       if pair['category'] in search_categories(d['category'])), None)
         whole = embedder.embed_images([image])[0]
         ranks['whole photo, no detection'].append(first_hit_rank(
             [pid for pid, _ in index.search(whole, k=10)], pair['correct_ids']))
@@ -93,10 +95,10 @@ def main():
             for mode in MODES:
                 ranks[mode].append(ranks['whole photo, no detection'][-1])
 
-        stats = per_category.setdefault(pair['category'], {'n': 0, 'detected': 0, 'mask_top5': 0})
+        stats = per_category.setdefault(pair['category'], {'n': 0, 'detected': 0, 'box_top5': 0})
         stats['n'] += 1
         stats['detected'] += bool(target)
-        stats['mask_top5'] += bool(ranks['mask'][-1] and ranks['mask'][-1] <= 5)
+        stats['box_top5'] += bool(ranks['box'][-1] and ranks['box'][-1] <= 5)
 
     results = {
         'embedder': embedder.name,
@@ -106,7 +108,9 @@ def main():
         'detection_rate': round(detected / len(pairs), 4),
         'avg_items_per_photo': round(float(np.mean(items_per_photo)), 2),
         'runs': {mode: summarize(r) for mode, r in ranks.items()},
+        'conf': args.conf,
         'any_detected_item': summarize(any_item_ranks),
+        'any_item_or_room_row': summarize(with_room_row),
         'end_to_end_latency': summarize([1] * len(end_to_end_ms), end_to_end_ms),
         'detect_latency': summarize([1] * len(detect_ms), detect_ms),
         'per_category': per_category,
@@ -114,7 +118,7 @@ def main():
     for key in ('end_to_end_latency', 'detect_latency'):
         results[key] = {k: v for k, v in results[key].items() if 'latency' in k}
 
-    out = config.RESULTS_DIR / 'm2_detection.json'
+    out = config.RESULTS_DIR / f'm2_detection{args.tag}.json'
     out.write_text(json.dumps(results, indent=2))
     print(json.dumps({k: v for k, v in results.items() if k != 'per_category'}, indent=2))
 

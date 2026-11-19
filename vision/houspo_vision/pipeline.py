@@ -16,7 +16,7 @@ def _thin(polygon, max_points=80):
 
 
 class ShopRoom:
-    def __init__(self, detector, embedder, index, products, crop_mode='mask'):
+    def __init__(self, detector, embedder, index, products, crop_mode='box'):
         self.detector = detector
         self.embedder = embedder
         self.index = index
@@ -41,8 +41,11 @@ class ShopRoom:
         timings['detect_ms'] = (time.perf_counter() - start) * 1000
 
         start = time.perf_counter()
-        crops = [make_crop(image, d, crop_mode) for d in detections] or [image]
+        # The whole photo is embedded too, so there is always a
+        # "matches for this room" row even if an item was missed.
+        crops = [make_crop(image, d, crop_mode) for d in detections] + [image]
         vectors = self.embedder.embed_images(crops)
+        room_vector = vectors[-1]
         timings['embed_ms'] = (time.perf_counter() - start) * 1000
 
         start = time.perf_counter()
@@ -57,11 +60,8 @@ class ShopRoom:
                 'matches': [self._product_card(pid, score) for pid, score in hits],
             })
 
-        # Nothing detected: fall back to matching the whole photo.
-        room_matches = []
-        if not detections:
-            room_matches = [self._product_card(pid, score)
-                            for pid, score in self.index.search(vectors[0], k=k)]
+        room_matches = [self._product_card(pid, score)
+                        for pid, score in self.index.search(room_vector, k=k)]
         timings['search_ms'] = (time.perf_counter() - start) * 1000
 
         return {
