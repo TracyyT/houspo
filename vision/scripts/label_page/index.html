@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>houspo · label room photos</title>
+<style>
+  body { margin: 0; font: 14px/1.5 -apple-system, "DM Sans", sans-serif; background: #f5f1eb; color: #1c1713; }
+  header { position: sticky; top: 0; z-index: 2; padding: 14px 28px; background: #fbfaf7; border-bottom: 1px solid #e3dbd1; display: flex; gap: 24px; align-items: center; }
+  header h1 { font-size: 17px; margin: 0; }
+  #progress { color: #756d65; }
+  #saved { margin-left: auto; color: #756d65; font-size: 12px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+  .guide { background: #fbfaf7; border: 1px solid #e3dbd1; border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; color: #4b423b; }
+  .photo { margin-bottom: 48px; }
+  .photo h2 { font-size: 16px; margin: 0 0 10px; }
+  .item { display: grid; grid-template-columns: 220px 1fr; gap: 18px; background: #fbfaf7; border: 1px solid #e3dbd1; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+  .item.done { border-color: #9cb08d; }
+  .item.wrong { opacity: .55; }
+  .item canvas { width: 220px; border-radius: 8px; background: #ddd6ce; }
+  .item h3 { margin: 8px 0 4px; font-size: 14px; }
+  .actions { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .actions button { border: 1px solid #cfc5ba; background: #fff; border-radius: 999px; padding: 5px 10px; cursor: pointer; font: inherit; font-size: 12px; }
+  .actions button.on { background: #3a2a20; color: #fbfaf7; border-color: #3a2a20; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .tile { border: 2px solid transparent; border-radius: 10px; background: #fff; cursor: pointer; overflow: hidden; font-size: 11px; }
+  .tile img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: #eee; }
+  .tile div { padding: 6px; height: 3.2em; overflow: hidden; }
+  .tile.on { border-color: #4f7a3a; box-shadow: 0 0 0 3px rgba(79,122,58,.25); }
+  .tile.on::after { content: "✓ match"; display: block; padding: 0 6px 6px; color: #4f7a3a; font-weight: 600; }
+</style>
+</head>
+<body>
+<header><h1>Label room photos</h1><span id="progress"></span><span id="saved"></span></header>
+<main>
+  <div class="guide">
+    For each detected item, click every product that's a <b>close match</b>: same kind of item with a similar
+    shape, color and material, something you'd accept as "this look". Order is shuffled on purpose.
+    If none fit, click <b>No good match</b>. If the box isn't a real piece of furniture or decor (or is
+    labeled as the wrong kind of thing), click <b>Not a real item</b>. Everything saves automatically.
+  </div>
+  <div id="photos"></div>
+</main>
+<script>
+let photos = [], labels = {}
+const savedEl = document.getElementById('saved')
+
+function itemState(key) {
+  return labels[key] || (labels[key] = { status: 'unlabeled', correct_ids: [] })
+}
+
+function exportLabels() {
+  return photos.map((photo) => ({
+    image: photo.image,
+    width: photo.width,
+    height: photo.height,
+    items: photo.items.map((item) => ({
+      key: item.key, label: item.label, category: item.category, box: item.box,
+      ...itemState(item.key),
+    })),
+  }))
+}
+
+let timer
+function save() {
+  clearTimeout(timer)
+  savedEl.textContent = 'saving…'
+  timer = setTimeout(async () => {
+    await fetch('/save', { method: 'POST', body: JSON.stringify(exportLabels()) })
+    savedEl.textContent = 'saved'
+  }, 300)
+  progress()
+}
+
+function progress() {
+  const all = photos.flatMap((p) => p.items)
+  const done = all.filter((i) => itemState(i.key).status !== 'unlabeled').length
+  document.getElementById('progress').textContent = `${done} / ${all.length} items labeled`
+}
+
+function render() {
+  const root = document.getElementById('photos')
+  root.innerHTML = ''
+  for (const photo of photos) {
+    const section = document.createElement('section')
+    section.className = 'photo'
+    section.innerHTML = `<h2>${photo.image} · ${photo.items.length} items</h2>`
+    const img = new Image()
+    img.src = `/photo/${photo.image}`
+    for (const item of photo.items) section.appendChild(renderItem(photo, item, img))
+    root.appendChild(section)
+  }
+  progress()
+}
+
+function renderItem(photo, item, img) {
+  const state = itemState(item.key)
+  const card = document.createElement('div')
+  const refresh = () => {
+    card.className = 'item' + (state.status === 'ok' ? ' done' : '') + (state.status === 'wrong' ? ' wrong' : '')
+    noMatch.classList.toggle('on', state.status === 'ok' && state.correct_ids.length === 0)
+    wrong.classList.toggle('on', state.status === 'wrong')
+    for (const tile of grid.children) tile.classList.toggle('on', state.correct_ids.includes(tile.dataset.id))
+  }
+
+  const left = document.createElement('div')
+  const canvas = document.createElement('canvas')
+  const [x1, y1, x2, y2] = item.box
+  const pad = 0.1, w = x2 - x1, h = y2 - y1
+  const sx = Math.max(0, x1 - w * pad), sy = Math.max(0, y1 - h * pad)
+  const sw = Math.min(photo.width - sx, w * (1 + 2 * pad)), sh = Math.min(photo.height - sy, h * (1 + 2 * pad))
+  canvas.width = 440; canvas.height = Math.round(440 * sh / sw)
+  const draw = () => canvas.getContext('2d').drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height)
+  img.complete ? draw() : img.addEventListener('load', draw)
+  left.appendChild(canvas)
+  left.insertAdjacentHTML('beforeend', `<h3>${item.label}</h3>`)
+
+  const actions = document.createElement('div')
+  actions.className = 'actions'
+  const noMatch = document.createElement('button')
+  noMatch.textContent = 'No good match'
+  noMatch.onclick = () => { state.status = 'ok'; state.correct_ids = []; refresh(); save() }
+  const wrong = document.createElement('button')
+  wrong.textContent = 'Not a real item'
+  wrong.onclick = () => { state.status = state.status === 'wrong' ? 'unlabeled' : 'wrong'; state.correct_ids = []; refresh(); save() }
+  actions.append(noMatch, wrong)
+  left.appendChild(actions)
+
+  const grid = document.createElement('div')
+  grid.className = 'grid'
+  for (const c of item.candidates) {
+    const tile = document.createElement('div')
+    tile.className = 'tile'
+    tile.dataset.id = c.id
+    tile.innerHTML = `<img loading="lazy" src="/product/${c.image}"><div>${c.price ? '$' + c.price + ' · ' : ''}${c.title}</div>`
+    tile.onclick = () => {
+      const ids = new Set(state.correct_ids)
+      ids.has(c.id) ? ids.delete(c.id) : ids.add(c.id)
+      state.correct_ids = [...ids]
+      state.status = 'ok'
+      refresh(); save()
+    }
+    grid.appendChild(tile)
+  }
+
+  card.append(left, grid)
+  refresh()
+  return card
+}
+
+fetch('/data').then((r) => r.json()).then((data) => {
+  photos = data.photos
+  for (const photo of data.labels) for (const item of photo.items) {
+    labels[item.key] = { status: item.status, correct_ids: item.correct_ids || [] }
+  }
+  render()
+})
+</script>
+</body>
+</html>
