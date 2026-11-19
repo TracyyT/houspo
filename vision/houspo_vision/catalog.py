@@ -41,8 +41,11 @@ CATEGORY_QUERIES = {
 
 LIFESTYLE_WORDS = ('lifestyle', 'in_context', 'in-context', 'context',
                    'scene', 'room', 'styled', 'environment')
-CLEAN_WORDS = ('product', 'cutout', 'packshot', 'white', 'clean', 'studio',
-               'front', 'main', 'primary')
+# Order of preference for the catalog-side product photo.
+# Infographics, size charts and packaging are never used if
+# anything better exists.
+GALLERY_PRIORITY = ('hero', 'angle_view', 'flat_lay', '', 'detail', 'in_use',
+                    'scale_reference', 'lifestyle', 'on_model')
 
 
 def _image_entry(image):
@@ -90,20 +93,31 @@ def is_lifestyle(image):
 def gallery_image(product):
     """The clean product photo used as the catalog side of retrieval."""
     images = product['images']
+    if not images:
+        return None
     for img in images:
         if img['is_cleaned']:
             return img
-    for img in images:
-        if img['shot_type'] and any(w in img['shot_type'] for w in CLEAN_WORDS):
-            return img
-    non_lifestyle = [img for img in images if not is_lifestyle(img)]
-    return (non_lifestyle or images or [None])[0]
+    for shot in GALLERY_PRIORITY:
+        for img in images:
+            if img['shot_type'] == shot:
+                return img
+    return images[0]
 
 
 def title_key(product):
-    """Same product sold by several retailers often shares a title."""
-    title = re.sub(r'[^a-z0-9 ]', ' ', product['title'].lower())
-    return ' '.join(title.split()[:8])
+    """Normalized brand + title.
+
+    The same product sold by several retailers shares a brand and
+    title. Generic titles like "Coffee Table" are too vague to say
+    two listings are the same product, so they get no shared key.
+    """
+    title = re.sub(r'[^a-z0-9 ]', ' ', product['title'].lower()).split()
+    brand = re.sub(r'[^a-z0-9 ]', ' ', (product['brand'] or '').lower()).split()
+    title = [word for word in title if word not in brand]
+    if len(title) < 3 or not brand:
+        return f'id:{product["id"]}'
+    return ' '.join(brand) + ' | ' + ' '.join(title[:8])
 
 
 def build_catalog(client, per_query=30, categories=None):

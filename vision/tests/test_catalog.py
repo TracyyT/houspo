@@ -26,8 +26,25 @@ def test_normalize_and_gallery_choice():
 
 def test_title_key_groups_retailer_duplicates():
     a = normalize_product({**RAW, 'title': 'Linen Sofa, 84"'}, 'sofa')
-    b = normalize_product({**RAW, 'title': 'linen sofa 84'}, 'sofa')
+    b = normalize_product({**RAW, 'id': 'xyz', 'title': 'linen sofa 84'}, 'sofa')
     assert title_key(a) == title_key(b)
+
+
+def test_generic_titles_and_other_brands_do_not_group():
+    a = normalize_product({**RAW, 'title': 'Coffee Table'}, 'coffee table')
+    b = normalize_product({**RAW, 'id': 'xyz', 'title': 'Coffee Table'}, 'coffee table')
+    c = normalize_product({**RAW, 'id': 'q', 'brands': [{'name': 'Other'}]}, 'sofa')
+    assert title_key(a) != title_key(b)
+    assert title_key(c) != title_key(normalize_product(RAW, 'sofa'))
+
+
+def test_gallery_prefers_hero_over_infographic():
+    product = normalize_product({**RAW, 'images': [
+        {'url': 'https://img/info.jpg', 'shot_type': 'product_information'},
+        {'url': 'https://img/room.jpg', 'shot_type': 'lifestyle'},
+        {'url': 'https://img/hero.jpg', 'shot_type': 'hero'},
+    ]}, 'sofa')
+    assert gallery_image(product)['url'] == 'https://img/hero.jpg'
 
 
 def test_dhash_matches_resized_copy(tmp_path):

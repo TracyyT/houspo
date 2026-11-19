@@ -18,6 +18,10 @@ def _load(images):
 
 
 def _normalize(features):
+    # Newer transformers versions return an output object
+    # instead of a plain tensor.
+    if not torch.is_tensor(features):
+        features = features.pooler_output
     features = features.float()
     return (features / features.norm(dim=-1, keepdim=True)).cpu().numpy()
 
