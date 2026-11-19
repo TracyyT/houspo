@@ -1,0 +1,183 @@
+{
+  "embedder": "siglip2-base-patch16-224",
+  "detector": "yoloe-26m-seg",
+  "device": "mps",
+  "queries": 509,
+  "detection_rate": 0.8743,
+  "avg_items_per_photo": 6.14,
+  "runs": {
+    "full": {
+      "queries": 509,
+      "recall@1": 0.556,
+      "recall@5": 0.8271,
+      "recall@10": 0.9077,
+      "mrr": 0.6751
+    },
+    "box": {
+      "queries": 509,
+      "recall@1": 0.6405,
+      "recall@5": 0.8487,
+      "recall@10": 0.9077,
+      "mrr": 0.735
+    },
+    "mask": {
+      "queries": 509,
+      "recall@1": 0.5206,
+      "recall@5": 0.7583,
+      "recall@10": 0.831,
+      "mrr": 0.6279
+    },
+    "whole photo, no detection": {
+      "queries": 509,
+      "recall@1": 0.5265,
+      "recall@5": 0.7721,
+      "recall@10": 0.835,
+      "mrr": 0.6337
+    }
+  },
+  "conf": 0.1,
+  "any_detected_item": {
+    "queries": 509,
+    "recall@1": 0.5914,
+    "recall@5": 0.7623,
+    "recall@10": 0.8016,
+    "mrr": 0.6691
+  },
+  "any_item_or_room_row": {
+    "queries": 509,
+    "recall@1": 0.7053,
+    "recall@5": 0.8821,
+    "recall@10": 0.9273,
+    "mrr": 0.7863
+  },
+  "end_to_end_latency": {
+    "latency_p50_ms": 266.3,
+    "latency_p95_ms": 291.3
+  },
+  "detect_latency": {
+    "latency_p50_ms": 200.5,
+    "latency_p95_ms": 209.6
+  },
+  "per_category": {
+    "bed": {
+      "n": 23,
+      "detected": 22,
+      "box_top5": 19
+    },
+    "office chair": {
+      "n": 25,
+      "detected": 25,
+      "box_top5": 23
+    },
+    "side table": {
+      "n": 24,
+      "detected": 20,
+      "box_top5": 21
+    },
+    "bench": {
+      "n": 18,
+      "detected": 7,
+      "box_top5": 16
+    },
+    "pendant light": {
+      "n": 21,
+      "detected": 20,
+      "box_top5": 21
+    },
+    "wall art": {
+      "n": 25,
+      "detected": 22,
+      "box_top5": 21
+    },
+    "nightstand": {
+      "n": 25,
+      "detected": 20,
+      "box_top5": 20
+    },
+    "vase": {
+      "n": 20,
+      "detected": 20,
+      "box_top5": 18
+    },
+    "throw pillow": {
+      "n": 21,
+      "detected": 20,
+      "box_top5": 19
+    },
+    "rug": {
+      "n": 25,
+      "detected": 24,
+      "box_top5": 24
+    },
+    "sofa": {
+      "n": 18,
+      "detected": 17,
+      "box_top5": 15
+    },
+    "coffee table": {
+      "n": 16,
+      "detected": 15,
+      "box_top5": 13
+    },
+    "planter": {
+      "n": 22,
+      "detected": 17,
+      "box_top5": 13
+    },
+    "bookshelf": {
+      "n": 25,
+      "detected": 25,
+      "box_top5": 24
+    },
+    "table lamp": {
+      "n": 14,
+      "detected": 12,
+      "box_top5": 14
+    },
+    "dresser": {
+      "n": 16,
+      "detected": 14,
+      "box_top5": 14
+    },
+    "dining table": {
+      "n": 17,
+      "detected": 16,
+      "box_top5": 13
+    },
+    "floor lamp": {
+      "n": 18,
+      "detected": 18,
+      "box_top5": 16
+    },
+    "tv stand": {
+      "n": 25,
+      "detected": 11,
+      "box_top5": 18
+    },
+    "dining chair": {
+      "n": 22,
+      "detected": 21,
+      "box_top5": 20
+    },
+    "desk": {
+      "n": 21,
+      "detected": 21,
+      "box_top5": 16
+    },
+    "armchair": {
+      "n": 25,
+      "detected": 18,
+      "box_top5": 24
+    },
+    "mirror": {
+      "n": 22,
+      "detected": 20,
+      "box_top5": 16
+    },
+    "sectional": {
+      "n": 21,
+      "detected": 20,
+      "box_top5": 14
+    }
+  }
+}
