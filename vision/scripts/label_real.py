@@ -23,7 +23,7 @@ from houspo_vision.crops import box_crop
 from houspo_vision.detect import YoloeDetector
 from houspo_vision.embed import get_embedder
 from houspo_vision.gallery import build_index
-from houspo_vision.images import open_rgb
+from houspo_vision.images import open_rgb, try_open_rgb
 
 PAGE = Path(__file__).parent / 'label_page' / 'index.html'
 CANDIDATES = config.DATA_DIR / 'label_candidates.json'
@@ -47,7 +47,9 @@ def prepare(max_items=6, per_system=5, max_candidates=15):
 
     photos = []
     for path in real_photos():
-        image = open_rgb(path)
+        image = try_open_rgb(path)
+        if image is None:
+            continue
         image.thumbnail((1280, 1280))
         items = []
         for number, det in enumerate(detector.detect(image, max_items=max_items)):

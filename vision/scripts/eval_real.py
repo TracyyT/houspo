@@ -21,7 +21,7 @@ from houspo_vision.crops import box_crop
 from houspo_vision.detect import YoloeDetector
 from houspo_vision.embed import get_embedder
 from houspo_vision.gallery import build_index
-from houspo_vision.images import open_rgb
+from houspo_vision.images import open_rgb, try_open_rgb
 from houspo_vision.metrics import first_hit_rank, summarize
 from houspo_vision.pipeline import ShopRoom
 
@@ -68,7 +68,9 @@ def main():
     production.analyze(open_rgb(config.REAL_DIR / labels[0]['image']))  # warm up
 
     for photo in labels:
-        image = open_rgb(config.REAL_DIR / photo['image'])
+        image = try_open_rgb(config.REAL_DIR / photo['image'])
+        if image is None:
+            continue
         image.thumbnail((1280, 1280))
 
         start = time.perf_counter()
