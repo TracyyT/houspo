@@ -116,6 +116,7 @@ def main():
         'features': args.features,
         'folds': FOLDS,
         'final_epochs': epochs,
+        'best_epochs_per_fold': best_epochs,
         'training_photos': len(q),
         'siglip2_box_crop': summarize(base_ranks),
         'siglip2_box_crop_adapter': summarize(adapted_ranks),

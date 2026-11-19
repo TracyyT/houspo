@@ -77,7 +77,8 @@ def train_adapter(queries, targets, gallery, same_product=None, epochs=300,
         loss.backward()
         optimizer.step()
 
-        if val_queries is not None and (epoch % 10 == 0 or epoch == epochs):
+        # Every epoch early on, where the best point usually is.
+        if val_queries is not None and (epoch <= 50 or epoch % 10 == 0 or epoch == epochs):
             score = val_top1()
             if score > best[0]:
                 best = (score, epoch, weight.detach().clone(), bias.detach().clone())
