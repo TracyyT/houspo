@@ -6,36 +6,12 @@ import argparse
 import json
 import time
 
-import numpy as np
-
 from houspo_vision import config
-from houspo_vision.catalog import gallery_image, image_path_for, load_catalog
+from houspo_vision.catalog import load_catalog
 from houspo_vision.embed import get_embedder
+from houspo_vision.gallery import gallery_for, load_or_embed
 from houspo_vision.index import VectorIndex
 from houspo_vision.metrics import first_hit_rank, summarize
-
-
-def gallery_for(products):
-    ids, paths, categories = [], [], []
-    for product in products:
-        img = gallery_image(product)
-        if img and image_path_for(img['url']).exists():
-            ids.append(product['id'])
-            paths.append(image_path_for(img['url']))
-            categories.append(product['category'])
-    return ids, paths, categories
-
-
-def load_or_embed(embedder, paths):
-    cache = config.EMBED_DIR / f'{embedder.name}_gallery.npz'
-    keys = np.array([p.name for p in paths])
-    if cache.exists():
-        saved = np.load(cache)
-        if np.array_equal(saved['keys'], keys):
-            return saved['vectors']
-    vectors = embedder.embed_images(paths)
-    np.savez(cache, keys=keys, vectors=vectors)
-    return vectors
 
 
 def evaluate(embedder, index, pairs, gated=False, k=10):

@@ -10,9 +10,11 @@ class VectorIndex:
         self.categories = list(categories) if categories is not None else None
 
     def search(self, query, k=10, category=None):
+        """category can be one category or a set of allowed ones."""
         scores = self.vectors @ np.asarray(query, dtype=np.float32)
         if category is not None and self.categories is not None:
-            mask = np.array([c == category for c in self.categories])
+            allowed = {category} if isinstance(category, str) else set(category)
+            mask = np.array([c in allowed for c in self.categories])
             scores = np.where(mask, scores, -np.inf)
         k = min(k, len(self.ids))
         top = np.argpartition(-scores, k - 1)[:k]
