@@ -1,0 +1,4 @@
+# local data, caches and model weights
+data/
+results/raw/
+*.onnx

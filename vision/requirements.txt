@@ -1,0 +1,11 @@
+numpy>=1.26
+pillow>=10.0
+requests>=2.31
+python-dotenv>=1.0
+tqdm>=4.66
+torch>=2.3
+open_clip_torch>=2.24
+transformers>=4.49
+sentencepiece>=0.2
+protobuf>=4.25
+pytest>=8.0
