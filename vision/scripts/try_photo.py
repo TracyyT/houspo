@@ -8,6 +8,7 @@ import argparse
 import base64
 import json
 import os
+import time
 from pathlib import Path
 
 import requests
@@ -32,8 +33,10 @@ def main():
 
     # The deployed service needs the shared key (set VISION_API_KEY).
     headers = {'X-Vision-Key': os.environ.get('VISION_API_KEY', '')}
+    start = time.perf_counter()
     response = requests.post(f'{args.url}/detect-and-match', json=body,
                              headers=headers, timeout=120)
+    round_trip_ms = (time.perf_counter() - start) * 1000
     response.raise_for_status()
     result = response.json()
 
@@ -50,6 +53,7 @@ def main():
     for match in result['room_matches'][:3]:
         print(f"   {match['similarity']:.3f}  {match['title'][:70]}")
     print('\ntimings:', result['timings_ms'])
+    print(f'round trip (upload + processing + any start-up): {round_trip_ms:.0f} ms')
 
     out_dir = config.DATA_DIR / 'try'
     out_dir.mkdir(exist_ok=True)
