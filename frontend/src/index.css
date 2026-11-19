@@ -7427,7 +7427,7 @@ button {
 
   text-align: center;
 
-  cursor: pointer;
+  cursor: none;
 
   transition:
     border-color 0.2s ease,
@@ -7515,7 +7515,7 @@ button {
   stroke-width: 3;
   vector-effect: non-scaling-stroke;
 
-  cursor: pointer;
+  cursor: none;
 
   transition:
     fill 0.2s ease,
@@ -7592,7 +7592,7 @@ button {
 
   color: var(--dark-coffee);
 
-  cursor: pointer;
+  cursor: none;
 
   transition:
     background 0.2s ease,
@@ -7678,6 +7678,11 @@ button {
   letter-spacing: 0.02em;
 
   color: var(--dark-coffee);
+}
+
+.shop-room-back {
+  align-self: flex-start;
+  margin-bottom: 0;
 }
 
 .shop-room-fallback .edit-action-button {

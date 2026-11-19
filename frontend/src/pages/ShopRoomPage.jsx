@@ -27,6 +27,48 @@ import { getRecommendations } from '../services/recommendationService'
 
 const ROOM_ID = 'room'
 
+// The last photo and its results are kept for
+// this browser tab, so a reload or coming back
+// from a product page doesn't lose them.
+const STORAGE_KEY = 'houspoShopRoom'
+
+function loadSavedSession() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(STORAGE_KEY))
+
+    if (saved?.photo?.dataUrl && saved?.result?.visionUsed) {
+      return saved
+    }
+  } catch {
+    // Missing or unreadable: start fresh.
+  }
+
+  return null
+}
+
+function saveSession(photo, result) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ photo, result }))
+  } catch {
+    // Storage full or blocked: results just won't survive a reload.
+  }
+}
+
+function clearSavedSession() {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Nothing to clear.
+  }
+}
+
+function firstSelection(result) {
+  return (
+    result.items[0]?.id ??
+    (result.room_matches.length ? ROOM_ID : null)
+  )
+}
+
 function capitalize(text = '') {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
@@ -159,11 +201,15 @@ function ShopRoomPage() {
   } = usePreferences()
 
   // idle → preparing → analyzing → done
-  const [status, setStatus] = useState('idle')
+  const [savedSession] = useState(loadSavedSession)
+
+  const [status, setStatus] = useState(savedSession ? 'done' : 'idle')
   const [errorMessage, setErrorMessage] = useState('')
-  const [photo, setPhoto] = useState(null)
-  const [result, setResult] = useState(null)
-  const [selectedId, setSelectedId] = useState(null)
+  const [photo, setPhoto] = useState(savedSession?.photo ?? null)
+  const [result, setResult] = useState(savedSession?.result ?? null)
+  const [selectedId, setSelectedId] = useState(
+    savedSession ? firstSelection(savedSession.result) : null
+  )
   const [hoveredId, setHoveredId] = useState(null)
   const [showOutsideBudget, setShowOutsideBudget] = useState(false)
   const [recentlyDisliked, setRecentlyDisliked] = useState(null)
@@ -233,10 +279,10 @@ function ShopRoomPage() {
 
     if (data.visionUsed) {
       // Start with the most confident item.
-      setSelectedId(
-        data.items[0]?.id ??
-          (data.room_matches.length ? ROOM_ID : null)
-      )
+      setSelectedId(firstSelection(data))
+      saveSession(prepared, data)
+    } else {
+      clearSavedSession()
     }
   }
 
@@ -292,11 +338,13 @@ function ShopRoomPage() {
     )
 
   const startOver = () => {
+    clearSavedSession()
     setStatus('idle')
     setPhoto(null)
     setResult(null)
     setSelectedId(null)
     setErrorMessage('')
+    setRecentlyDisliked(null)
 
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -395,6 +443,15 @@ function ShopRoomPage() {
         {photo && (
           <div className="shop-room-layout">
             <div className="shop-room-photo-column">
+              {status === 'done' && (
+                <button
+                  className="product-detail-back shop-room-back"
+                  onClick={startOver}
+                >
+                  ← Back
+                </button>
+              )}
+
               <div className="shop-room-photo">
                 <img src={photo.dataUrl} alt="Your room" />
 
@@ -492,11 +549,6 @@ function ShopRoomPage() {
                 </div>
               )}
 
-              {status === 'done' && (
-                <button className="start-over-link" onClick={startOver}>
-                  Try another photo
-                </button>
-              )}
             </div>
 
             <div className="shop-room-panel">
