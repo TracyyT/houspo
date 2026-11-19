@@ -49,7 +49,7 @@ def main():
 
     ranks = {mode: [] for mode in MODES}
     ranks['whole photo, no detection'] = []
-    any_item_ranks, with_room_row, end_to_end_ms, detect_ms, items_per_photo = [], [], [], []
+    any_item_ranks, with_room_row, end_to_end_ms, detect_ms, items_per_photo = [], [], [], [], []
     detected = 0
     per_category = {}
 
