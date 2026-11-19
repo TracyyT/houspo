@@ -22,6 +22,8 @@ def test_normalize_and_gallery_choice():
     assert product['brand'] == 'Acme'
     assert gallery_image(product)['url'] == 'https://img/front.jpg'
     assert [is_lifestyle(i) for i in product['images']] == [True, False, False]
+    assert product['raw']['offers'][0]['price']['price'] == 899
+    assert product['raw']['images'][0] == 'https://img/room.jpg'
 
 
 def test_title_key_groups_retailer_duplicates():

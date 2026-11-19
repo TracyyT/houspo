@@ -81,6 +81,18 @@ def normalize_product(raw, category):
         'url': offer.get('url', ''),
         'category': category,
         'images': images,
+        # The fields houspo's frontend normalizer reads, so visual
+        # matches can be scored with the same rules as other products.
+        'raw': {
+            'id': str(raw.get('id')),
+            'title': raw.get('title') or '',
+            'description': (raw.get('description') or '')[:600],
+            'images': [img['url'] for img in images[:4]],
+            'offers': (raw.get('offers') or [])[:1],
+            'brands': raw.get('brands') or [],
+            'materials': raw.get('materials') or [],
+            'key_features': (raw.get('key_features') or [])[:8],
+        },
     }
 
 

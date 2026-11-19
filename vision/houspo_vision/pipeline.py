@@ -30,6 +30,7 @@ class ShopRoom:
         image = gallery_image(product)
         card['image'] = image['url'] if image else ''
         card['similarity'] = round(similarity, 4)
+        card['channel3'] = product.get('raw')
         return card
 
     def analyze(self, image, k=8, max_items=8, crop_mode=None):
