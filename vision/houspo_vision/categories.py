@@ -48,6 +48,35 @@ PROMPTS = {
     'cushion': 'throw pillow',
 }
 
+# Milestone 4 additions, measured separately in the eval.
+NEW_PROMPTS = {
+    'ottoman': 'ottoman',
+    'pouf': 'ottoman',
+    'wall hanging': 'wall decor',
+    'macrame wall hanging': 'wall decor',
+    'tv console': 'tv stand',
+}
+
+# Things that look like furniture or decor to the detector but
+# aren't sold here. Detections with these labels are dropped,
+# which stops e.g. a ceiling fan being matched as a lamp.
+NEGATIVE_PROMPTS = [
+    'ceiling fan',
+    'television',
+    'window',
+    'door',
+    'window blinds',
+    'cardboard box',
+    'person',
+]
+
+PROMPT_SETS = {
+    # Milestone 2: specific + generic prompts.
+    'v2': (PROMPTS, []),
+    # Milestone 4: new categories and negative prompts.
+    'v3': ({**PROMPTS, **NEW_PROMPTS}, NEGATIVE_PROMPTS),
+}
+
 GENERIC = {
     'chair': {'dining chair', 'armchair', 'office chair'},
     'table': {'coffee table', 'side table', 'dining table', 'desk', 'nightstand'},
@@ -63,6 +92,9 @@ GROUPS = [
     {'floor lamp', 'table lamp'},
     {'desk', 'dining table'},
     {'dresser', 'tv stand'},
+    {'desk', 'tv stand'},
+    {'ottoman', 'bench'},
+    {'wall decor', 'wall art'},
 ]
 
 

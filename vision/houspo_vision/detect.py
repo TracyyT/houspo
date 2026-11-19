@@ -1,13 +1,16 @@
 """Open-vocabulary furniture and decor detection with YOLOE."""
-from .categories import PROMPTS
+from .categories import PROMPT_SETS
 
 
 class YoloeDetector:
-    def __init__(self, weights='yoloe-26s-seg.pt', conf=0.25, device=None):
+    def __init__(self, weights='yoloe-26s-seg.pt', conf=0.25, device=None,
+                 prompt_set='v3'):
         from ultralytics import YOLOE
-        self.name = weights.replace('.pt', '')
+        self.name = f"{weights.replace('.pt', '')}-{prompt_set}"
         self.model = YOLOE(weights)
-        self.prompts = list(PROMPTS)
+        self.categories, negatives = PROMPT_SETS[prompt_set]
+        self.negatives = set(negatives)
+        self.prompts = list(self.categories) + list(negatives)
         try:
             self.model.set_classes(self.prompts)
         except TypeError:
@@ -29,9 +32,11 @@ class YoloeDetector:
         detections = []
         for box, score, cls, polygon in zip(boxes, scores, classes, polygons):
             prompt = self.prompts[cls]
+            if prompt in self.negatives:
+                continue
             detections.append({
                 'label': prompt,
-                'category': PROMPTS[prompt],
+                'category': self.categories[prompt],
                 'confidence': round(float(score), 3),
                 'box': [round(float(v), 1) for v in box],
                 'polygon': ([[round(float(x), 1), round(float(y), 1)] for x, y in polygon]

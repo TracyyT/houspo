@@ -38,6 +38,8 @@ CATEGORY_QUERIES = {
     'planter': 'indoor planter pot',
     'vase': 'decorative vase',
     'throw pillow': 'throw pillow',
+    'ottoman': 'ottoman pouf',
+    'wall decor': 'macrame wall hanging',
 }
 
 LIFESTYLE_WORDS = ('lifestyle', 'in_context', 'in-context', 'context',

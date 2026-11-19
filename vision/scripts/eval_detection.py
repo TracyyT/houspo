@@ -31,6 +31,7 @@ def main():
     parser.add_argument('--conf', type=float, default=0.25)
     parser.add_argument('--limit', type=int, default=0)
     parser.add_argument('--tag', default='')
+    parser.add_argument('--prompts', default='v3', choices=['v2', 'v3'])
     args = parser.parse_args()
 
     products = load_catalog()
@@ -39,7 +40,7 @@ def main():
         pairs = pairs[:args.limit]
 
     embedder = get_embedder(args.embedder)
-    detector = YoloeDetector(args.detector, conf=args.conf)
+    detector = YoloeDetector(args.detector, conf=args.conf, prompt_set=args.prompts)
     index = build_index(embedder, products)
     pipeline = ShopRoom(detector, embedder, index, products, crop_mode='box')
 

@@ -16,6 +16,11 @@ from houspo_vision.imagehash import dhash, hamming
 
 
 def main(seed=7, max_per_category=25):
+    # Keep the existing pairs so earlier results stay comparable;
+    # only categories without pairs get new ones.
+    existing = json.loads(config.PAIRS_PATH.read_text()) if config.PAIRS_PATH.exists() else []
+    covered = {pair['category'] for pair in existing}
+
     products = load_catalog()
     by_title = defaultdict(set)
     for product in products:
@@ -30,6 +35,8 @@ def main(seed=7, max_per_category=25):
     pairs = []
     skipped = Counter()
     for product in products:
+        if product['category'] in covered:
+            continue
         main_image = gallery_image(product)
         if not main_image or not image_path_for(main_image['url']).exists():
             skipped['no gallery image'] += 1
@@ -57,15 +64,16 @@ def main(seed=7, max_per_category=25):
 
     random.Random(seed).shuffle(pairs)
     per_category = Counter()
-    kept = []
+    kept = list(existing)
     for pair in pairs:
         if per_category[pair['category']] < max_per_category:
             per_category[pair['category']] += 1
             kept.append(pair)
 
     config.PAIRS_PATH.write_text(json.dumps(kept, indent=1))
-    print(f'{len(kept)} pairs written to {config.PAIRS_PATH.name}')
-    print('by category:', dict(per_category))
+    print(f'{len(kept)} pairs written to {config.PAIRS_PATH.name} '
+          f'({len(kept) - len(existing)} new)')
+    print('new pairs by category:', dict(per_category))
     print('skipped:', dict(skipped))
 
 
