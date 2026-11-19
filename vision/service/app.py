@@ -45,14 +45,21 @@ def default_pipeline():
     from houspo_vision.catalog import load_catalog
     from houspo_vision.detect import YoloeDetector
     from houspo_vision.embed import get_embedder
-    from houspo_vision.gallery import build_index
+    from houspo_vision.gallery import build_index, load_bundle
     from houspo_vision.pipeline import ShopRoom
 
     from houspo_vision import config
     from houspo_vision.adapter import QueryAdapter
 
-    products = load_catalog()
     embedder = get_embedder(os.getenv('VISION_EMBEDDER', 'siglip2-base'))
+    bundle = os.getenv('VISION_BUNDLE')
+    if bundle:
+        # Cloud: catalog and embeddings from the deploy bundle.
+        products, index = load_bundle(bundle, embedder.name)
+    else:
+        # Local: build (or load cached) embeddings from the downloaded images.
+        products = load_catalog()
+        index = build_index(embedder, products)
     # On by default (it improved retrieval on both test sets);
     # set VISION_ADAPTER=none to turn it off.
     adapter_name = os.getenv('VISION_ADAPTER', 'adapter_siglip2.npz')
@@ -62,8 +69,7 @@ def default_pipeline():
                if adapter_name else None)
     detector = YoloeDetector(os.getenv('VISION_DETECTOR', 'yoloe-26s-seg.pt'),
                              prompt_set=os.getenv('VISION_PROMPTS', 'v3'))
-    return ShopRoom(detector, embedder, build_index(embedder, products), products,
-                    adapter=adapter)
+    return ShopRoom(detector, embedder, index, products, adapter=adapter)
 
 
 def create_app(pipeline_factory=default_pipeline):

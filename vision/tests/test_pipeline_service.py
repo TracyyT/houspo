@@ -103,6 +103,27 @@ def test_prompt_sets():
     assert search_categories(v3['pouf']) == {'ottoman', 'bench'}
 
 
+def test_bundle_round_trip(tmp_path, monkeypatch):
+    import houspo_vision.gallery as gallery
+
+    class Named:
+        name = 'fake'
+
+    index = VectorIndex(np.eye(3, dtype=np.float32), ['sofa1', 'sect1', 'lamp1'],
+                        ['sofa', 'sectional', 'floor lamp'])
+    monkeypatch.setattr(gallery, 'build_index', lambda embedder, products: index)
+    for product in PRODUCTS:
+        product['raw'] = {'id': product['id'], 'title': product['title']}
+    assert gallery.save_bundle(tmp_path, Named(), PRODUCTS) == 3
+    products, loaded = gallery.load_bundle(tmp_path, 'fake')
+    assert [p['id'] for p in products] == ['sofa1', 'sect1', 'lamp1']
+    assert products[0]['raw']['title'] == 'Sofa'
+    assert loaded.search(np.array([0, 0, 1.0]), k=1, category='floor lamp')[0][0] == 'lamp1'
+    # The service can answer from the bundle alone.
+    pipeline = ShopRoom(FakeDetector([SOFA]), FakeEmbedder(), loaded, products)
+    assert pipeline.analyze(Image.new('RGB', (50, 50)))['items'][0]['matches'][0]['id'] == 'sofa1'
+
+
 def test_crops():
     image = Image.new('RGB', (100, 100), (0, 0, 0))
     assert padded_box([10, 10, 50, 50], (100, 100), pad=0.1) == (6, 6, 54, 54)
