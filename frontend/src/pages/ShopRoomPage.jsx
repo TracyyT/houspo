@@ -423,6 +423,31 @@ function ShopRoomPage() {
                   </svg>
                 )}
 
+                {status === 'done' &&
+                  items.map((item) => {
+                    const width = result.width || photo.width
+                    const height = result.height || photo.height
+                    const [x1, y1, x2, y2] = item.box
+
+                    return (
+                      <button
+                        key={item.id}
+                        className={`shop-room-tag ${
+                          item.id === selectedId ? 'selected' : ''
+                        }`}
+                        style={{
+                          left: `${((x1 + x2) / 2 / width) * 100}%`,
+                          top: `${((y1 + y2) / 2 / height) * 100}%`,
+                        }}
+                        onClick={() => selectItem(item.id)}
+                        onMouseEnter={() => setHoveredId(item.id)}
+                        onMouseLeave={() => setHoveredId(null)}
+                      >
+                        {capitalize(item.label)}
+                      </button>
+                    )
+                  })}
+
                 {(status === 'preparing' || status === 'analyzing') && (
                   <div className="shop-room-scanning">
                     <span>
@@ -485,6 +510,13 @@ function ShopRoomPage() {
                 <>
                   <div className="shop-room-panel-heading">
                     <h2>{panelTitle}</h2>
+
+                    {selectedItem && (
+                      <p className="shop-room-panel-position">
+                        Item {items.indexOf(selectedItem) + 1} of{' '}
+                        {items.length}
+                      </p>
+                    )}
 
                     {items.length === 0 && (
                       <p>

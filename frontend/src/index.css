@@ -7575,6 +7575,49 @@ button {
   gap: 8px;
 }
 
+.shop-room-tag {
+  position: absolute;
+  transform: translate(-50%, -50%);
+
+  padding: 5px 11px;
+
+  border-radius: 999px;
+
+  background: rgba(251, 250, 247, 0.9);
+  box-shadow: 0 4px 12px rgba(21, 19, 16, 0.18);
+
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  color: var(--dark-coffee);
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.shop-room-tag:hover {
+  transform: translate(-50%, -50%) scale(1.06);
+}
+
+.shop-room-tag.selected {
+  background: var(--dark-coffee);
+  color: var(--soft-white);
+}
+
+.shop-room-panel-heading .shop-room-panel-position {
+  margin: 0 0 4px;
+
+  font-size: 12px;
+  letter-spacing: 0.02em;
+
+  color: var(--muted);
+}
+
 .shop-room-panel {
   min-width: 0;
 }
