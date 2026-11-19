@@ -28,6 +28,7 @@ function LandingPage() {
         <nav className="nav-links">
           <a href="#about">About</a>
           <a href="#how-it-works">How It Works</a>
+          <Link to="/shop-room">Shop a Room</Link>
 
           <Link to="/preferences" className="nav-cta">
             Get Started

@@ -22,6 +22,17 @@ function AboutPage() {
             </Link>
 
             <Link
+                to="/shop-room"
+                className={
+                    location.pathname === '/shop-room'
+                        ? 'active'
+                        : ''
+                }
+            >
+                Shop a Room
+            </Link>
+
+            <Link
                 to="/saved"
                 className={
                 location.pathname === '/saved'

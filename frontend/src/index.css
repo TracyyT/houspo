@@ -7406,3 +7406,257 @@ button {
   opacity: 0;
   pointer-events: none;
 }
+
+/* =========================================================
+   SHOP THIS ROOM
+   ========================================================= */
+
+.shop-room-dropzone {
+  margin-top: 10px;
+  padding: 70px 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  border: 1.5px dashed rgba(38, 28, 22, 0.25);
+  border-radius: 17px;
+
+  background: var(--soft-white);
+
+  text-align: center;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.shop-room-dropzone:hover {
+  border-color: var(--coffee);
+  background: #fffdf9;
+}
+
+.shop-room-dropzone input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.shop-room-dropzone:focus-within {
+  outline: 2px solid var(--coffee);
+  outline-offset: 3px;
+}
+
+.shop-room-dropzone-title {
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  color: var(--dark-coffee);
+}
+
+.shop-room-dropzone-hint {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.shop-room-error {
+  margin-top: 16px;
+}
+
+.shop-room-layout {
+  margin-top: 10px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 36px;
+
+  align-items: start;
+}
+
+.shop-room-photo-column {
+  position: sticky;
+  top: 24px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shop-room-photo {
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 17px;
+
+  background: #ddd6ce;
+}
+
+.shop-room-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shop-room-overlay {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+}
+
+.shop-room-shape {
+  fill: rgba(251, 250, 247, 0);
+  stroke: rgba(251, 250, 247, 0.85);
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+
+  cursor: pointer;
+
+  transition:
+    fill 0.2s ease,
+    stroke 0.2s ease;
+}
+
+.shop-room-shape.hovered {
+  fill: rgba(251, 250, 247, 0.18);
+}
+
+.shop-room-shape.selected {
+  fill: rgba(58, 42, 32, 0.22);
+  stroke: #fbfaf7;
+  stroke-width: 4;
+}
+
+.shop-room-scanning {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  padding-bottom: 24px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(21, 19, 16, 0) 40%,
+      rgba(21, 19, 16, 0.55)
+    );
+}
+
+.shop-room-scanning span {
+  padding: 9px 16px;
+
+  border-radius: 999px;
+
+  background: rgba(251, 250, 247, 0.92);
+
+  font-size: 13px;
+  color: var(--dark-coffee);
+
+  animation: shop-room-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes shop-room-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.shop-room-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.shop-room-panel {
+  min-width: 0;
+}
+
+.shop-room-panel-heading h2 {
+  margin: 0 0 6px;
+
+  font-family: "Playfair Display", serif;
+  font-size: 30px;
+  font-weight: 500;
+
+  letter-spacing: -0.02em;
+
+  color: #241b16;
+}
+
+.shop-room-panel-heading p {
+  margin: 0 0 20px;
+
+  font-size: 14px;
+  line-height: 1.6;
+
+  color: #6e655e;
+}
+
+.shop-room-panel-message {
+  padding: 30px 0;
+
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.shop-room-grid {
+  margin-top: 18px;
+  margin-bottom: 20px;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.shop-room-card.is-disliked {
+  opacity: 0.45;
+}
+
+.shop-room-similarity {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  background: rgba(251, 250, 247, 0.92);
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+
+  color: var(--dark-coffee);
+}
+
+.shop-room-fallback .edit-action-button {
+  display: inline-block;
+}
+
+@media (max-width: 900px) {
+  .shop-room-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-room-photo-column {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .shop-room-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-room-dropzone {
+    padding: 48px 18px;
+  }
+}

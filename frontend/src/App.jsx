@@ -12,6 +12,7 @@ import ProductDetailPage from './pages/ProductDetailPage'
 import SavedPage from './pages/SavedPage'
 import MyStylePage from './pages/MyStylePage'
 import AboutPage from './pages/AboutPage'
+import ShopRoomPage from './pages/ShopRoomPage'
 import Footer from './components/Footer'
 import ScrollRestoration from './components/ScrollRestoration'
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/saved" element={<SavedPage />}/>
         <Route path="/my-style" element={<MyStylePage />}/>
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/shop-room" element={<ShopRoomPage />} />
       </Routes>
 
       <Footer />
