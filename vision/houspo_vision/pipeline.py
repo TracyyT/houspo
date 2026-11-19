@@ -16,8 +16,11 @@ def _thin(polygon, max_points=80):
 
 
 class ShopRoom:
-    def __init__(self, detector, embedder, index, products, crop_mode='box'):
+    def __init__(self, detector, embedder, index, products, crop_mode='box',
+                 adapter=None):
         self.detector = detector
+        # Optional learned layer for room-crop embeddings.
+        self.adapter = adapter
         self.embedder = embedder
         self.index = index
         self.products = {p['id']: p for p in products}
@@ -47,6 +50,8 @@ class ShopRoom:
         crops = [make_crop(image, d, crop_mode) for d in detections] + [image]
         vectors = self.embedder.embed_images(crops)
         room_vector = vectors[-1]
+        if self.adapter is not None and detections:
+            vectors = list(self.adapter(vectors[:-1])) + [room_vector]
         timings['embed_ms'] = (time.perf_counter() - start) * 1000
 
         start = time.perf_counter()

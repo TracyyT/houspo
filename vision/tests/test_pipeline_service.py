@@ -58,6 +58,27 @@ def test_detection_only_matches_its_category_group():
     assert set(result['timings_ms']) == {'detect_ms', 'embed_ms', 'search_ms'}
 
 
+def test_adapter_changes_item_matches_only():
+    from houspo_vision.adapter import QueryAdapter
+    # Maps the crop's vector onto the sectional's direction.
+    weight = np.zeros((3, 3), dtype=np.float32)
+    weight[2, 1] = 10.0
+    pipeline = make_pipeline([SOFA])
+    pipeline.adapter = QueryAdapter(weight, np.zeros(3, dtype=np.float32))
+    result = pipeline.analyze(Image.new('RGB', (100, 80)))
+    assert result['items'][0]['matches'][0]['id'] == 'sect1'
+    assert result['room_matches'][0]['id'] == 'lamp1'
+
+
+def test_untrained_adapter_is_identity(tmp_path):
+    from houspo_vision.adapter import QueryAdapter
+    adapter = QueryAdapter(np.zeros((3, 3)), np.zeros(3))
+    vectors = np.array([[0.6, 0.8, 0.0]], dtype=np.float32)
+    np.testing.assert_allclose(adapter(vectors), vectors, atol=1e-6)
+    adapter.save(tmp_path / 'a.npz')
+    np.testing.assert_allclose(QueryAdapter.load(tmp_path / 'a.npz')(vectors), vectors, atol=1e-6)
+
+
 def test_no_detections_falls_back_to_whole_photo():
     result = make_pipeline([]).analyze(Image.new('RGB', (100, 80)))
     assert result['items'] == []
@@ -69,6 +90,17 @@ def test_generic_prompts_search_their_group():
     assert search_categories(PROMPTS['chair']) == {'dining chair', 'armchair', 'office chair'}
     assert 'pendant light' in search_categories(PROMPTS['lamp'])
     assert search_categories('sofa') == {'sofa', 'sectional'}
+
+
+def test_prompt_sets():
+    from houspo_vision.categories import PROMPT_SETS, search_categories
+    v2, v2_negatives = PROMPT_SETS['v2']
+    v3, v3_negatives = PROMPT_SETS['v3']
+    assert v2_negatives == [] and 'ceiling fan' in v3_negatives
+    assert set(v2) < set(v3)
+    assert not set(v3) & set(v3_negatives)
+    assert 'tv stand' in search_categories('desk')
+    assert search_categories(v3['pouf']) == {'ottoman', 'bench'}
 
 
 def test_crops():

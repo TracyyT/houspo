@@ -48,10 +48,19 @@ def default_pipeline():
     from houspo_vision.gallery import build_index
     from houspo_vision.pipeline import ShopRoom
 
+    from houspo_vision import config
+    from houspo_vision.adapter import QueryAdapter
+
     products = load_catalog()
     embedder = get_embedder(os.getenv('VISION_EMBEDDER', 'siglip2-base'))
-    detector = YoloeDetector(os.getenv('VISION_DETECTOR', 'yoloe-26s-seg.pt'))
-    return ShopRoom(detector, embedder, build_index(embedder, products), products)
+    # Off unless VISION_ADAPTER names a trained adapter file.
+    adapter_name = os.getenv('VISION_ADAPTER')
+    adapter = (QueryAdapter.load(config.VISION_DIR / 'models' / adapter_name)
+               if adapter_name else None)
+    detector = YoloeDetector(os.getenv('VISION_DETECTOR', 'yoloe-26s-seg.pt'),
+                             prompt_set=os.getenv('VISION_PROMPTS', 'v3'))
+    return ShopRoom(detector, embedder, build_index(embedder, products), products,
+                    adapter=adapter)
 
 
 def create_app(pipeline_factory=default_pipeline):
