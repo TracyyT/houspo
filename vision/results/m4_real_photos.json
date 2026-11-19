@@ -1,0 +1,49 @@
+{
+  "photos": 29,
+  "labeled_items": 172,
+  "detection_precision_v3": 0.9593,
+  "items_with_no_close_match_in_catalog": 34,
+  "items_scored": 131,
+  "runs": {
+    "CLIP ViT-B/32, detected box (v3 prompts)": {
+      "queries": 131,
+      "recall@1": 0.229,
+      "recall@5": 0.6336,
+      "recall@10": 0.7328,
+      "mrr": 0.3877
+    },
+    "SigLIP 2, detected box (v2 prompts)": {
+      "queries": 131,
+      "recall@1": 0.3664,
+      "recall@5": 0.7328,
+      "recall@10": 0.8397,
+      "mrr": 0.512
+    },
+    "SigLIP 2, detected box (v3 prompts)": {
+      "queries": 131,
+      "recall@1": 0.374,
+      "recall@5": 0.7481,
+      "recall@10": 0.855,
+      "mrr": 0.5222
+    },
+    "SigLIP 2 + adapter, detected box (v3 prompts)": {
+      "queries": 131,
+      "recall@1": 0.374,
+      "recall@5": 0.7863,
+      "recall@10": 0.855,
+      "mrr": 0.5265
+    },
+    "SigLIP 2, whole photo (no detection)": {
+      "queries": 131,
+      "recall@1": 0.0076,
+      "recall@5": 0.084,
+      "recall@10": 0.1527,
+      "mrr": 0.0388
+    }
+  },
+  "end_to_end_latency": {
+    "latency_p50_ms": 162.6,
+    "latency_p95_ms": 256.2
+  },
+  "device": "mps"
+}
