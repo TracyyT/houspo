@@ -28,8 +28,42 @@ const visionLimiter = rateLimit({
   legacyHeaders: false,
 })
 
+// The vision service scales to zero, so the first
+// photo after a quiet period includes its start-up.
 const VISION_TIMEOUT_MS =
-  Number(process.env.VISION_TIMEOUT_MS) || 25000
+  Number(process.env.VISION_TIMEOUT_MS) || 60000
+
+const warmLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+
+// Start the vision service when someone opens the
+// Shop this room page, so it's ready by the time
+// they pick a photo. Responds right away.
+app.get(
+  '/api/vision/warm',
+  warmLimiter,
+  (req, res) => {
+    if (!process.env.VISION_SERVICE_URL) {
+      return res.json({ warming: false })
+    }
+
+    fetch(
+      `${process.env.VISION_SERVICE_URL}/health`,
+      { signal: AbortSignal.timeout(VISION_TIMEOUT_MS) }
+    ).catch((error) => {
+      console.error(
+        'Vision warm-up failed:',
+        error.message
+      )
+    })
+
+    res.json({ warming: true })
+  }
+)
 
 // Shop this room: send a room photo to the
 // vision service and return detected items

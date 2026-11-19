@@ -41,6 +41,13 @@ export async function prepareRoomPhoto(file) {
   }
 }
 
+// Wake the vision service up early. It scales
+// to zero when idle, so the first request after
+// a quiet period is slow. Failures don't matter.
+export function warmVisionService() {
+  fetch(`${API_BASE_URL}/api/vision/warm`).catch(() => {})
+}
+
 // Detect items in the room photo and find
 // visually similar products for each one.
 //

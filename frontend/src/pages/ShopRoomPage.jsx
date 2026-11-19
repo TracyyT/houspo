@@ -15,6 +15,7 @@ import { usePreferences } from '../context/PreferenceContext'
 import {
   prepareRoomPhoto,
   shopRoom,
+  warmVisionService,
 } from '../services/visionService'
 
 import {
@@ -215,6 +216,23 @@ function ShopRoomPage() {
   const [recentlyDisliked, setRecentlyDisliked] = useState(null)
   const [fallbackProducts, setFallbackProducts] = useState([])
   const [fallbackLoading, setFallbackLoading] = useState(false)
+  const [slowStart, setSlowStart] = useState(false)
+
+  useEffect(() => {
+    warmVisionService()
+  }, [])
+
+  // Explain long waits: the first photo after a
+  // quiet period also starts the vision service.
+  useEffect(() => {
+    if (status !== 'analyzing') {
+      return
+    }
+
+    const timer = setTimeout(() => setSlowStart(true), 8000)
+
+    return () => clearTimeout(timer)
+  }, [status])
 
   const personalized = hasStyleProfile(preferences)
 
@@ -270,6 +288,7 @@ function ShopRoomPage() {
     }
 
     setPhoto(prepared)
+    setSlowStart(false)
     setStatus('analyzing')
 
     const data = await shopRoom(prepared.dataUrl)
@@ -510,7 +529,9 @@ function ShopRoomPage() {
                     <span>
                       {status === 'preparing'
                         ? 'Preparing photo…'
-                        : 'Finding furniture and decor…'}
+                        : status === 'analyzing' && slowStart
+                          ? 'Starting up, the first photo can take up to a minute…'
+                          : 'Finding furniture and decor…'}
                     </span>
                   </div>
                 )}
