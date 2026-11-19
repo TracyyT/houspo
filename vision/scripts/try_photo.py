@@ -7,6 +7,7 @@ annotated copy with the top matches for each detected item.
 import argparse
 import base64
 import json
+import os
 from pathlib import Path
 
 import requests
@@ -29,7 +30,10 @@ def main():
     body = {'image_base64': base64.b64encode(
         (config.DATA_DIR / 'try_upload.jpg').read_bytes()).decode()}
 
-    response = requests.post(f'{args.url}/detect-and-match', json=body, timeout=120)
+    # The deployed service needs the shared key (set VISION_API_KEY).
+    headers = {'X-Vision-Key': os.environ.get('VISION_API_KEY', '')}
+    response = requests.post(f'{args.url}/detect-and-match', json=body,
+                             headers=headers, timeout=120)
     response.raise_for_status()
     result = response.json()
 
