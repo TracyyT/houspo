@@ -53,8 +53,11 @@ def default_pipeline():
 
     products = load_catalog()
     embedder = get_embedder(os.getenv('VISION_EMBEDDER', 'siglip2-base'))
-    # Off unless VISION_ADAPTER names a trained adapter file.
-    adapter_name = os.getenv('VISION_ADAPTER')
+    # On by default (it improved retrieval on both test sets);
+    # set VISION_ADAPTER=none to turn it off.
+    adapter_name = os.getenv('VISION_ADAPTER', 'adapter_siglip2.npz')
+    if adapter_name.lower() == 'none':
+        adapter_name = None
     adapter = (QueryAdapter.load(config.VISION_DIR / 'models' / adapter_name)
                if adapter_name else None)
     detector = YoloeDetector(os.getenv('VISION_DETECTOR', 'yoloe-26s-seg.pt'),
