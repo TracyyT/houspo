@@ -94,7 +94,7 @@ function getMatchedValues(
   )
 }
 
-function getBudgetRange(budget) {
+export function getBudgetRange(budget) {
   switch (budget) {
     case 'under-200':
       return {
@@ -394,7 +394,10 @@ export function scoreProduct(
   }
 
 
+  // Only award category points when the user
+  // picked categories, matching calculateMaximumScore.
   if (
+    preferences.categories.length > 0 &&
     matchesSelectedCategory(
         product,
         preferences.categories
